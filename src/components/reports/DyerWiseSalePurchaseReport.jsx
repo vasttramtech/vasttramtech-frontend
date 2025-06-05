@@ -21,13 +21,13 @@ const headersForTable = [
     "Colour",
     "Item",
     "Sale Date",
-    "Clear",
-    "Clear Date",
+    // "Clear Date",
     "Ex Date",
-    "Pur Date",
+    // "Pur Date",
     "Sale Qty",
     "Pur Qty",
     "Balance Qty",
+    "Status",
 ]
 
 
@@ -110,25 +110,26 @@ const setTimings = () => {
         });
 
         const data = Array.isArray(response.data.data) ? response.data.data : [];
-        //console.log("response: ", data)
+        console.log("response: ", data)
         setTotalPages(response.data.meta.pageCount);
-
+//  there have to be three status (completed, partially completed, sended)
         const mappedData = data?.map((item) => {
             return {
                 so_id: item?.so_id,
-                bill_no: item?.bill_no || "-",
+                bill_no: item?.billOfSaleId || "-",
                 processor: item?.processor,
                 design: item?.design,
                 colour: item?.color?.color_name,
                 item: item?.item?.semi_finished_goods_name,
                 sale_date: item?.sale_date || "-",
-                clear: item?.clear || "-",
-                clear_date: item?.clear_date|| "-",
+                // clear: item?.clear || "-",   
+                // clear_date: item?.clear_date|| "-",
                 ex_date: item?.ex_date,
-                pur_date: item?.pur_date,
+                // pur_date: item?.pur_date,
                 sale_qty: item?.qty,
                 pur_qty: item?.receive_qty,
                 balance_qty: (item?.qty - item?.receive_qty),
+                status: (item?.qty - item?.receive_qty) === 0 ? "Completed" : "Partially Received",
             };
         })
 
@@ -184,8 +185,9 @@ const setTimings = () => {
         setSelectedWorkType({ label:"", value:""});
         setTimings();
 
-        fetchReportData()
     }
+
+    
 
     if(loading){
         return (
@@ -196,7 +198,7 @@ const setTimings = () => {
     }
 
 
-
+ 
     return (
         <div>
             <div className="py-2 bg-white rounded-lg relative">
@@ -210,6 +212,7 @@ const setTimings = () => {
                         <div className="my-8" >
                             <div className='border border-gray-300 rounded-xl shadow-md shadow-gray-400 p-5'>
 
+                                <div className='text-red-500 text-sm text-center mb-5'>(Please select any one from Jobber and Work Type)</div>
 
                                 <div className='grid grid-cols-2 gap-4 '>
                                     <div>
@@ -220,6 +223,7 @@ const setTimings = () => {
                                             onChange={(selectedOption) => {
                                                 setSelectedJobber(selectedOption);
                                             }}
+                                            isDisabled={ selectedWorkType.value !== ""}                                    
                                             value={selectedJobber}
                                         />
                                     </div>
@@ -228,6 +232,7 @@ const setTimings = () => {
                                         <Select
                                             placeholder={fetchJobberLoader ? "Loading..." : "Select Work Type"}
                                             options={workType}
+                                            isDisabled={ selectedJobber.value !== ""}
                                             onChange={(e) => {
                                                 setSelectedWorkType(e);
                                             }}

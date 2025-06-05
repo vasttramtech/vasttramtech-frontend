@@ -61,6 +61,7 @@ const SelectedJobbersTable = ({
               <td className="py-2 px-4">
                 <input
                   type="number"
+                  placeholder="Enter Rate"
                   className="w-20 p-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                   value={jobber.Rate || 0}
                   onChange={(e) =>
@@ -71,6 +72,7 @@ const SelectedJobbersTable = ({
               <td className="py-2 px-4">
                 <input
                   type="text"
+                  placeholder="Enter Description"
                   className="w-full p-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                   value={jobber.jobber_description}
                   onChange={(e) => updateDescription(jobber.id, e.target.value)}

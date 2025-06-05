@@ -236,13 +236,13 @@ export default function SFGdataTable({
                 </td>
                 <td className="px-4 py-3 text-sm">{sfgQty(index)}</td>
                 <td className="px-4 py-3 text-sm">
-                  <select className="bg-blue-50 p-2 rounded text-sm border border-gray-400">
+                  <div className="bg-blue-50 p-2 rounded text-sm border border-gray-400 flex flex-col items-start justify-center">
                     {sfg.jobber_master_sfg.map((jobber, jobberIndex) => (
-                      <option key={jobberIndex} value={jobber.jobber_master}>
-                        {jobber.jobber_master} - {jobber.jobber_work_type}
-                      </option>
+                      <span key={jobberIndex} value={jobber.jobber_master}>
+                         <span className="font-semibold text-green-600">{jobber.jobber_master}</span> - <span className="font-semibold text-gray-800">{jobber.jobber_work_type}</span>
+                      </span>
                     ))}
-                  </select>
+                  </div>
                 </td>
                 <td className="px-4 py-3 text-sm text-center">
                   <button
