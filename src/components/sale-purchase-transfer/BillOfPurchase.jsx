@@ -1890,6 +1890,12 @@ const BillOfPurchase = () => {
       return;
     }
 
+    if(formData.clearDate === "") {
+      toast.warning("Please select the Clear Date.");
+      setSubmitting(false);
+      return;
+    }
+
     const fullyReceivedItems = selectedItems
       .filter(item => item.qty === (item.alreadyReceived || 0) + (item.enteredQty || 0))
       .map(item => ({
@@ -1950,22 +1956,26 @@ const BillOfPurchase = () => {
 
     try {
       // Submit main bill-of-purchase data
-      const response =  axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/bill-of-purchases`, postData, {
+      const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/bill-of-purchases`, postData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
+      if(res.status !== 200) {
+        toast.error(res?.data?.message, { position: "top-right" });
+        setSubmitting(false);
+        return;
+      }
 
-      const updateBomQtyPromise = axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/update-receive-qty-bill-of-sales`, {
+
+      const updateBomQtyPromise = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/update-receive-qty-bill-of-sales`, {
         billOfSaleId,
         updates
       }, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
-      const [ res ,updateBomQtyRes] = await Promise.all([response, updateBomQtyPromise]);
       console.log("res: ", res);
-      console.log("updateBomQtyRes: ", updateBomQtyRes);
 
 
       if (fullyReceivedItems.length > 0) {

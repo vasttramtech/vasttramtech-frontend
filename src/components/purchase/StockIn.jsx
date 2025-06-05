@@ -728,13 +728,25 @@ const StockIn = () => {
                                 type="number"
                                 className="w-16 px-2 py-1 border rounded-md text-center focus:ring-2 focus:ring-blue-400 focus:outline-none"
                                 value={row.receiveQty}
-                                onChange={(e) => handleInputChange(index, "receiveQty", Number(e.target.value))}
+                                max={row.requiredQty - row.alreadyReceived}
+                                min={0}
+                                onChange={(e) => {
+                                  const value = Number(e.target.value);
+                                  const min = 0;
+                                  const max = row.requiredQty - row.alreadyReceived;
+
+                                  const clampedValue = Math.max(min, Math.min(max, value));
+
+                                  handleInputChange(index, "receiveQty", clampedValue);
+                                }}
+
                               />
                             </td>
 
                             <td className="border border-gray-300 px-2 py-3 text-center">
                               <input
                                 type="number"
+                                min={0}
                                 className="w-16 px-2 py-1 border rounded-md text-center focus:ring-2 focus:ring-blue-400 focus:outline-none"
                                 value={row.extraQty}
                                 onChange={(e) => handleInputChange(index, "extraQty", Number(e.target.value))}
@@ -747,6 +759,7 @@ const StockIn = () => {
                             <td className="border border-gray-300 px-2 py-3 text-center">
                               <input
                                 type="number"
+                                min={0}
                                 className="w-16 px-2 py-1 border rounded-md text-center focus:ring-2 focus:ring-blue-400 focus:outline-none"
                                 value={row.cgst}
                                 onChange={(e) => handleInputChange(index, "cgst", Number(e.target.value))}
@@ -756,6 +769,7 @@ const StockIn = () => {
                             <td className="border border-gray-300 px-2 py-3 text-center">
                               <input
                                 type="number"
+                                min={0}
                                 className="w-16 px-2 py-1 border rounded-md text-center focus:ring-2 focus:ring-blue-400 focus:outline-none"
                                 value={row.sgst}
                                 onChange={(e) => handleInputChange(index, "sgst", Number(e.target.value))}
@@ -765,6 +779,7 @@ const StockIn = () => {
                             <td className="border border-gray-300 px-2 py-3 text-center">
                               <input
                                 type="number"
+                                min={0}
                                 className="w-16 px-2 py-1 border rounded-md text-center focus:ring-2 focus:ring-blue-400 focus:outline-none"
                                 value={row.igst}
                                 onChange={(e) => handleInputChange(index, "igst", Number(e.target.value))}

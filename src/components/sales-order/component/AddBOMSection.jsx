@@ -106,7 +106,7 @@ const SFGBomSection = ({
   });
 
   const sfgDataHandler = (event) => {
-    event.preventDefault();
+    // event.preventDefault();  
     const { name, value } = event.target;
 
     // Reset dependent fields when a parent field changes
@@ -178,10 +178,10 @@ const SFGBomSection = ({
       finalSelectedRawMaterials.map((row) =>
         row.id === id
           ? {
-              ...row,
-              Qty: newQty,
-              Total: newQty * (row.price_per_unit || 0),
-            }
+            ...row,
+            Qty: newQty,
+            Total: newQty * (row.price_per_unit || 0),
+          }
           : row
       )
     );
@@ -237,9 +237,9 @@ const SFGBomSection = ({
       finalSelectedJobbers.map((row) =>
         row.id === id
           ? {
-              ...row,
-              Rate: newRate,
-            }
+            ...row,
+            Rate: newRate,
+          }
           : row
       )
     );
@@ -250,9 +250,9 @@ const SFGBomSection = ({
       finalSelectedJobbers.map((row) =>
         row.id === id
           ? {
-              ...row,
-              jobber_description: value,
-            }
+            ...row,
+            jobber_description: value,
+          }
           : row
       )
     );
@@ -311,8 +311,7 @@ const SFGBomSection = ({
       !SfgData.sfg_color1 ||
       !SfgData.sfg_material ||
       !SfgData.sfg_qty ||
-      !SfgData.sfg_total_cost ||
-      !SfgData.sfg_description
+      !SfgData.sfg_total_cost
     ) {
       toast.error("Please fill all the fields.");
       return;
@@ -529,13 +528,7 @@ const SFGBomSection = ({
 
       <div className="flex items-center gap-2">
         <p className="text-xl font-semibold">Semi Finished Goods Master </p>
-        <button
-          type="button"
-          className="bg-blue-900 hover:bg-blue-800 flex items-center  gap-3 text-center rounded-md px-3 py-2 text-white font-semibold text-sm"
-          onClick={(event) => updateSFGdata(event)}
-        >
-          Add <Plus className="w-4 h-4" />
-        </button>
+
       </div>
 
       {/* {sfgLoader ? (
@@ -543,8 +536,11 @@ const SFGBomSection = ({
           <BounceLoader />
         </div>
       ) : ( */}
-        <>
-          <div className="mt-2 grid grid-cols-2 gap-6 p-5 border border-gray-400 shadow-xl rounded-xl">
+      <>
+        <div className=" bg-white p-5 border border-gray-400 shadow-xl rounded-xl">
+
+          <div className="mt-2 grid grid-cols-2 gap-6">
+
             {/* SFG Group */}
             <div className="flex flex-col">
               <FormLabel title={"SFG Group"} />
@@ -593,42 +589,42 @@ const SFGBomSection = ({
                   ))}
               </select>
             </div> */}
-         
-         
-          <div className="flex flex-col">
-            <label className="text-gray-700 font-semibold mb-1">
-              SFG Material
-            </label>
-            <Select
-              name="sfg_material"
-              classNames={
-                "border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"}
-              isLoading={sfgLoader}
-              isDisabled={!SfgData.sfg_group}
-              placeholder={sfgLoader ? "Loading SFG Materials..." : "Select SFG Material"}
-              options={
-                sfgMaterials?.map((item) => ({
-                  label: item,
-                  value: item,
-                })) || []
-              }
-              value={
-                SfgData.sfg_material
-                  ? { label: SfgData.sfg_material, value: SfgData.sfg_material }
-                  : null
-              }
-              onChange={(selectedOption) =>
-                sfgDataHandler({
-                  target: {
-                    name: "sfg_material",
-                    value: selectedOption?.value || "",
-                  },
-                })
-              }
-              className="react-select-container"
-              classNamePrefix="react-select"
-            />
-          </div>
+
+
+            <div className="flex flex-col">
+              <label className="text-gray-700 font-semibold mb-1">
+                SFG Material
+              </label>
+              <Select
+                name="sfg_material"
+                classNames={
+                  "border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"}
+                isLoading={sfgLoader}
+                isDisabled={!SfgData.sfg_group}
+                placeholder={sfgLoader ? "Loading SFG Materials..." : "Select SFG Material"}
+                options={
+                  sfgMaterials?.map((item) => ({
+                    label: item,
+                    value: item,
+                  })) || []
+                }
+                value={
+                  SfgData.sfg_material
+                    ? { label: SfgData.sfg_material, value: SfgData.sfg_material }
+                    : null
+                }
+                onChange={(selectedOption) =>
+                  sfgDataHandler({
+                    target: {
+                      name: "sfg_material",
+                      value: selectedOption?.value || "",
+                    },
+                  })
+                }
+                className="react-select-container"
+                classNamePrefix="react-select"
+              />
+            </div>
 
             {/* Color1 */}
             <div className="flex flex-col">
@@ -647,7 +643,7 @@ const SFGBomSection = ({
                   sfgCustomColor.length > 0 &&
                   sfgCustomColor.map((item, idx) => (
                     <option key={idx} value={item.id}>
-                      {item.color_name}
+                      {item.color_id} - {item.color_name}
                     </option>
                   ))}
               </select>
@@ -677,56 +673,69 @@ const SFGBomSection = ({
               />
             </div>
 
-            <div className="flex flex-col"></div>
-            {/* Selection buttons */}
-            <div className="flex items-center gap-3">
-              <button
-                className="p-2 bg-blue-900 hover:bg-blue-800 text-white rounded-md w-full"
-                type="button"
-                onClick={handleSelectRawMaterial}
-              >
-                Choose Raw Material
-              </button>
+          </div>
+
+          <div className="w-full flex flex-col gap-3 mt-6">
+
+          {/* Selection buttons */}
+          <div className="flex w-1/2 items-center gap-3">
+            <button
+              className="p-2 bg-blue-900 hover:bg-blue-800 text-white rounded-md w-full"
+              type="button"
+              onClick={handleSelectRawMaterial}
+            >
+              Choose Raw Material
+            </button>
+          </div>
+
+
+          {/* Raw Materials Section */}
+          {finalSelectedRawMaterials.length > 0 && (
+            <div className="col-span-2 flex flex-col justify-center items-center">
+              <h3 className="text-xl font-semibold mb-1">
+                Selected Raw Materials
+              </h3>
+              <SelectedRawMaterialsTable
+                selectedMaterials={finalSelectedRawMaterials}
+                updateQuantity={updateRawMaterialQty}
+                removeItem={removeRawMaterial}
+                onTotalCostChange={handleRawMaterialTotalCostChange}
+              />
             </div>
+          )}
 
-            <div className="flex items-center gap-3">
-              <button
-                className="p-2 bg-blue-900 hover:bg-blue-800 text-white rounded-md  w-full"
-                type="button"
-                onClick={handleSelectJobber}
-              >
-                Choose Jobber
-              </button>
+
+          <div className="flex w-1/2 items-center gap-3">
+            <button
+              className="p-2 bg-blue-900 hover:bg-blue-800 text-white rounded-md  w-full"
+              type="button"
+              onClick={handleSelectJobber}
+            >
+              Choose Jobber
+            </button>
+          </div>
+
+          {/* Jobbers Section */}
+          {finalSelectedJobbers.length > 0 && (
+            <div className="col-span-2 flex flex-col justify-center items-center">
+              <h3 className="text-xl font-semibold mb-1">Selected Jobbers</h3>
+              <SelectedJobbersTable
+                selectedJobbers={finalSelectedJobbers}
+                updateJobberRate={updateJobberRate}
+                removeJobber={removeJobber}
+                onTotalCostChange={handleJobberTotalCostChange}
+                updateDescription={updateDescription}
+              />
             </div>
+          )}
 
-            {/* Raw Materials Section */}
-            {finalSelectedRawMaterials.length > 0 && (
-              <div className="col-span-2 flex flex-col justify-center items-center">
-                <h3 className="text-xl font-semibold mb-1">
-                  Selected Raw Materials
-                </h3>
-                <SelectedRawMaterialsTable
-                  selectedMaterials={finalSelectedRawMaterials}
-                  updateQuantity={updateRawMaterialQty}
-                  removeItem={removeRawMaterial}
-                  onTotalCostChange={handleRawMaterialTotalCostChange}
-                />
-              </div>
-            )}
+          </div>
 
-            {/* Jobbers Section */}
-            {finalSelectedJobbers.length > 0 && (
-              <div className="col-span-2 flex flex-col justify-center items-center">
-                <h3 className="text-xl font-semibold mb-1">Selected Jobbers</h3>
-                <SelectedJobbersTable
-                  selectedJobbers={finalSelectedJobbers}
-                  updateJobberRate={updateJobberRate}
-                  removeJobber={removeJobber}
-                  onTotalCostChange={handleJobberTotalCostChange}
-                  updateDescription={updateDescription}
-                />
-              </div>
-            )}
+
+
+ <div className=" grid grid-cols-2 gap-6">
+
+
             {/* Total Cost */}
             <div className="flex flex-col">
               <label className="text-gray-700 font-semibold">Total Cost</label>
@@ -739,8 +748,21 @@ const SFGBomSection = ({
                 disabled
               />
             </div>
+
           </div>
-        </>
+
+          <div className="flex justify-end">
+
+           <button
+          type="button"
+          className="bg-green-500 hover:bg-green-800 flex items-center  gap-3 text-center rounded-md px-4 py-2 text-white font-semibold text-md"
+          onClick={(event) => updateSFGdata(event)}
+        >
+          Add <Plus className="w-4 h-4" />
+        </button>
+          </div>
+        </div>
+              </>
       {/* )} */}
     </div>
   );

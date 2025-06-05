@@ -656,7 +656,7 @@ const SFGBomSection = ({
                   sfgCustomColor.length > 0 &&
                   sfgCustomColor.map((item, idx) => (
                     <option key={idx} value={item.id}>
-                      {item.color_name}
+                      {item.color_id} - {item.color_name}
                     </option>
                   ))}
               </select>

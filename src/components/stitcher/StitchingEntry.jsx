@@ -361,6 +361,17 @@ const StitchingEntry = () => {
             setSubmitting(false);
             return
         }
+           if(formData.due_date === ""){
+            toast.warning("Please select a due date");
+            setSubmitting(false);
+            return;
+        }
+
+        if(formData.selected_stiitcher === ""){
+            toast.warning("Please select a stitcher");
+            setSubmitting(false);
+            return;
+        }
 
 
         console.log("Selected Stitch Rows: ", selectedStitchRows);

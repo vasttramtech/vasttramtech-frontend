@@ -89,12 +89,12 @@ const BOMSection = ({
             />
           )}
 
-        <div className="flex justify-end">
+        <div className="flex justify-end mt-5">
           <button
-            className="px-4 py-2 bg-blue-600 text-white rounded-md shadow-md hover:bg-blue-700 transition"
+            className="px-4 py-2 bg-blue-900 text-white rounded-md shadow-md hover:bg-blue-700 transition"
             onClick={handleAddBOm}
           >
-            Add BOM
+            Add All BOM
           </button>
         </div>
       </div>

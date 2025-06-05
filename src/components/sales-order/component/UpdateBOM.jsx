@@ -651,13 +651,7 @@ const UpdateBOM = ({
 
       <div className="flex items-center gap-2">
         <p className="text-xl font-semibold">Semi Finished Goods Master </p>
-        <button
-          type="button"
-          className="bg-blue-900 hover:bg-blue-800 flex items-center gap-2 px-3 py-2  text-center rounded-md text-white font-semibold text-sm"
-          onClick={(event) => updateSFGdata(event)}
-        >
-          Update <GrUpdate className="text-sm" />
-        </button>
+     
       </div>
 
       {sfgLoader ? (
@@ -732,7 +726,7 @@ const UpdateBOM = ({
                   colors.length > 0 &&
                   colors.map((item, idx) => (
                     <option key={idx} value={item.id}>
-                      {item.color_name}
+                     {item.color_id} - {item.color_name}
                     </option>
                   ))}
               </select>
@@ -803,6 +797,7 @@ const UpdateBOM = ({
                     />
                   </div>
                 )}
+                
 
               {/* Jobbers Section */}
               {finalSelectedJobbers && finalSelectedJobbers.length > 0 && (
@@ -821,8 +816,11 @@ const UpdateBOM = ({
               )}
             </div>
           </div>
+
+          <div className="flex justify-between items-center px-10">
+
           {/* Total Cost */}
-          <div className="flex flex-col w-1/3 mx-auto mt-2">
+          <div className="flex flex-col w-1/3 mt-2">
             <label className="text-blue-700 font-semibold">Total Cost</label>
             <input
               value={SfgData.sfg_total_cost}
@@ -833,6 +831,17 @@ const UpdateBOM = ({
               disabled
             />
           </div>
+
+             <button
+          type="button"
+          className="bg-blue-900 hover:bg-blue-800 flex items-center gap-2 px-4 py-3  text-center rounded-md text-white font-semibold text-sm"
+          onClick={(event) => updateSFGdata(event)}
+        >
+          Update <GrUpdate className="text-sm" />
+        </button>
+
+          </div>
+        
         </>
       )}
     </div>

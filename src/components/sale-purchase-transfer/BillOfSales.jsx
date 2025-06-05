@@ -943,7 +943,7 @@ const BillOfSales = () => {
                                         </button> */}
 
                                         <button
-                                            className="bg-gradient-to-r from-green-400 via-blue-500 to-teal-600 text-white font-semibold py-3 px-8 mr-4 rounded-full shadow-lg hover:scale-105 hover:shadow-2xl transition-all duration-300 ease-in-out flex items-center gap-2"
+                                            className="bg-gradient-to-r from-green-400 via-blue-500 to-teal-600 text-white font-semibold py-3 px-8 mr-4 rounded-full shadow-lg hover:scale-100 hover:shadow-2xl hover:text-lg  transition-all duration-300 ease-in-out flex items-center gap-2"
                                             type="button"
                                             onClick={() => {
                                                 if (selectedRows.length === 0) {
@@ -1265,7 +1265,7 @@ const BillOfSales = () => {
 
                                         value={formData.remarks}
                                         onChange={formDataChangeHandler}
-                                        required
+                                   
                                     />
                                 </div>
 
@@ -1281,7 +1281,7 @@ const BillOfSales = () => {
                                         name="job_note"
                                         value={formData.job_note}
                                         onChange={formDataChangeHandler}
-                                        required
+                                     
                                     />
                                 </div>
 

@@ -328,6 +328,12 @@ const StitchingReceive = () => {
             return;
         }
 
+           if(formData.receiving_date === "") {
+            toast.warning("Please select the Receiving Date.", { position: "top-right" });
+            setSubmitting(false)
+            return;
+        }
+
          const getStitchingStatus = () => {
             if (!selectedEntry || !selectedEntry.order_Items) return "partially_completed";
 
