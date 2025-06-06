@@ -1961,22 +1961,26 @@ const BillOfPurchase = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      if(res.status !== 200) {
+      console.log("ressssssss: ", res);
+
+
+      if(res.data.data === null) {
         toast.error(res?.data?.message, { position: "top-right" });
         setSubmitting(false);
         return;
       }
 
-
-      const updateBomQtyPromise = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/update-receive-qty-bill-of-sales`, {
-        billOfSaleId,
-        updates
-      }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-
-      console.log("res: ", res);
-
+      if(res.data.data) {
+        const updateBomQtyPromise = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/update-receive-qty-bill-of-sales`, {
+          billOfSaleId,
+          updates
+        }, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+      }
+        
+        console.log("res: ", res);
+        
 
       if (fullyReceivedItems.length > 0) {
         const updateItems = fullyReceivedItems.map((item) => {
@@ -2160,10 +2164,10 @@ console.log("addBomProcess: ", addBomProcess);
     }
   };
 
-  console.log("billOfSale: ", billOfSale)
-  console.log("company: ", company)
-  console.log("selectedItems: ", selectedItems)
-  console.log("soBom: ", soBom)
+  // console.log("billOfSale: ", billOfSale)
+  // console.log("company: ", company)
+  // console.log("selectedItems: ", selectedItems)
+  // console.log("soBom: ", soBom)
 
   return (
     <div className="py-2 bg-white rounded-lg relative">
