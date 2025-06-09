@@ -253,6 +253,8 @@ const IndividualReport = () => {
     }
   };
 
+  // console.log(data.convert_id)
+
   // Format date function
   const formatDate = (dateString) => {
     if (!dateString) return "N/A";
@@ -331,7 +333,7 @@ const IndividualReport = () => {
             {!isInternal && data?.convert_id && (
               <div className="col-span-2">
                 <p className="text-gray-600 text-sm">Convert ID</p>
-                <p className="font-medium">{data?.convert_id?.so_id}</p>
+                <p className="font-medium">{data?.convert_id}</p>
               </div>
             )}
           </div>
@@ -576,7 +578,7 @@ const IndividualReport = () => {
         )}
 
         <div className="flex gap-3">
-          <button
+         {!data?.convert_id && <button
             onClick={refreshStockAndData}
             disabled={refreshingStock}
             className="bg-green-600 hover:bg-green-700 text-white py-2 px-6 rounded-lg shadow-md transition duration-300 flex items-center gap-2"
@@ -586,7 +588,7 @@ const IndividualReport = () => {
               className={refreshingStock ? "animate-spin" : ""}
             />
             {refreshingStock ? "Refreshing..." : "Refresh Stock"}
-          </button>
+          </button>}
 
           <button
             onClick={() => window.print()}
