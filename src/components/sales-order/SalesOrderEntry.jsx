@@ -11,6 +11,7 @@ import DesignDetails from "./component/DesignDetails";
 import EditSfgComponent from "./component/EditSfgComponent";
 import BOMSection from "./component/BOMSection";
 import ExtraBOMSfgCreate from "./component/ExtraBOMSfgCreate";
+import ConvertIDSfgDataTable from "./component/ConvertIDSfgDataTable";
 
 const SalesOrderEntry = () => {
   const { token } = useSelector((state) => state.auth);
@@ -107,8 +108,10 @@ const SalesOrderEntry = () => {
   const [headersforConvertId] = useState([
     "ID",
     "SO_ID",
+    "Design Number",
     "Quanity",
     "Remaining Quantity",
+    "Order Date",
     "Stock order Status",
   ]);
 
@@ -191,7 +194,6 @@ const SalesOrderEntry = () => {
     new Set()
   );
 
-
   useEffect(() => {
     // console.log(1);
     const handleBeforeUnload = (e) => {
@@ -213,7 +215,7 @@ const SalesOrderEntry = () => {
   const fetchConvertId = async () => {
     // console.log(formData.group, selectedData.design_number);
     if (!formData.group || !selectedData?.design_number) {
-      toast.error("Please select group and design number to get conver id");
+      toast.error("Please select group and design number to get convert id");
       return;
     }
     try {
@@ -230,11 +232,14 @@ const SalesOrderEntry = () => {
       if (!response.data || !response.data.convertIds)
         toast.error("Error at getting convert id");
       else {
+        // console.log(response.data.convertIds);
         const updatedConvertIds = response.data.convertIds.map((item) => ({
           id: item?.id,
           so_id: item?.so_id,
+          design_number: item?.design_number?.design_number,
           quantity: item?.qty,
           remaining_quantity: item?.remaining_qty,
+          order_date: item?.order_date,
           order_status: item?.order_status,
         }));
         setConvertIdDatas(updatedConvertIds);
@@ -401,10 +406,96 @@ const SalesOrderEntry = () => {
     }
   }, [selectedData]);
 
+  async function fetchDetails(id) {
+    if (!id) {
+      toast.error("Invalid Data");
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await axios.get(
+        `${process.env.REACT_APP_BACKEND_URL}/api/internal-sales-order-entry/edit/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const exta_bom = res?.data?.extra_bom_so[0]?.Extra_bom || [];
+      const transformedData = exta_bom?.map((entry) => ({
+        semi_finished_goods:
+          entry.semi_finished_goods?.semi_finished_goods_name || "",
+        qty: Number(entry.qty),
+        total_price: Number(entry.total_price),
+        sfg_description: entry.sfg_description || "",
+        color: entry?.color?.color_name,
+        unit: entry?.unit?.unit_name,
+        raw_material_bom: (entry.raw_material_bom || []).map((rm) => ({
+          raw_material_id: rm.raw_material_master?.id || "",
+          raw_material_master: rm.raw_material_master?.item_name || "",
+          rm_qty: rm.rm_qty || 1,
+          color: rm.raw_material_master?.color?.color_name || "",
+          price_per_unit: rm.raw_material_master?.price_per_unit || "",
+          unit: rm.raw_material_master?.unit?.unit_name || "",
+          new_sfg: false,
+        })),
+        jobber_master_sfg: (entry.jobber_master_sfg || []).map((jobber) => ({
+          jobber_master: jobber.jobber_master?.jobber_name || "",
+          jobber_rate: jobber.jobber_rate || 0,
+          jobber_work_type: jobber.jobber_work_type || "",
+          jobber_description: jobber.jobber_description || "",
+          jobber_id: jobber.jobber_master?.jobber_id || "",
+          jobber_address: jobber.jobber_master?.jobber_address || "",
+          completed: jobber?.completed,
+        })),
+        color: entry.color,
+        bom_status: entry?.bom_status,
+        new_sfg: false,
+        stock_status: entry?.stock_status,
+        fromStock: entry?.fromStock,
+      }));
+      setAllSavedSemiFinishedGoods(transformedData);
+      const savedData = exta_bom?.map((entry) => ({
+        semi_finished_goods: entry?.semi_finished_goods?.id,
+        qty: Number(entry?.qty),
+        color: entry?.color?.id,
+        processes: entry?.processes.map((item) => ({
+          process: item?.process,
+          jobber: item?.jobber?.id,
+        })),
+        bom_status: entry?.bom_status,
+        total_price: Number(entry?.total_price),
+        sfg_description: entry?.sfg_description,
+        raw_material_bom: entry?.raw_material_bom.map((rm) => ({
+          raw_material_master: rm?.raw_material_master?.id,
+          rm_qty: rm?.rm_qty,
+        })),
+        jobber_master_sfg: entry?.jobber_master_sfg.map((jobber) => ({
+          jobber_master: jobber?.jobber_master?.id,
+          jobber_rate: jobber?.jobber_rate,
+          jobber_work_type: jobber?.jobber_work_type,
+          jobber_description: jobber?.jobber_description,
+          completed: jobber?.completed,
+        })),
+      }));
+      setAllSemiFinishedGoods(savedData);
+      setsfglist(exta_bom.map((item) => item?.semi_finished_goods));
+    } catch (error) {
+      console.error("Error fetching design details:", error);
+      toast.error(
+        error?.response?.data?.error?.message || "Error fetching convert ID"
+      );
+    } finally {
+      setLoading(false);
+    }
+  }
+
   useEffect(() => {
-    if (!selectedConvertIdData) return;
-    if (Object.keys(selectedConvertIdData).length > 0)
-      setShowConvertIdTable(false);
+    if (!selectedConvertIdData || !Object.keys(selectedConvertIdData).length)
+      return;
+    // console.log(selectedConvertIdData);
+    setShowConvertIdTable(false);
+    fetchDetails(selectedConvertIdData?.id);
   }, [selectedConvertIdData]);
 
   useEffect(() => {
@@ -603,9 +694,10 @@ const SalesOrderEntry = () => {
       setsubmitting(false);
     }
   };
+  // console.log(allSemiFinishedGoods,allSavedSemiFinishedGoods);
 
   useEffect(() => {
-    console.log(selectedConvertIdData);
+    // console.log(selectedConvertIdData);
     if (!isAdmin && selectedConvertIdData.so_id)
       setFormData({ ...formData, qty: 1 });
   }, [selectedConvertIdData, isAdmin]);
@@ -1165,7 +1257,7 @@ const SalesOrderEntry = () => {
           </div>
         </div>
 
-        {showTables && (
+        {showTables && !selectedConvertIdData?.so_id && (
           <div>
             <DesignDetails
               selectedData={selectedData}
@@ -1214,6 +1306,15 @@ const SalesOrderEntry = () => {
               Add SFG from Stock
             </button>
           </div>
+        )}
+
+        {selectedConvertIdData?.so_id && (
+          <ConvertIDSfgDataTable
+            allSavedSemiFinishedGoods={allSavedSemiFinishedGoods}
+            allSemiFinishedGoods={allSemiFinishedGoods}
+            sfglist={sfglist}
+            convertId={selectedConvertIdData?.so_id}
+          />
         )}
 
         <div className="grid grid-cols-2 gap-6 p-2 mb-16">
