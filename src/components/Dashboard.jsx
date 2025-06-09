@@ -7,6 +7,7 @@ import { BounceLoader } from "react-spinners";
 import { Link, useNavigate } from "react-router-dom";
 import Pagination from "./utility/Pagination";
 import { useSelector } from "react-redux";
+import CountsDashboard from "./CountsDashboard";
 
 const Dashboard = ({  company, setSelectedSOId, setSalesOrder, setBom, setFormData, setFromDashboard, setSelectedItem }) => {
   const [salesDatas, setSalesData] = useState([]);
@@ -36,9 +37,12 @@ const Dashboard = ({  company, setSelectedSOId, setSalesOrder, setBom, setFormDa
   const [totalPages, setTotalPages] = useState(1);
   const [pageSize, setPageSize] = useState(5);
   const [paginationLoading, setPaginationLoading] = useState(false);
-  console.log(designation , id)
-
   const navigate = useNavigate();
+  // console.log(designation , id)
+
+  //  tabs logic
+  const [activeTab, setActiveTab] = useState("dashboard");
+
   console.log(salesDatas);
   useEffect(() => {
     console.log(updateData);
@@ -166,6 +170,38 @@ const Dashboard = ({  company, setSelectedSOId, setSalesOrder, setBom, setFormDa
   return (
     <div className="  ">
       <h1 className="text-3xl font-bold text-blue-900 mb-4">DashBoard</h1>
+
+
+      <div className="flex w-full justify-end gap-5">
+        {activeTab === 'dashboard' && 
+          <div className="border  rounded-lg px-4 py-2 bg-green-500 cursor-pointer hover:bg-green-600 transition-all ease-out duration-200">
+            <h1 className="text-xl text-white font-bold">Export to XLS</h1>
+          </div>
+          }
+      <div className="flex">
+         <div
+          onClick={() => setActiveTab("dashboard")}
+          className={`border rounded-l-lg px-4 py-2 cursor-pointer transition-all duration-200 ${
+            activeTab === "dashboard" ? "bg-blue-900 hover:bg-blue-700" : "bg-gray-300 hover:bg-gray-400"
+          }`}
+        >
+          <h1 className="text-xl text-white font-bold">Dashboard</h1>
+        </div>
+
+        {/* Counts Dashboard Tab */}
+        <div
+          onClick={() => setActiveTab("counts")}
+          className={`border rounded-r-lg px-4 py-2 cursor-pointer transition-all duration-200 ${
+            activeTab === "counts" ? "bg-blue-900 hover:bg-blue-700" : "bg-gray-300 hover:bg-gray-400"
+          }`}
+        >
+          <h1 className="text-xl text-white font-bold">Counts Dashboard</h1>
+        </div>
+      </div>
+        
+      </div>
+
+      {activeTab === "dashboard" &&
       <>
         {paginationLoading ? (
           <div className="flex p-5 justify-center items-center space-x-2 mt-4 border border-gray-400 rounded-lg">
@@ -187,6 +223,11 @@ const Dashboard = ({  company, setSelectedSOId, setSalesOrder, setBom, setFormDa
           <div className="text-center text-gray-500 mt-6">No data found.</div>
         )}
       </>
+      }
+
+      {activeTab === "counts" && (
+        <CountsDashboard />
+      )}
     </div>
   );
 };
