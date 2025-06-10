@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { BounceLoader } from "react-spinners";
@@ -127,7 +126,7 @@ const IndividualReport = () => {
     fetchStock();
   }, [id, type, token]);
 
-  console.log(approvedSFG)
+  console.log(approvedSFG);
 
   const refreshStockAndData = async (e) => {
     e.preventDefault();
@@ -330,10 +329,17 @@ const IndividualReport = () => {
               <p className="text-gray-600 text-sm">Stock Order</p>
               <p className="font-medium">{data?.stock_order ? "Yes" : "No"}</p>
             </div>
-            {!isInternal && data?.convert_id && (
+            {data?.orders && (
               <div className="col-span-2">
                 <p className="text-gray-600 text-sm">Convert ID</p>
-                <p className="font-medium">{data?.convert_id}</p>
+                <p className="font-medium">
+                  {data?.orders
+                    .map((order) => order?.external_orders)
+                    .join(", ")}{" "}
+                </p>
+                <p className="font-medium">
+                  Converted Date: {data?.converted_date}
+                </p>
               </div>
             )}
           </div>
@@ -578,17 +584,19 @@ const IndividualReport = () => {
         )}
 
         <div className="flex gap-3">
-         {!data?.convert_id && <button
-            onClick={refreshStockAndData}
-            disabled={refreshingStock}
-            className="bg-green-600 hover:bg-green-700 text-white py-2 px-6 rounded-lg shadow-md transition duration-300 flex items-center gap-2"
-          >
-            <RefreshCw
-              size={18}
-              className={refreshingStock ? "animate-spin" : ""}
-            />
-            {refreshingStock ? "Refreshing..." : "Refresh Stock"}
-          </button>}
+          {!data?.convert_id && (
+            <button
+              onClick={refreshStockAndData}
+              disabled={refreshingStock}
+              className="bg-green-600 hover:bg-green-700 text-white py-2 px-6 rounded-lg shadow-md transition duration-300 flex items-center gap-2"
+            >
+              <RefreshCw
+                size={18}
+                className={refreshingStock ? "animate-spin" : ""}
+              />
+              {refreshingStock ? "Refreshing..." : "Refresh Stock"}
+            </button>
+          )}
 
           <button
             onClick={() => window.print()}

@@ -421,6 +421,12 @@ const SalesOrderEntry = () => {
           },
         }
       );
+      console.log(res.data);
+      setFormData((prev) => ({
+        ...prev,
+        processor: res?.data?.processor?.id,
+        merchandiser: res?.data?.merchandiser?.id,
+      }));
       const exta_bom = res?.data?.extra_bom_so[0]?.Extra_bom || [];
       const transformedData = exta_bom?.map((entry) => ({
         semi_finished_goods:
@@ -560,6 +566,7 @@ const SalesOrderEntry = () => {
       }));
       const postData = {
         data: {
+          customer: formData.customer,
           so_id: formData.so_id,
           group: formData.group,
           qty: formData.qty,
@@ -681,7 +688,10 @@ const SalesOrderEntry = () => {
           );
           toast.success("Stock updated successfully");
         }
-        navigate(`/sales-order-report/report/external/${response.data.id}`);
+        if (selectedConvertIdData?.so_id) {
+          navigate(`/sales-order-report/report/internal/${response.data.id}`);
+        } else
+          navigate(`/sales-order-report/report/external/${response.data.id}`);
       }
     } catch (error) {
       console.log("Error at creating Sales Order", error);
@@ -1373,6 +1383,7 @@ const SalesOrderEntry = () => {
               value={formData.processor}
               name="processor"
               onChange={handleChange}
+              disabled={selectedConvertIdData?.so_id}
               className="border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="" disabled selected>
@@ -1395,6 +1406,7 @@ const SalesOrderEntry = () => {
               value={formData.merchandiser}
               name="merchandiser"
               onChange={handleChange}
+              disabled={selectedConvertIdData?.so_id}
               className="border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="" disabled selected>

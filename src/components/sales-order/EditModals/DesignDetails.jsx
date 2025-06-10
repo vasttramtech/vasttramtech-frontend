@@ -23,7 +23,8 @@ const DesignDetails = ({
   sfgStock,
   sfgStockCategories,
   sfglist,
-  fetchSFGStock
+  fetchSFGStock,
+  setDeletedSfg,
 }) => {
   const [loading, setLoading] = useState(false);
 
@@ -131,17 +132,18 @@ const DesignDetails = ({
           }
         );
         toast.success("Stock updated successfully");
-        await fetchSFGStock();        
+        await fetchSFGStock();
       } catch (error) {
         console.log("Error fetching design details:", error);
         toast.error(
           error?.response?.data?.error?.message || "Error updating Stock"
         );
-        return;
       } finally {
         setLoading(false);
       }
+      return;
     }
+    setDeletedSfg((prev) => [...prev, allSemiFinishedGoods[index]]);
     updatedSfgData.splice(index, 1);
     setSavedSfgData(updatedSfgData);
     const updatedfinalSfgdata = [...allSemiFinishedGoods];
@@ -158,11 +160,11 @@ const DesignDetails = ({
         <div className="flex justify-center items-center p-4">
           <BounceLoader size={20} />
         </div>
-      ) : designData ? (
+      ) : (
         <>
           {/* Design Info */}
           <div className="flex mb-3">
-            {designData.image?.[0]?.url && (
+            {designData?.image?.[0]?.url && (
               <div className="mr-3">
                 <img
                   src={designData.image[0].url}
@@ -172,12 +174,12 @@ const DesignDetails = ({
               </div>
             )}
             <div>
-              <h3 className="font-bold">{designData.design_number}</h3>
+              <h3 className="font-bold">{designData?.design_number}</h3>
               <div className="grid grid-cols-2 gap-x-4 mt-1">
-                <div>Color: {designData.color?.color_name || "N/A"}</div>
-                <div>Unit: {designData.unit?.unit_name || "N/A"}</div>
-                <div>Cost: {designData.total_design_cost || 0}</div>
-                <div>Description: {designData.description || "N/A"}</div>
+                <div>Color: {designData?.color?.color_name || "N/A"}</div>
+                <div>Unit: {designData?.unit?.unit_name || "N/A"}</div>
+                <div>Cost: {designData?.total_design_cost || 0}</div>
+                <div>Description: {designData?.description || "N/A"}</div>
               </div>
             </div>
           </div>
@@ -202,8 +204,6 @@ const DesignDetails = ({
             />
           </div>
         </>
-      ) : (
-        <p className="text-gray-500 text-center p-2">No design selected</p>
       )}
     </div>
   );

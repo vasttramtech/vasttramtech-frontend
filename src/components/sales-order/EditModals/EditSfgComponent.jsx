@@ -22,12 +22,10 @@ const EditSfgComponent = ({
 
   useEffect(() => {
     setIndividualsfg(sfglist[index]);
-    // setIndividualsfg(dataDesign?.semi_finished_goods_entries[index]);
     setFinalSFGData(allSemiFinishedGoods[index]);
     setSavedSfgData(allSavedSemiFinishedGoods[index]);
   }, [dataDesign, allSemiFinishedGoods, allSavedSemiFinishedGoods, index]);
 
-  // console.log("All saved semi data ",allSavedSemiFinishedGoods)
   return (
     <div className="z-10 shadow-lg rounded-md p-4 bg-gray-200 overflow-y-auto">
       <UpdateBOM

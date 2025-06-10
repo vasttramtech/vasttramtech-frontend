@@ -149,6 +149,7 @@ const EditSalesOrderModel = () => {
   const [currentBomRow, setCurrentBomRow] = useState(null);
   const [BillOfSaleStatus, setBillOfSaleStatus] = useState(null);
   const [MerchandiserOptions, setMerchandiserOptions] = useState([]);
+  const [deletedsfg, setDeletedSfg] = useState([]);
   // console.log(sfglist, allSavedSemiFinishedGoods, allSemiFinishedGoods);
   // console.log(BillOfSaleStatus)
   const fetchSFGStock = async () => {
@@ -198,34 +199,32 @@ const EditSalesOrderModel = () => {
     setStockList((prev) => [...stockList, ...arr]);
   }, [extra_bom_so, formData.qty]);
 
-
   function updateOrderItemStatus(orderItems) {
-  const updatedItems = {};
+    const updatedItems = {};
 
-  for (const key in orderItems) {
-    const item = orderItems[key];
+    for (const key in orderItems) {
+      const item = orderItems[key];
 
-    const allEmpty = Object.entries(item).every(([field, value]) => {
-      // Skip status field
-      if (field === "status") return true;
+      const allEmpty = Object.entries(item).every(([field, value]) => {
+        // Skip status field
+        if (field === "status") return true;
 
-      const isEmpty =
-        value === null ||
-        value === undefined ||
-        (typeof value === "string" && value.trim() === "");
+        const isEmpty =
+          value === null ||
+          value === undefined ||
+          (typeof value === "string" && value.trim() === "");
 
-      return isEmpty;
-    });
+        return isEmpty;
+      });
 
-    updatedItems[key] = {
-      ...item,
-      status: !allEmpty,
-    };
+      updatedItems[key] = {
+        ...item,
+        status: !allEmpty,
+      };
+    }
+
+    return updatedItems;
   }
-
-  return updatedItems;
-}
-
 
   const fetchPageData = async () => {
     setLoading(true);
@@ -349,6 +348,9 @@ const EditSalesOrderModel = () => {
         setOrder_items(response?.data?.order_items);
         setExtra_bom_so(response?.data?.extra_bom_so[0]?.Extra_bom);
         setDesignData(response?.data?.design_number);
+        setSelectedConvertIdData({
+          so_id: response.data?.orders[0]?.external_orders || "N/A",
+        });
       }
     } catch (error) {
       console.log("Error at getting data", error);
@@ -359,6 +361,7 @@ const EditSalesOrderModel = () => {
       setLoading(false);
     }
   };
+  console.log(deletedsfg);
 
   useEffect(() => {
     fetchPageData();
@@ -429,7 +432,7 @@ const EditSalesOrderModel = () => {
       [name]: value,
     }));
   }
-  console.log(extra_bom_so);
+  // console.log(extra_bom_so);
   const handleSubmitInternalSalesOrder = async () => {
     if (!token) {
       navigate("/login");
@@ -466,6 +469,22 @@ const EditSalesOrderModel = () => {
         toast.error("Error at creating Sales Order");
       } else {
         toast.success("Internal Sales Order updated successfully");
+
+        const allIncomplete = [];
+        const someCompleted = [];
+        if (deletedsfg.length > 0) {
+          deletedsfg.forEach((item) => {
+            const allAreIncomplete = item.jobber_master_sfg.every(
+              (jobber) => jobber.completed === "Incomplete"
+            );
+
+            if (allAreIncomplete) {
+              allIncomplete.push(item);
+            } else {
+              someCompleted.push(item);
+            }
+          });
+        }
 
         const increaseStock = extra_bom_so.flatMap((item) =>
           item.raw_material_bom.map((rm) => ({
@@ -776,6 +795,8 @@ const EditSalesOrderModel = () => {
     setSelectedData({});
     setSelectedRow();
   }, [formData.group]);
+
+  // console.log(deletedsfg)
 
   const clearHandler = (e) => {
     e.preventDefault();
@@ -1181,19 +1202,6 @@ const EditSalesOrderModel = () => {
                 readOnly
                 className="w-full bg-gray-100 border broder-gray-300 broder-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-              {/* <button
-                className="bg-blue-900 rounded-lg px-3 hover:bg-blue-800 text-white"
-                onClick={(e) => {
-                  e.preventDefault();
-                  if (!formData.group) {
-                    toast.error("Please select group first");
-                    return;
-                  }
-                  setShowDesignTable(!showDesignTable);
-                }}
-              >
-                Choose Design
-              </button> */}
             </div>
           </div>
         </div>
@@ -1220,6 +1228,7 @@ const EditSalesOrderModel = () => {
             sfgStockCategories={sfgStockCategories}
             sfglist={sfglist}
             fetchSFGStock={fetchSFGStock}
+            setDeletedSfg={setDeletedSfg}
           />
         }
         <button
@@ -1246,7 +1255,6 @@ const EditSalesOrderModel = () => {
 
         <div className="grid grid-cols-2 gap-6 p-2 mb-16">
           {/* Convert ID */}
-
           <div className="flex flex-col">
             <FormLabel title={"Convert ID"} />
             <div className="flex gap-2">
@@ -1256,20 +1264,6 @@ const EditSalesOrderModel = () => {
                 placeholder="Convert ID"
                 className="w-full bg-gray-100 border broder-gray-300 broder-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-              {/* <button
-                className="bg-blue-900 rounded-lg px-3 hover:bg-blue-800 text-white"
-                disabled={isAdmin}
-                onClick={(e) => {
-                  e.preventDefault();
-                  if (!selectedData || !formData.group) {
-                    toast.error("Please select group and Design number first");
-                    return;
-                  }
-                  setShowConvertIdTable(!showConvertIdTable);
-                }}
-              >
-                Choose Convert ID
-              </button> */}
             </div>
           </div>
 
