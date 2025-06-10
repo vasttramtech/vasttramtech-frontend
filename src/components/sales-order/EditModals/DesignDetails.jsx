@@ -143,7 +143,9 @@ const DesignDetails = ({
       }
       return;
     }
-    setDeletedSfg((prev) => [...prev, allSemiFinishedGoods[index]]);
+    // console.log(SavedSfgData[index]);
+    if (SavedSfgData[index].stock_status)
+      setDeletedSfg((prev) => [...prev, allSemiFinishedGoods[index]]);
     updatedSfgData.splice(index, 1);
     setSavedSfgData(updatedSfgData);
     const updatedfinalSfgdata = [...allSemiFinishedGoods];

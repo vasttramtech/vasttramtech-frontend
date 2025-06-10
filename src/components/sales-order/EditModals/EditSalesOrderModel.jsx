@@ -170,7 +170,7 @@ const EditSalesOrderModel = () => {
         process: entry?.processes,
       }));
       console.log(sfgStock);
-      setSfgStock(sfgStock);
+      // setSfgStock(sfgStock);
     } catch (error) {
       console.log(error);
       toast.error(
@@ -433,6 +433,42 @@ const EditSalesOrderModel = () => {
     }));
   }
   // console.log(extra_bom_so);
+  console.log(deletedsfg);
+  const handleBulkAddStock = async (someCompleted) => {
+    try {
+      const result = someCompleted.map((item) => {
+        const processes = item.jobber_master_sfg
+          .filter((jobber) => jobber.completed !== "Incomplete")
+          .map((jobber) => ({ process: jobber.jobber_work_type }));
+
+        return {
+          sfg: item.semi_finished_goods,
+          color: item.color,
+          add_qty: item.qty * formData.qty,
+          processes,
+        };
+      });
+
+      const response = await axios.post(
+        `${process.env.REACT_APP_BACKEND_URL}/api/custom/bulk-add-stock-sfg`,
+        result,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      toast.success("Stock added successfully!");
+      // console.log("Bulk add response:", response.data);
+    } catch (error) {
+      console.error("Bulk add error:", error);
+      toast.error(
+        error?.response?.data?.error?.message || "Something went wrong"
+      );
+    }
+  };
+
   const handleSubmitInternalSalesOrder = async () => {
     if (!token) {
       navigate("/login");
@@ -485,8 +521,13 @@ const EditSalesOrderModel = () => {
             }
           });
         }
-
-        const increaseStock = extra_bom_so.flatMap((item) =>
+        if (someCompleted.length > 0) {
+          await handleBulkAddStock(someCompleted);
+        }
+        const to_increase_stock = extra_bom_so.filter(
+          (item) => item.fromStock === true
+        );
+        const increaseStock = to_increase_stock.flatMap((item) =>
           item.raw_material_bom.map((rm) => ({
             raw_material_master: rm.raw_material_master.id,
             qty: rm.rm_qty * formData.qty,
@@ -502,16 +543,33 @@ const EditSalesOrderModel = () => {
           );
         }
 
-        const reduceStock = approvedSFG.map((item) =>
-          item?.raw_material_bom?.map((rm) => ({
+        const reduceFromApproved = approvedSFG.flatMap((item) =>
+          item.raw_material_bom.map((rm) => ({
             raw_material_master: rm.raw_material_id,
             qty: rm.total_rm_qty,
           }))
         );
 
+        // ✅ From someCompleted — uses: raw_material_master.id & rm_qty
+        const reduceFromSomeCompleted = someCompleted.flatMap((item) =>
+          item.raw_material_bom.map((rm) => ({
+            raw_material_master: rm.raw_material_master.id,
+            qty: rm.rm_qty,
+          }))
+        );
+
+        // Combine all reductions
+        const reduceStock = [...reduceFromSomeCompleted, ...reduceFromApproved];
+        // const reduceStock = approvedSFG.map((item) =>
+        //   item?.raw_material_bom?.map((rm) => ({
+        //     raw_material_master: rm.raw_material_id,
+        //     qty: rm.total_rm_qty,
+        //   }))
+        // );
+
         const reduce = reduceStock.flat();
-        // console.log(reduce);
-        if (reduce.length > 0 && !selectedConvertIdData?.so_id) {
+
+        if (reduce.length > 0) {
           await axios.post(
             `${process.env.REACT_APP_BACKEND_URL}/api/custom/redact-stock-inBulk`,
             reduce,
