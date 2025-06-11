@@ -1890,7 +1890,7 @@ const BillOfPurchase = () => {
       return;
     }
 
-    if(formData.clearDate === "") {
+    if (formData.clearDate === "") {
       toast.warning("Please select the Clear Date.");
       setSubmitting(false);
       return;
@@ -1943,7 +1943,7 @@ const BillOfPurchase = () => {
 
     // data for updation bill of sales receive qty 
     const billOfSaleId = formData?.billId;
-    const updates = selectedItems?.map((item)=> ({
+    const updates = selectedItems?.map((item) => ({
       bom_id: item?.bom_id,
       receive_qty: item?.enteredQty
     }))
@@ -1964,13 +1964,13 @@ const BillOfPurchase = () => {
       console.log("ressssssss: ", res);
 
 
-      if(res.data.data === null) {
+      if (res.data.data === null) {
         toast.error(res?.data?.message, { position: "top-right" });
         setSubmitting(false);
         return;
       }
 
-      if(res.data.data) {
+      if (res.data.data) {
         const updateBomQtyPromise = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/update-receive-qty-bill-of-sales`, {
           billOfSaleId,
           updates
@@ -1978,9 +1978,9 @@ const BillOfPurchase = () => {
           headers: { Authorization: `Bearer ${token}` }
         });
       }
-        
-        console.log("res: ", res);
-        
+
+      console.log("res: ", res);
+
 
       if (fullyReceivedItems.length > 0) {
         const updateItems = fullyReceivedItems.map((item) => {
@@ -2011,23 +2011,36 @@ const BillOfPurchase = () => {
           "jobber": billOfSale?.bom_billOfSale?.jobber?.id
         }));
 
-            
+        const updateItemsForStatus = updateItems.map(item => ({
+          id: item.id,
+          bom_status: item.bom_status
+        }));
 
-const updateBomStatusPromise = axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/${api_point}/update-bom-status/${billOfSale?.so_id}`, updateItems, {
-  headers: { Authorization: `Bearer ${token}` }
-});
+        // const updateBomStatusonly = axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/${api_point}/update-only-bom-status/${billOfSale?.so_id}`, updateItemsForStatus, {
+        //   headers: { Authorization: `Bearer ${token}` }
+        // });
 
-const addBomProcessPromise = axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/${api_point}/${billOfSale?.so_id}/add-bom-process`, processData, {
-  headers: { Authorization: `Bearer ${token}` }
-});
+        const updateBomStatusPromise = axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/${api_point}/update-bom-status/${billOfSale?.so_id}`, updateItems, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
 
-const [updateBomStatus, addBomProcess] = await Promise.all([
-  updateBomStatusPromise,
-  addBomProcessPromise,
-]);
+        const addBomProcessPromise = axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/${api_point}/${billOfSale?.so_id}/add-bom-process`, processData, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
 
-console.log("updateBomStatus: ", updateBomStatus);
-console.log("addBomProcess: ", addBomProcess);
+        const [updateBomStatus, addBomProcess] = await Promise.all([
+          updateBomStatusPromise,
+          addBomProcessPromise,
+        ]);
+
+        console.log("updateBomStatus: ", updateBomStatus);
+        console.log("addBomProcess: ", addBomProcess);
+
+        const updateBomStatusonly = await axios.put(
+          `${process.env.REACT_APP_BACKEND_URL}/api/${api_point}/update-only-bom-status/${billOfSale?.so_id}`,
+          updateItemsForStatus,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
 
 
         function determineStatus(updateItems, bom) {
