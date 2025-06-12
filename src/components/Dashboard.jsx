@@ -14,7 +14,7 @@ const Dashboard = ({  company, setSelectedSOId, setSalesOrder, setBom, setFormDa
   const [headers] = useState([
     " ",
     "SO Id",
-    "Convert Id",
+    "Converted To",
     "Order No",
     "Customer Name",
     "Group Name",
@@ -125,7 +125,7 @@ const Dashboard = ({  company, setSelectedSOId, setSalesOrder, setBom, setFormDa
       const salesData = response.data.data.map((item) => ({
         id: item?.id,
         so_id: item?.so_id,
-        convert_id: item?.convert_id || "",
+        convert_id: item?.orders?.[0]?.external_orders || "",
         order_no: item?.order_no,
         customer_name: item?.customer?.company_name || "Vasttram Admin",
         group_name: item?.group?.group_name || "",
