@@ -14,7 +14,7 @@ const SalesOrderReport = () => {
   const [headers] = useState([
     " ",
     "SO Id",
-    "Convert Id",
+    "Converted To",
     "Order No",
     "Customer Name",
     "Group Name",
@@ -37,7 +37,7 @@ const SalesOrderReport = () => {
   const [pageSize, setPageSize] = useState(5);
   const [paginationLoading, setPaginationLoading] = useState(false);
 
-  const {token,email,designation , id  } = useSelector((state) => state.auth);
+  const { token, email, designation, id } = useSelector((state) => state.auth);
 
   const navigate = useNavigate();
   // console.log(salesDatas);
@@ -47,7 +47,7 @@ const SalesOrderReport = () => {
       salesDatas.map((item, index) => ({
         ...item,
         edit:
-          (item?.status === "In Process" || item?.status === "Process Due") && item.convert_id==="N/A" ? (
+          (item?.status === "In Process" || item?.status === "Process Due") ? (
             <img
               src={EditIcon}
               alt="Edit"
@@ -122,7 +122,6 @@ const SalesOrderReport = () => {
     try {
       setPaginationLoading(true);
       const response = await axios.get(
-
         `${process.env.REACT_APP_BACKEND_URL}/api/sales-oder-entries/get-all-orders?page=${page}&pageSize=${pageSize}&designation=${designation}&userId=${id}`,
         {
           headers: {
@@ -139,7 +138,7 @@ const SalesOrderReport = () => {
       const salesData = response.data.data.map((item) => ({
         id: item?.id,
         so_id: item?.so_id,
-        convert_id: item?.convert_id || "N/A",
+        convert_id: item?.orders?.[0]?.external_orders || "N/A",
         order_no: item?.order_no,
         customer_name: item?.customer?.company_name || "Vasttram Admin",
         group_name: item?.group?.group_name || "",
@@ -171,7 +170,7 @@ const SalesOrderReport = () => {
   const formateDate = (date) => {
     const options = { year: "numeric", month: "long", day: "numeric" };
     return new Date(date).toLocaleDateString(undefined, options);
-  }
+  };
 
   if (loading)
     return (
