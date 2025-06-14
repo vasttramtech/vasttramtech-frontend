@@ -145,6 +145,9 @@ const Sidebar = () => {
           label: "Stitching Receive Entry Reports",
           path: "/stitching-receive-reports",
         },
+        { label: "Dispatch Entry", path: "/dispatch-entry" },
+        { label: "Dispatch Reports", path: "/dispatch-reports" },
+        { label: "Dispatch Entry Reports", path: "/dispatch-entry-reports" },
       ],
     },
     {

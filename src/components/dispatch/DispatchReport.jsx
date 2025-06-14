@@ -13,10 +13,10 @@ const headersForTable = [
     "Invoice No",  
     "SO ID", 
     "Convert Id", 
-    "Order No", 
+    // "Order No", 
     "Invoice", 
     "CN No", 
-    "Status", 
+    // "Status", 
     "Invoice Date", 
     "Customer Name", 
     "Design Number", 
@@ -24,13 +24,14 @@ const headersForTable = [
     "Qty",
     "Remarks",
     "Processor",
-    "Detr"
+    "Detr",
+    "View"
 ];
 
 const DispatchReport = () => {
     const location = useLocation()
     const title = location.state?.title || 'Dispatch Report';
-  const { token } = useSelector(state => state.auth);
+  const { token, designation, id } = useSelector(state => state.auth);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
 
@@ -113,16 +114,38 @@ const DispatchReport = () => {
   const fetchDispatchData = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/dispatch-entry?`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        params:{
-          "pagination[page]" : page,
-          "pagination[pageSize]" : pageSize,
-          "sort[0]": "createdAt:desc",
-        }
-      });
+    let params = {
+  "pagination[page]": page,
+  "pagination[pageSize]": pageSize,
+  "sort[0]": "createdAt:desc",
+
+  // populate all required relations
+  "populate[design_master][populate]": "color",
+  "populate[customer_master][fields][0]": "company_name",
+  "populate[sales_oder_entry][populate]": "processor",
+  "populate[internal_sales_order_entry][populate]": "processor",
+};
+
+// Add conditional access control filters
+if (designation === "Merchandiser" && id) {
+  params["filters[$or][0][sales_oder_entry][merchandiser][id][$eq]"] = id;
+  params["filters[$or][1][internal_sales_order_entry][merchandiser][id][$eq]"] = id;
+} else if (designation !== "Admin" && id) {
+  params["filters[$or][0][sales_oder_entry][processor][id][$eq]"] = id;
+  params["filters[$or][1][internal_sales_order_entry][processor][id][$eq]"] = id;
+}
+
+// API call
+const response = await axios.get(
+  `${process.env.REACT_APP_BACKEND_URL}/api/dispatch-entries`,
+  {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    params: params,
+  }
+);
+
       const data = Array.isArray(response.data.data) ? response.data.data : [];
       setTotalPages(response.data.meta.pagination.pageCount);
       console.log("data: ", response.data);
@@ -132,18 +155,18 @@ const DispatchReport = () => {
         return {
           invoiceNo: dispatches?.id,
           so_id:  dispatches?.so_id|| "N/A",
-          convert_id: dispatches?.convert_id || "N/A",
-          order_no: dispatches?.order_no || "N/A",
-          invoice: dispatches?.invoice || "N/A",
+          convert_id: dispatches?.convert_id || "-",
+          // order_no: dispatches?.order_no || "N/A",
+          invoice: dispatches?.invoice_no || "N/A",
           cn_no: dispatches?.cn_no || "N/A",
-          status: dispatches?.status || "N/A",
+          // status: dispatches?.status || "N/A",
           invoice_date: formatDate(dispatches?.invoice_date) || "N/A",
-          customer_name: dispatches?.customer?.name || "N/A",
-          design_number: dispatches?.design_number?.design_number || "N/A",
-          colour: dispatches?.colour?.name || "N/A",
+          customer_name: dispatches?.customer_master?.company_name || "-",
+          design_number: dispatches?.design_master?.design_number || "N/A",
+          colour: dispatches?.design_master?.color?.color_name || "N/A",
           qty: dispatches?.qty || "N/A",
           remarks: dispatches?.remarks || "N/A",
-          processor: dispatches?.processor?.name || "N/A",
+          processor: dispatches?.sales_oder_entry?.processor?.name || dispatches?.internal_sales_order_entry?.processor?.name || "N/A",
         };
       });
 
@@ -178,13 +201,19 @@ const DispatchReport = () => {
     ...item,
     
     Print: (
-       <div className="flex justify-center items-center space-x-2 border p-2 rounded-lg text-white bg-green-500 hover:bg-green-700">
+       <div className="flex justify-center items-center space-x-2 border p-2 rounded-lg text-white bg-blue-500 hover:bg-blue-700">
         <button type='button' onClick={() => console.log("Detr Clicked")}>
           Detr
         </button>
       </div >
-
     ),
+    View: (
+      <div className="flex justify-center items-center space-x-2 border p-2 rounded-lg text-white bg-green-500 hover:bg-green-700">
+        <button type='button' onClick={() => navigate(`/dispatch-entry-report/${item.invoiceNo}`)}>
+          View
+        </button>
+      </div >
+    )
  
   }));
 

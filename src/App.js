@@ -102,7 +102,6 @@ import StockInView from "./components/purchase/StockInView";
 
 import { FcPrivacy } from "react-icons/fc";
 import SemiFinishedGoodStock from "./components/Stock/SemiFinishedStock";
-import DispatchReport from "./components/reports/DispatchReport";
 import SemiFinishedStockReport from "./components/Stock/SemiFinishedStockReport";
 import StitchReport from "./components/reports/StitchReport";
 import SaleBillReport from "./components/reports/SaleBillReport";
@@ -113,6 +112,11 @@ import DyerWiseSalePurchaseReport from "./components/reports/DyerWiseSalePurchas
 import AllStockEntry from "./components/Stock/AllStockEntry";
 import KanbanBoard from "./components/design-entry-task/Kanban";
 import BoardsList from "./components/design-entry-task/BoardList";
+// import DispatchEntry from "./components/dispatch/DispatchEntry";
+import DispatchReport from "./components/dispatch/DispatchReport";
+import DispatchEntry from "./components/dispatch/DispatchEntry";
+import DispatchEntryReport from "./components/dispatch/DispatchEntryReport";
+
 
 function App() {
   const navigate = useNavigate();
@@ -243,6 +247,10 @@ function App() {
             path="/access-control/user/edit/:id"
             element={<UpdateUser />}
           />
+
+          <Route path="/dispatch-entry" element={<DispatchEntry />} />
+          <Route path="/dispatch-reports" element={<DispatchReport />} />
+          <Route path="/dispatch-entry-report/:id" element={<DispatchEntryReport />} />
 
           {/* Purchase Routes */}
 
