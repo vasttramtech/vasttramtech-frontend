@@ -564,10 +564,16 @@ export default function SFGdataTable({
                   <div className="bg-blue-50 p-2 rounded text-sm border border-gray-400">
                     {sfg.jobber_master_sfg.map((jobber, jobberIndex) => (
                       <p key={jobberIndex} value={jobber.jobber_master}>
-                        <span className="font-semibold text-gray-500">{jobber.jobber_master}</span> - <span className="font-bold text-green-700">{jobber.jobber_work_type}</span>
+                        <span className="font-semibold text-gray-500">
+                          {jobber.jobber_master}
+                        </span>{" "}
+                        -{" "}
+                        <span className="font-bold text-green-700">
+                          {jobber.jobber_work_type}
+                        </span>
                       </p>
                     ))}
-                    </div>
+                  </div>
                 </td>
                 <td className="px-4 py-3 text-sm text-center">
                   <button
@@ -580,26 +586,31 @@ export default function SFGdataTable({
                   >
                     <Expand size={18} />
                   </button>
-                  <button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      onDeleteSfg(index);
-                    }}
-                    className="p-1 text-red-600 hover:text-red-800 rounded-full hover:bg-red-50 mr-1"
-                    aria-label="Delete"
-                  >
-                    <Trash2 size={18} />
-                  </button>
+                  {sfg.bom_status !== "SendToStitcher" &&
+                    sfg.bom_status !== "sendToJobber" && (
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          onDeleteSfg(index);
+                        }}
+                        className="p-1 text-red-600 hover:text-red-800 rounded-full hover:bg-red-50 mr-1"
+                        aria-label="Delete"
+                      >
+                        <Trash2 size={18} />
+                      </button>
+                    )}
 
-                  {sfg.fromStock !== true && (
-                    <button
-                      onClick={(e) => handleEdit(e, index)}
-                      className="p-1 text-blue-600 hover:text-blue-800 rounded-full hover:bg-blue-50 mr-1"
-                      aria-label="Edit"
-                    >
-                      <Edit size={18} />
-                    </button>
-                  )}
+                  {sfg.fromStock !== true &&
+                    sfg.bom_status !== "SendToStitcher" &&
+                    sfg.bom_status !== "sendToJobber" && (
+                      <button
+                        onClick={(e) => handleEdit(e, index)}
+                        className="p-1 text-blue-600 hover:text-blue-800 rounded-full hover:bg-blue-50 mr-1"
+                        aria-label="Edit"
+                      >
+                        <Edit size={18} />
+                      </button>
+                    )}
                 </td>
               </tr>
             </React.Fragment>
