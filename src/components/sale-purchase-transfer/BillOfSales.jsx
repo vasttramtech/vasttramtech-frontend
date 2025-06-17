@@ -229,7 +229,7 @@ const BillOfSales = () => {
             setCompany(company[0]);
             setFormData(prev => ({
                 ...prev,
-                purchaser_details: company[0].gst_no
+                purchaser_details: company[0]?.gst_no || ""
             }));
 
 
