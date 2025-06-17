@@ -69,10 +69,11 @@ const Sidebar = () => {
         { label: "Design Entry", isModule: true },
         { label: "Designer Entry Page", path: "/design-entry" },
         { label: "Designer Entry Reports", path: "/design-entry-report" },
-        {
-          label: "Complete Designs Reports",
-          path: "/complete-designs-reports",
-        },
+        // {
+        //   label: "Complete Designs Reports",
+        //   path: "/complete-designs-reports",
+        // },
+        { label: "Complete Design Reports", path: "/kanban" },
       ],
     },
     {
@@ -92,7 +93,6 @@ const Sidebar = () => {
         { label: "Task Management", path: "/tasks" },
         { label: "Messages", path: "/messages" },
         { label: "Reminders", path: "/reminders" },
-        { label: "Kanban", path: "/kanban" },
       ],
     },
     {
