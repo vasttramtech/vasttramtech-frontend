@@ -64,18 +64,18 @@ const Sidebar = () => {
         { label: "Stock In Report", path: "/stock-in-report" },
       ],
     },
-    // {
-    //   icon: Money,
-    //   options: [
-    //     { label: "Design Entry", isModule: true },
-    //     { label: "Designer Entry Page", path: "/design-entry" },
-    //     { label: "Designer Entry Reports", path: "/design-entry-report" },
-    //     {
-    //       label: "Complete Designs Reports",
-    //       path: "/complete-designs-reports",
-    //     },
-    //   ],
-    // },
+    {
+      icon: Money,
+      options: [
+        { label: "Design Entry", isModule: true },
+        // { label: "Designer Entry Page", path: "/design-entry" },
+        // { label: "Designer Entry Reports", path: "/design-entry-report" },
+        {
+          label: "Complete Designs Reports",
+          path: "/complete-designs-reports",
+        },
+      ],
+    },
     {
       icon: Stocks,
       options: [
