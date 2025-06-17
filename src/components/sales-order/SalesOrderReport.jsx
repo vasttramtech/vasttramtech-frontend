@@ -34,7 +34,7 @@ const SalesOrderReport = () => {
   //  adding pagination logic
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
+  const [pageSize, setPageSize] = useState(10);
   const [paginationLoading, setPaginationLoading] = useState(false);
 
   const { token, email, designation, id } = useSelector((state) => state.auth);
@@ -202,7 +202,7 @@ const SalesOrderReport = () => {
           <div className="flex p-5 justify-center items-center space-x-2 mt-4 border border-gray-400 rounded-lg">
             <BounceLoader size={20} color="#1e3a8a" />
           </div>
-        ) : updateData && updateData.length > 0 ? (
+        ) : updateData && (
           <>
             <SmartTable headers={headers} data={updateData} />
 
@@ -214,8 +214,6 @@ const SalesOrderReport = () => {
               pageSize={pageSize}
             />
           </>
-        ) : (
-          <div className="text-center text-gray-500 mt-6">No data found.</div>
         )}
       </>
     </div>

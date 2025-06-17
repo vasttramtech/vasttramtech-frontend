@@ -156,6 +156,7 @@ const fetchDataSlice = createSlice({
       .addCase(fetchDesignGroups.fulfilled, (state, action) => {
         state.load = false;
         state.designGroups = action.payload;
+        state.availableDesignMasterGroups = action.payload;
       })
       .addCase(fetchDesignGroups.rejected, (state, action) => {
         state.load = false;

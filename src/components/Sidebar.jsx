@@ -17,6 +17,7 @@ import Stocks from "../assets/sidebar-images/Stocks.png";
 import { IoMenu, IoClose } from "react-icons/io5";
 import { useSelector } from "react-redux";
 import Reports from "../assets/sidebar-images/Reports.png";
+import dispatch from "../assets/sidebar-images/dispatch.png"
 
 const Sidebar = () => {
   const navigate = useNavigate();
@@ -57,7 +58,7 @@ const Sidebar = () => {
       options: [
         { label: "Purchase Master", isModule: true },
         { label: "Supplier Master", path: "/supplier-master" },
-        { label: "Purchase order", path: "/supplier-purchase-order" },
+        { label: "Purchase Order", path: "/supplier-purchase-order" },
         { label: "Purchase Order List", path: "/purchase-order-list" },
         { label: "Stock In", path: "/stock-in" },
         { label: "Stock In Report", path: "/stock-in-report" },
@@ -69,10 +70,11 @@ const Sidebar = () => {
         { label: "Design Entry", isModule: true },
         { label: "Designer Entry Page", path: "/design-entry" },
         { label: "Designer Entry Reports", path: "/design-entry-report" },
-        {
-          label: "Complete Designs Reports",
-          path: "/complete-designs-reports",
-        },
+        // {
+        //   label: "Complete Designs Reports",
+        //   path: "/complete-designs-reports",
+        // },
+        { label: "Complete Design Reports", path: "/kanban" },
       ],
     },
     {
@@ -80,8 +82,8 @@ const Sidebar = () => {
       options: [
         { label: "Stocks", isModule: true },
         { label: "Raw Material Stock", path: "/raw-material-stock" },
-        { label: "Semi Finished Stock Entry", path: "/sfg-stock" },
         { label: "Semi Finished Stock", path: "/sfg-stock-report" },
+        { label: "Semi Finished Stock Entry", path: "/sfg-stock" },
         { label: "All SFG Stock Entry", path: "/all-stock-entry" },
       ],
     },
@@ -90,22 +92,21 @@ const Sidebar = () => {
       options: [
         { label: "Alerts", isModule: true },
         { label: "Task Management", path: "/tasks" },
-        { label: "Messages", path: "/messages" },
+        // { label: "Messages", path: "/messages" },
         { label: "Reminders", path: "/reminders" },
-        { label: "Kanban", path: "/kanban" },
       ],
     },
     {
       icon: Bargraph,
       options: [
         { label: "Sales-order", isModule: true },
-        { label: "Sales order entry", path: "/sales-order-entry" },
+        { label: "Sales Order Entry", path: "/sales-order-entry" },
         // { label: "Internal Sales order entry", path: "/internal-sales-order" },
         { label: "Sales Order Report", path: "/sales-order-report" },
-        {
-          label: "Sales Order Status Report",
-          path: "/sales-order-status-report",
-        },
+        // {
+        //   label: "Sales Order Status Report",
+        //   path: "/sales-order-status-report",
+        // },
       ],
     },
     {
@@ -128,16 +129,16 @@ const Sidebar = () => {
           label: "Bill Of Purchase Report",
           path: "/bill-of-purchase-report",
         },
-        {
-          label: "Ready To Stitch",
-          path: "/ready-to-stitch",
-        },
+        // {
+        //   label: "Ready To Stitch",
+        //   path: "/ready-to-stitch",
+        // },
       ],
     },
     {
       icon: stitchingIcon,
       options: [
-        { label: "Stitcher", isModule: true },
+        { label: "Stitching", isModule: true },
         { label: "Stitching Entry", path: "/stitching-entry" },
         { label: "Stitching Entry Reports", path: "/stitching-entry-reports" },
         { label: "Stitching Receive Entry", path: "/stitching-receive" },
@@ -145,9 +146,16 @@ const Sidebar = () => {
           label: "Stitching Receive Entry Reports",
           path: "/stitching-receive-reports",
         },
+        // { label: "Dispatch Entry Reports", path: "/dispatch-entry-reports" },
+      ],
+    },
+    {
+      icon: dispatch,
+      options: [
+        { label: "Dispatch", isModule: true },
         { label: "Dispatch Entry", path: "/dispatch-entry" },
         { label: "Dispatch Reports", path: "/dispatch-reports" },
-        { label: "Dispatch Entry Reports", path: "/dispatch-entry-reports" },
+        // { label: "Dispatch Entry Reports", path: "/dispatch-entry-reports" },
       ],
     },
     {
@@ -156,7 +164,7 @@ const Sidebar = () => {
         { label: "Reports", isModule: true },
         { label: "Stitch Report", path: "/stitch-report" },
         { label: "Stitch Clear Report", path: "/stitch-clear-report" },
-        { label: "Dispatch Report", path: "/dispatch-report" },
+        { label: "Dispatch Report", path: "/dispatch-reports" },
         { label: "Sale Bill Report", path: "/sale-bill-report" },
         { label: "Purchase Bill Report", path: "/purchase-bill-report" },
         { label: "SO Return Report", path: "/so-return-report" },
@@ -166,40 +174,40 @@ const Sidebar = () => {
         },
       ],
     },
-    {
-      icon: Other,
-      options: [
-        { label: "Others", isModule: true },
-        {
-          label: "Stock Transfer",
-          path: "/stock-transfer",
-        },
-        {
-          label: "Stitch Status",
-          path: "/stitch-status",
-        },
-        {
-          label: "Dispatch Entry",
-          path: "/dispatch-entry",
-        },
-        {
-          label: "Dye follow up",
-          path: "/dye-follow-up",
-        },
-        {
-          label: "Bill Of Sale SFG",
-          path: "/bill-of-sale-sfg",
-        },
-        {
-          label: "Sales Release",
-          path: "/sales-release",
-        },
-        {
-          label: "Sales Return",
-          path: "/sales-return",
-        },
-      ],
-    },
+    // {
+    //   icon: Other,
+    //   options: [
+    //     { label: "Others", isModule: true },
+    //     {
+    //       label: "Stock Transfer",
+    //       path: "/stock-transfer",
+    //     },
+    //     {
+    //       label: "Stitch Status",
+    //       path: "/stitch-status",
+    //     },
+    //     {
+    //       label: "Dispatch Entry",
+    //       path: "/dispatch-entry",
+    //     },
+    //     {
+    //       label: "Dye follow up",
+    //       path: "/dye-follow-up",
+    //     },
+    //     {
+    //       label: "Bill Of Sale SFG",
+    //       path: "/bill-of-sale-sfg",
+    //     },
+    //     {
+    //       label: "Sales Release",
+    //       path: "/sales-release",
+    //     },
+    //     {
+    //       label: "Sales Return",
+    //       path: "/sales-return",
+    //     },
+    //   ],
+    // },
   ];
 
   return (
