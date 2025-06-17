@@ -1,14 +1,16 @@
 import { useState } from "react";
 import axios from "axios";
 import { PuffLoader } from "react-spinners";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import { fetchDesignGroups } from "../../state/fetchDataSlice";
 
 const DesgnGroup = ({ setDesignGroupModel , setRefresh ,refresh }) => {
     const [designGroup, setDesignGroup] = useState("");
     const [designDescription, setDesignDescription] = useState("");
     const [submitting, setSubmitting] = useState(false);
     const { token } = useSelector((state) => state.auth);
+    const dispatch=useDispatch();
 
     const handleSubmit = async (e) => {
         e.preventDefault(); // Prevent form refresh
@@ -33,6 +35,7 @@ const DesgnGroup = ({ setDesignGroupModel , setRefresh ,refresh }) => {
                 }
             );
             // Reset form and close modal
+            await dispatch(fetchDesignGroups(token)).unwrap()
             setDesignGroup("");
             setDesignDescription("");
             toast.success("Design Group saved successfully!", { position: "top-right" });
