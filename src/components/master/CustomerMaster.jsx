@@ -13,6 +13,7 @@ import { BounceLoader, PuffLoader } from "react-spinners";
 import { toast } from "react-toastify";
 import EditCustomerMaster from "./EditModals/EditCustomerMaster";
 import Pagination from "../utility/Pagination";
+import { fetchCustomers } from "../../state/fetchDataSlice";
 
 const statesOfIndia = [
   "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh",
@@ -215,6 +216,8 @@ const [paginationLoading, setPaginationLoading] = useState(false);
       });
       // Optionally handle success (e.g., notify user, reset form)
       toast.success("Customer Master data saved successfully!", { position: "top-right" });
+
+      await dispatch(fetchCustomers(token)).unwrap();
 
       setFormData({
         group_name: "",
