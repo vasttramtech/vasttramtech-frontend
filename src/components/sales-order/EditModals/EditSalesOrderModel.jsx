@@ -150,6 +150,9 @@ const EditSalesOrderModel = () => {
   const [BillOfSaleStatus, setBillOfSaleStatus] = useState(null);
   const [MerchandiserOptions, setMerchandiserOptions] = useState([]);
   const [deletedsfg, setDeletedSfg] = useState([]);
+  const [setOfNewlyAddedStockSfg, setSetOfNewlyAddedStockSfg] = useState(
+    new Set()
+  );
   // console.log(sfglist, allSavedSemiFinishedGoods, allSemiFinishedGoods);
   // console.log(BillOfSaleStatus)
   const fetchSFGStock = async () => {
@@ -1112,6 +1115,8 @@ const EditSalesOrderModel = () => {
           setAllSavedSemiFinishedGoods={setAllSavedSemiFinishedGoods}
           setsfglist={setsfglist}
           fetchSFGStock={fetchSFGStock}
+          setSetOfNewlyAddedStockSfg={setSetOfNewlyAddedStockSfg}
+          setOfNewlyAddedStockSfg={setOfNewlyAddedStockSfg}
         />
       )}
 
