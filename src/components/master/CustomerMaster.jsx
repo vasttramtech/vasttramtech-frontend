@@ -58,14 +58,7 @@ const CustomerMaster = () => {
   const [openEditModal, setOpenEditModal] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
   const dispatch = useDispatch();
-  // const [mails, setMails] = useState([]);
-  // const [contacts, setContacts] = useState([]);
-  // const [addressed, setAddresses] = useState([]);
-  // const [websites, setWebsites] = useState([]);
-  // const [currenMail, setCurrentmail] = useState("");
-  // const [currentAddresss, setcurrentAddresss] = useState("");
-  // const [currentWebsite, setCurrentWebsite] = useState("");
-  // const [currentContact, setCurrentContact] = useState("");
+ 
   
    //  adding pagination logic
  const [page, setPage] = useState(1);
