@@ -4,13 +4,14 @@ import { useNavigate } from "react-router-dom";
 import PinIcon from "../../assets/Others/PinIcon.png";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { BounceLoader, PuffLoader } from "react-spinners";
 import ViewIcon from "../../assets/Others/ViewIcon.png";
 import EditIcon from "../../assets/Others/EditIcon.png";
 import EditColorMaster from "./EditModals/EditColorMaster";
 import Pagination from "../utility/Pagination";
+import { fetchColor } from "../../state/fetchDataSlice";
 
 
 const headers = ["document_id", "Color Id", "Color Name", "Edit"];
@@ -26,6 +27,7 @@ const ColorMaster = () => {
     const [selectedRow, setSelectedRow] = useState(null);
     const [loading, setLoading] = useState(false);
     const [openEditModal, setOpenEditModal] = useState(false);
+    const dispatch=useDispatch();
     const [formData, setFormData] = useState({
         colorId:"",
         colorName:""
@@ -127,6 +129,7 @@ const ColorMaster = () => {
             });
             // Optionally handle success (e.g., notify user, reset form)
             toast.success("Color saved successfully!", { position: "top-right" });
+            await dispatch(fetchColor(token)).unwrap();
 
             setFormData({
                 colorName: "",
