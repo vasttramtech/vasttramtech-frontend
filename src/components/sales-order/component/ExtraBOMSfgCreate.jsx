@@ -262,6 +262,7 @@ const ExtraBOMSfgCreate = ({
   setOfNewlyAddedStockSfg,
   setSetOfNewlyAddedStockSfg,
   allSemiFinishedGoods,
+  SalessorderQty
 }) => {
   const { token } = useSelector((state) => state.auth);
   const navigate = useNavigate();
@@ -447,7 +448,7 @@ const ExtraBOMSfgCreate = ({
         semi_finished_goods:
           finalselectedSFG?.semi_finished_goods_master
             ?.semi_finished_goods_name || "",
-        qty: Number(selectedSFG.addQty),
+        qty: Number(selectedSFG.addQty)/Number(SalessorderQty),
         total_price: Number(
           Number(selectedSFG.addQty * finalselectedSFG.price_per_unit) +
             Number(jobberCost)

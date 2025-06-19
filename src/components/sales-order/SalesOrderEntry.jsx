@@ -1008,6 +1008,7 @@ const SalesOrderEntry = () => {
           setOfNewlyAddedStockSfg={setOfNewlyAddedStockSfg}
           setSetOfNewlyAddedStockSfg={setSetOfNewlyAddedStockSfg}
           allSemiFinishedGoods={allSemiFinishedGoods}
+          SalessorderQty={formData.qty}
         />
       )}
 
@@ -1293,6 +1294,7 @@ const SalesOrderEntry = () => {
               fetchSFGStock={fetchSFGStock}
               setSetOfNewlyAddedStockSfg={setSetOfNewlyAddedStockSfg}
               setOfNewlyAddedStockSfg={setOfNewlyAddedStockSfg}
+              SalesOrderQty={formData.qty}
             />
             <button
               className="mt-4 ml-4 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:scale-100 hover:shadow-2xl transition-all duration-300 ease-in-out flex items-center gap-2"
