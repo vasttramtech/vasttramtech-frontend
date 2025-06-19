@@ -321,8 +321,8 @@ const JobberMaster = () => {
 
                                     {/* Jobber Plan */}
                                     <div className="flex flex-col">
-                                        <label className="text-gray-700 font-semibold">Jobber Plan</label>
-                                        <input type="text" className="border border-gray-300 bg-gray-100 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Jobber Plan" name="jobber_plan"
+                                        <label className="text-gray-700 font-semibold">Jobber Pan</label>
+                                        <input type="text" className="border border-gray-300 bg-gray-100 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Jobber Pan" name="jobber_plan"
                                             value={updateFormData.jobber_plan}
                                             onChange={handleUpdateInputChange} />
                                     </div>
@@ -423,8 +423,8 @@ const JobberMaster = () => {
 
                         {/* Jobber Plan */}
                         <div className="flex flex-col">
-                            <label className="text-gray-700 font-semibold">Jobber Plan</label>
-                            <input type="text" className="border border-gray-300 bg-gray-100 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Jobber Plan" name="jobber_plan"
+                            <label className="text-gray-700 font-semibold">Jobber Pan</label>
+                            <input type="text" className="border border-gray-300 bg-gray-100 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Jobber Pan" name="jobber_plan"
                                 value={formData.jobber_plan}
                                 onChange={handleInputChange} />
                         </div>
