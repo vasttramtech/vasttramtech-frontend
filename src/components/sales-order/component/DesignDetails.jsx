@@ -29,6 +29,7 @@ const DesignDetails = ({
   fetchSFGStock,
   setSetOfNewlyAddedStockSfg,
   setOfNewlyAddedStockSfg,
+  SalesOrderQty
 }) => {
   const [loading, setLoading] = useState(false);
 
@@ -123,7 +124,7 @@ const DesignDetails = ({
     if (data.fromStock) {
       const postData = {
         id: data.sfg_stock_id,
-        add_qty: data.qty,
+        add_qty: (data.qty)* Number(SalesOrderQty),
       };
       if (!postData.id || !postData.add_qty) {
         toast.error("Please select the Semi finished goods and enter the qty.");
@@ -149,7 +150,6 @@ const DesignDetails = ({
         toast.error(
           error?.response?.data?.error?.message || "Error updating Stock"
         );
-        return;
       } finally {
         setLoading(false);
       }

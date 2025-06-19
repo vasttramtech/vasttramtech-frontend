@@ -1117,6 +1117,7 @@ const EditSalesOrderModel = () => {
           fetchSFGStock={fetchSFGStock}
           setSetOfNewlyAddedStockSfg={setSetOfNewlyAddedStockSfg}
           setOfNewlyAddedStockSfg={setOfNewlyAddedStockSfg}
+          SalessorderQty={formData.qty}
         />
       )}
 
@@ -1366,6 +1367,7 @@ const EditSalesOrderModel = () => {
             sfglist={sfglist}
             fetchSFGStock={fetchSFGStock}
             setDeletedSfg={setDeletedSfg}
+            salesOrderQty={formData.qty}
           />
         }
         <button
