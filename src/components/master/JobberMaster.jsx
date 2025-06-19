@@ -13,7 +13,7 @@ import ViewIcon from "../../assets/Others/ViewIcon.png";
 import Pagination from "../utility/Pagination";
 
 
-const headers = ["document_id","Jobber id", "Jobber Name", "Jobber Plan", "Jobber GSTIN", "Jobber Address", "Jobber Code", "State Name", "Days", "Work Type", "Edit"];
+const headers = ["document_id","Jobber id", "Jobber Name", "Jobber Pan", "Jobber GSTIN", "Jobber Address", "Jobber Code", "State Name", "Days", "Work Type", "Edit"];
 
 const statesOfIndia = [
     "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh",
