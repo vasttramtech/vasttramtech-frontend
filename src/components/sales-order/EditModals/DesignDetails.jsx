@@ -25,6 +25,7 @@ const DesignDetails = ({
   sfglist,
   fetchSFGStock,
   setDeletedSfg,
+  salesOrderQty
 }) => {
   const [loading, setLoading] = useState(false);
 
@@ -111,7 +112,7 @@ const DesignDetails = ({
         processes: allSemiFinishedGoods[index]?.processes?.map((item) => ({
           process: item?.process,
         })),
-        add_qty: data.qty,
+        add_qty: Number(data.qty)* Number(salesOrderQty),
       };
       console.log(postData);
       if (!postData.sfg || !postData.color || !postData.add_qty) {
@@ -141,7 +142,6 @@ const DesignDetails = ({
       } finally {
         setLoading(false);
       }
-      return;
     }
     // console.log(SavedSfgData[index]);
     if (SavedSfgData[index].stock_status)

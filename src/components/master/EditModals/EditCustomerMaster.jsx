@@ -652,10 +652,11 @@
 
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { PuffLoader, BounceLoader } from "react-spinners";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { fetchCustomers } from "../../../state/fetchDataSlice";
 
 
 const EditCustomerMaster = ({ setOpenEditModal, selectedRow, fetchCustomerMasterData, groupName, addressCategory, statesOfIndia,  concerned_person_headers, EditableDelte }) => {
@@ -694,7 +695,8 @@ const EditCustomerMaster = ({ setOpenEditModal, selectedRow, fetchCustomerMaster
         gstin_number: "",
         concerned_person: [],
     });
-    console.log("selectedRow: ", selectedRow)
+    const dispatch=useDispatch();
+    // console.log("selectedRow: ", selectedRow)
 
     const handleInputChangeCompay = (e) => {
         const { name, value } = e.target;
@@ -839,6 +841,8 @@ const EditCustomerMaster = ({ setOpenEditModal, selectedRow, fetchCustomerMaster
             });
             // Optionally handle success (e.g., notify user, reset form)
             toast.success("Customer Data updated successfully!", { position: "top-right" });
+
+             await dispatch(fetchCustomers(token)).unwrap();
 
             setFormData({
                 group_name: "",

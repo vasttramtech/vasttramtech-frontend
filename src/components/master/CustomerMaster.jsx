@@ -13,6 +13,7 @@ import { BounceLoader, PuffLoader } from "react-spinners";
 import { toast } from "react-toastify";
 import EditCustomerMaster from "./EditModals/EditCustomerMaster";
 import Pagination from "../utility/Pagination";
+import { fetchCustomers } from "../../state/fetchDataSlice";
 
 const statesOfIndia = [
   "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh",
@@ -57,14 +58,7 @@ const CustomerMaster = () => {
   const [openEditModal, setOpenEditModal] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
   const dispatch = useDispatch();
-  // const [mails, setMails] = useState([]);
-  // const [contacts, setContacts] = useState([]);
-  // const [addressed, setAddresses] = useState([]);
-  // const [websites, setWebsites] = useState([]);
-  // const [currenMail, setCurrentmail] = useState("");
-  // const [currentAddresss, setcurrentAddresss] = useState("");
-  // const [currentWebsite, setCurrentWebsite] = useState("");
-  // const [currentContact, setCurrentContact] = useState("");
+ 
   
    //  adding pagination logic
  const [page, setPage] = useState(1);
@@ -215,6 +209,8 @@ const [paginationLoading, setPaginationLoading] = useState(false);
       });
       // Optionally handle success (e.g., notify user, reset form)
       toast.success("Customer Master data saved successfully!", { position: "top-right" });
+
+      await dispatch(fetchCustomers(token)).unwrap();
 
       setFormData({
         group_name: "",

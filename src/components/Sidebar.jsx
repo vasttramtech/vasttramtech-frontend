@@ -68,8 +68,8 @@ const Sidebar = () => {
       icon: Money,
       options: [
         { label: "Design Entry", isModule: true },
-        { label: "Designer Entry Page", path: "/design-entry" },
-        { label: "Designer Entry Reports", path: "/design-entry-report" },
+        // { label: "Designer Entry Page", path: "/design-entry" },
+        // { label: "Designer Entry Reports", path: "/design-entry-report" },
         // {
         //   label: "Complete Designs Reports",
         //   path: "/complete-designs-reports",
