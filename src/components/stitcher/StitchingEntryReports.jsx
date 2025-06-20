@@ -106,7 +106,7 @@ const StitchingEntryReports = () => {
       setLoading(true);
 
      let params = {
-  "filters[stitch_status][$eq]": "stitching_process",
+  // "filters[stitch_status][$eq]": "stitching_process",
   "pagination[page]": page,
   "pagination[pageSize]": pageSize,
   "sort[0]": "createdAt:desc",
