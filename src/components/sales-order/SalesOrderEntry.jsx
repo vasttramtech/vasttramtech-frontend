@@ -562,7 +562,7 @@ const SalesOrderEntry = () => {
       const extrabomso = allSemiFinishedGoods.map((item, ind) => ({
         ...item,
         stock_status: SFGStatusStock[ind],
-        qty: item.qty * formData.qty,
+        qty: item.qty,
       }));
       const postData = {
         data: {
