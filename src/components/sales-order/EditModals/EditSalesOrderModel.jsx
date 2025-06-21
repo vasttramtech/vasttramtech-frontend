@@ -436,7 +436,7 @@ const EditSalesOrderModel = () => {
     }));
   }
   // console.log(extra_bom_so);
-  console.log(deletedsfg);
+  // console.log(deletedsfg);
   const handleBulkAddStock = async (someCompleted) => {
     try {
       const result = someCompleted.map((item) => {
