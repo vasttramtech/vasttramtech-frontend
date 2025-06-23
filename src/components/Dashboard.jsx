@@ -225,7 +225,7 @@ const Dashboard = ({  company, setSelectedSOId, setSalesOrder, setBom, setFormDa
       }
 
       {activeTab === "counts" && (
-        <CountsDashboard />
+        <CountsDashboard data={salesDatas}/>
       )}
     </div>
   );
