@@ -428,7 +428,7 @@ const ExtraBOMSfgCreate = ({
     const data = {
       data: {
         id: finalselectedSFG.id,
-        redact_qty: selectedSFG.addQty,
+        redact_qty: (selectedSFG.addQty)*(SalessorderQty),
       },
     };
 
@@ -448,7 +448,7 @@ const ExtraBOMSfgCreate = ({
         semi_finished_goods:
           finalselectedSFG?.semi_finished_goods_master
             ?.semi_finished_goods_name || "",
-        qty: Number(selectedSFG.addQty)/Number(SalessorderQty),
+        qty: Number(selectedSFG.addQty),
         total_price: Number(
           Number(selectedSFG.addQty * finalselectedSFG.price_per_unit) +
             Number(jobberCost)
