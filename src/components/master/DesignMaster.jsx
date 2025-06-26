@@ -79,6 +79,9 @@ const DesignMaster = () => {
   const [rawMateralList, setRawMateralList] = useState([]);
   const [jobberList, setJobberList] = useState([]);
   const [SFGBom, setSFGBom] = useState([]);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [previewImage, setPreviewImage] = useState(null);
+  const [hasTriggered, setHasTriggered] = useState(false);
 
   // const [rmLoader, setRmLoader] = useState(false);
   // const [sfgLoader, setSfgLoader] = useState(false);
@@ -88,7 +91,7 @@ const DesignMaster = () => {
     design_group: "",
     design_number: "",
     color: "",
-    unit: "", // This will store the selected jobber_code (visible value)
+    unit: "",
     description: "",
     total_design_cost: 0,
   });
@@ -173,7 +176,56 @@ const DesignMaster = () => {
     updatedfinalSfgdata.splice(index, 1);
     setFinalSFGData(updatedfinalSfgdata);
   };
-    
+
+  const handleFieldBlur = async () => {
+    const { design_group, design_number, color } = formData;
+
+    const allFilled =
+      String(design_group).trim() !== "" &&
+      String(design_number).trim() !== "" &&
+      String(color).trim() !== "";
+
+    if (allFilled && !hasTriggered) {
+      setHasTriggered(true);
+
+      const postData = {
+        design_group: Number(design_group),
+        color: Number(color),
+        design_number: design_number,
+      };
+
+      try {
+        setLoading(true);
+        const res = await axios.post(
+          `${process.env.REACT_APP_BACKEND_URL}/api/design-masters/check-unique`,
+          postData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        toast.success(res.data.message || "Design is unique!", {
+          position: "top-right",
+        });
+        setLoading(false);
+      } catch (error) {
+        const err = error?.response?.data?.error;
+
+        toast.error(
+          <div>
+            <strong>{err?.message || "Error checking design uniqueness."}</strong>
+            <div>{err?.details || "Something went wrong"}</div>
+          </div>
+        );
+        setLoading(false);
+      }
+    }
+  };
+
+
+
   // console.log(FinalSFGData);
   // useEffect(() => {
   //   if (!SfgData.sfg_group) return;
@@ -342,8 +394,7 @@ const DesignMaster = () => {
   //   SfgData.sfg_group,
   // ]);
 
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [previewImage, setPreviewImage] = useState(null);
+
 
   const fetchPageData = async () => {
     try {
@@ -367,16 +418,16 @@ const DesignMaster = () => {
       ]);
 
       const rawMaterials = availableRawMaterial?.data?.map((entry) => (
-          console.log(entry),
+        console.log(entry),
         {
-        item_name: entry.item_name,
-        price_per_unit: entry.price_per_unit,
-        unit: entry.unit?.unit_name || null,
-        color: entry.color?.color_name || null,
-        group: entry.group?.group_name || null,
-        hsn_sac_code: entry.hsn_sac_code?.hsn_sac_code || null,
-        id: entry.id,
-      }));
+          item_name: entry.item_name,
+          price_per_unit: entry.price_per_unit,
+          unit: entry.unit?.unit_name || null,
+          color: entry.color?.color_name || null,
+          group: entry.group?.group_name || null,
+          hsn_sac_code: entry.hsn_sac_code?.hsn_sac_code || null,
+          id: entry.id,
+        }));
       const jobbers = availableJobbers?.data?.map((entry) => ({
         jobber_name: entry.jobber_name,
         jobber_id: entry.jobber_id,
@@ -566,11 +617,11 @@ const DesignMaster = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if(
+    if (
       formData.design_group == "" ||
       formData.color == "" ||
-      formData.design_number == "" 
-    ){
+      formData.design_number == ""
+    ) {
       alert("Design Group, Color, Design Number and Total Design Cost is required");
       return;
     }
@@ -615,7 +666,7 @@ const DesignMaster = () => {
         design_group: Number(formData.design_group),
         color: Number(formData.color),
         design_number: formData.design_number,
-        unit: formData.unit,
+        unit: Number(formData.unit),
         description: formData.description,
         image: uploadedImageIds,
         semi_finished_goods_entries: FinalSFGData,
@@ -680,8 +731,15 @@ const DesignMaster = () => {
         }
       }
 
+      // toast.error(
+      //   error?.response?.data?.error?.message || "Something went wrong"
+      // );
+      const err = error?.response?.data?.error;
       toast.error(
-        error?.response?.data?.error?.message || "Something went wrong"
+        <div>
+          <strong>{err?.message || "Error creating Design Master."}</strong>
+          <div>{err?.details || "Something went wrong"}</div>
+        </div>
       );
     } finally {
       setSubmitting(false);
@@ -704,27 +762,27 @@ const DesignMaster = () => {
 
 
   const clearHandler = (e) => {
-      setFormData({
-        design_group: "",
-        design_number: "",
-        color: "",
-        unit: "",
-        description: "",
-        sfg_group: "",
-        raw_material: "",
-        process: "",
-        qty: "",
-        sfg_material: "",
-        bom_description: "",
-      });
-      setFinalSFGData([]);
-      setSelectedImage(null);
-      setPreviewImage(null);
-      
-      setSavedSfgData([]);
-      setSelectedJobber();
-      setAvailableSFGBasedOnColor([]);
-      setAvailableSFGBasedOnMaterial([]);
+    setFormData({
+      design_group: "",
+      design_number: "",
+      color: "",
+      unit: "",
+      description: "",
+      sfg_group: "",
+      raw_material: "",
+      process: "",
+      qty: "",
+      sfg_material: "",
+      bom_description: "",
+    });
+    setFinalSFGData([]);
+    setSelectedImage(null);
+    setPreviewImage(null);
+
+    setSavedSfgData([]);
+    setSelectedJobber();
+    setAvailableSFGBasedOnColor([]);
+    setAvailableSFGBasedOnMaterial([]);
   }
 
   const enhancedData = designMaster.map((item) => ({
@@ -746,7 +804,7 @@ const DesignMaster = () => {
     ),
   }));
 
-  
+
 
   if (reduxLoading)
     return (
@@ -819,6 +877,7 @@ const DesignMaster = () => {
                     name="design_group"
                     className="flex-grow border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     onChange={handleInputChange}
+                    onBlur={handleFieldBlur}
                     defaultValue=""
                     value={formData.design_group}
                   >
@@ -854,6 +913,7 @@ const DesignMaster = () => {
                   placeholder="Design Number"
                   value={formData.design_number}
                   onChange={handleInputChange}
+                  onBlur={handleFieldBlur}
                 />
               </div>
 
@@ -863,6 +923,7 @@ const DesignMaster = () => {
                   name="color"
                   className="border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   onChange={handleInputChange}
+                  onBlur={handleFieldBlur}
                   defaultValue=""
                   value={formData.color}
                 >
@@ -1003,11 +1064,10 @@ const DesignMaster = () => {
               </button>
               <button
                 type="submit"
-                className={`bg-blue-900 ml-2 px-6 py-2 rounded text-white font-semibold transition-all ease-in-out duration-300 transform ${
-                  submitting
-                    ? "opacity-50 cursor-not-allowed"
-                    : "hover:bg-blue-700"
-                }`}
+                className={`bg-blue-900 ml-2 px-6 py-2 rounded text-white font-semibold transition-all ease-in-out duration-300 transform ${submitting
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:bg-blue-700"
+                  }`}
                 disabled={submitting}
               >
                 {submitting ? (
@@ -1024,10 +1084,10 @@ const DesignMaster = () => {
 
           <div className="mt-10">
 
-                <div className="">
-                  <h3 className="text-2xl font-bold mb-2">List Of Designs</h3>
-                </div>
-              
+            <div className="">
+              <h3 className="text-2xl font-bold mb-2">List Of Designs</h3>
+            </div>
+
             {paginationLoading ? (
               <div className="flex p-5 justify-center items-center space-x-2 mt-4 border border-gray-400 rounded-lg">
                 <BounceLoader size={20} color="#1e3a8a" />
