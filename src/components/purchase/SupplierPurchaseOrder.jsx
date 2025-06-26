@@ -388,6 +388,7 @@ const SupplierPurchaseOrder = () => {
                                 type="number"
                                 value={row.Price}
                                 min="0"
+                                step="any"
                                 className="w-16 border p-1 text-center"
                                 onChange={(e) => handlePriceChange(index, Number(e.target.value))}
                               />
@@ -396,6 +397,7 @@ const SupplierPurchaseOrder = () => {
                                 type="number"
                                 value={row.Qty}
                                 min="1"
+                                step="any"
                                 className="w-16 border p-1 text-center"
                                 onChange={(e) => handleQtyChange(index, Number(e.target.value))}
                               />
