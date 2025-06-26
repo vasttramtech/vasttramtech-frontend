@@ -1,5 +1,5 @@
 import SmartTable from "../../smartTable/SmartTable";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import ViewIcon from "../../assets/Others/ViewIcon.png";
 import EditIcon from "../../assets/Others/EditIcon.png";
 import PinIcon from "../../assets/Others/PinIcon.png";
@@ -19,6 +19,7 @@ import { Loader2 } from "lucide-react";
 import SFGBomComponent from "./SFGBomComponent";
 import SFGBomSection from "./SFGBomSection";
 import SFGDataTable from "./component/SFGDataTable";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const headers = [
   "document_id",
@@ -116,6 +117,8 @@ const DesignMaster = () => {
     availableUnits,
     availableSfgmGroups,
   } = useSelector((state) => state.fetchData);
+
+  const location = useLocation();
   // const sfgDataHandler = (event) => {
   //   event.preventDefault();
   //   setSfgData({ ...SfgData, [event.target.name]: event.target.value });
@@ -205,21 +208,41 @@ const DesignMaster = () => {
             },
           }
         );
+        console.log("res check unique: ", res)
 
         toast.success(res.data.message || "Design is unique!", {
           position: "top-right",
         });
         setLoading(false);
+        setHasTriggered(false);
       } catch (error) {
         const err = error?.response?.data?.error;
+        console.log("error check unique: ", err);
+        if (err.status === 409) {
+          toast.error(
+            <div>
+              <strong>{err?.message}</strong>
+            </div>
+          );
+          setFormData({
+            design_group: "",
+            design_number: "",
+            color: "",
+          });
+        }
 
-        toast.error(
-          <div>
-            <strong>{err?.message || "Error checking design uniqueness."}</strong>
-            <div>{err?.details || "Something went wrong"}</div>
-          </div>
-        );
+        // toast.error(
+        //   <div>
+        //     <strong>{err?.message || "Error checking design uniqueness."}</strong>
+        //     <div>{typeof err?.details === "string" ? err.details : JSON.stringify(err?.details)}</div>
+        //   </div>
+        // );
         setLoading(false);
+        setHasTriggered(false);
+        // setTimeout(() => {
+        //   navigate(location.pathname, { replace: true });
+        // }, 2000);
+
       }
     }
   };
