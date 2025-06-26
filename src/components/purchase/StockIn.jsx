@@ -730,6 +730,7 @@ const StockIn = () => {
                                 value={row.receiveQty}
                                 max={row.requiredQty - row.alreadyReceived}
                                 min={0}
+                                step="any"
                                 onChange={(e) => {
                                   const value = Number(e.target.value);
                                   const min = 0;
@@ -747,6 +748,7 @@ const StockIn = () => {
                               <input
                                 type="number"
                                 min={0}
+                                step="any"
                                 className="w-16 px-2 py-1 border rounded-md text-center focus:ring-2 focus:ring-blue-400 focus:outline-none"
                                 value={row.extraQty}
                                 onChange={(e) => handleInputChange(index, "extraQty", Number(e.target.value))}
@@ -760,6 +762,7 @@ const StockIn = () => {
                               <input
                                 type="number"
                                 min={0}
+                                step="any"
                                 className="w-16 px-2 py-1 border rounded-md text-center focus:ring-2 focus:ring-blue-400 focus:outline-none"
                                 value={row.cgst}
                                 onChange={(e) => handleInputChange(index, "cgst", Number(e.target.value))}
@@ -770,6 +773,7 @@ const StockIn = () => {
                               <input
                                 type="number"
                                 min={0}
+                                step="any"
                                 className="w-16 px-2 py-1 border rounded-md text-center focus:ring-2 focus:ring-blue-400 focus:outline-none"
                                 value={row.sgst}
                                 onChange={(e) => handleInputChange(index, "sgst", Number(e.target.value))}
@@ -780,6 +784,7 @@ const StockIn = () => {
                               <input
                                 type="number"
                                 min={0}
+                                step="any"
                                 className="w-16 px-2 py-1 border rounded-md text-center focus:ring-2 focus:ring-blue-400 focus:outline-none"
                                 value={row.igst}
                                 onChange={(e) => handleInputChange(index, "igst", Number(e.target.value))}
@@ -811,6 +816,7 @@ const StockIn = () => {
                 <input
                   type="number"
                   placeholder="0.00"
+                  step="any"
                   className="bg-gray-100 border broder-gray-300 broder-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   value={freight}
                   onChange={(e) => setFreight(Number(e.target.value))}
@@ -821,6 +827,7 @@ const StockIn = () => {
                 <input
                   type="number"
                   placeholder="0.00"
+                  step="any"
                   className="bg-gray-100 border broder-gray-300 broder-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   value={otherCharges}
                   onChange={(e) => setOtherCharges(Number(e.target.value))}

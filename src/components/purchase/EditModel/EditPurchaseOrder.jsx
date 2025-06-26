@@ -435,6 +435,7 @@ const EditPurchaseOrder = ({ setOpenEditModal, selectedRowData, fetchPurchaseOrd
                                                     <input
                                                         type="number"
                                                         value={row.Price}
+                                                        step="any"
                                                         min="0"
                                                         className="w-16 border p-1 text-center"
                                                         onChange={(e) => handlePriceChange(index, Number(e.target.value))}
@@ -443,6 +444,7 @@ const EditPurchaseOrder = ({ setOpenEditModal, selectedRowData, fetchPurchaseOrd
                                                     <input
                                                         type="number"
                                                         value={row.Qty}
+                                                        step="any"
                                                         min="1"
                                                         className="w-16 border p-1 text-center"
                                                         onChange={(e) => handleQtyChange(index, Number(e.target.value))}
