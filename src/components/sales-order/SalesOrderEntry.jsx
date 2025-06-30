@@ -426,7 +426,10 @@ const SalesOrderEntry = () => {
         ...prev,
         processor: res?.data?.processor?.id,
         merchandiser: res?.data?.merchandiser?.id,
+        remark:res?.data?.remark,
+        goods_received_remark:res?.data?.goods_received_remark,
       }));
+      setOrder_items(res.data?.order_items)
       const exta_bom = res?.data?.extra_bom_so[0]?.Extra_bom || [];
       const transformedData = exta_bom?.map((entry) => ({
         semi_finished_goods:
