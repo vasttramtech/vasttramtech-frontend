@@ -172,8 +172,8 @@ const EditSalesOrderModel = () => {
         qty: entry?.qty,
         process: entry?.processes,
       }));
-      console.log(sfgStock);
-      // setSfgStock(sfgStock);
+      // console.log(sfgStock);
+      setSfgStock(sfgStock);
     } catch (error) {
       console.log(error);
       toast.error(
@@ -364,7 +364,7 @@ const EditSalesOrderModel = () => {
       setLoading(false);
     }
   };
-  console.log(deletedsfg);
+  console.log(formData);
 
   useEffect(() => {
     fetchPageData();
@@ -871,11 +871,11 @@ const EditSalesOrderModel = () => {
     }
   };
 
-  useEffect(() => {
-    // console.log(selectedConvertIdData);
-    if (!isAdmin && selectedConvertIdData.so_id)
-      setFormData({ ...formData, qty: 1 });
-  }, [selectedConvertIdData, isAdmin]);
+  // useEffect(() => {
+  //   // console.log(selectedConvertIdData);
+  //   if (!isAdmin && selectedConvertIdData.so_id)
+  //     setFormData({ ...formData, qty: 1 });
+  // }, [selectedConvertIdData, isAdmin]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

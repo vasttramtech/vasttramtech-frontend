@@ -18,12 +18,13 @@ const SemiFinishedStockReport = () => {
             try {
                 setLoading(true);
                 const response = await axios.get(
-                    `${process.env.REACT_APP_BACKEND_URL}/api/semi-finished-goods-stocks?populate[semi_finished_goods_master][populate][group]=*&populate[color]=*`,
+                    `${process.env.REACT_APP_BACKEND_URL}/api/semi-finished-goods-stocks?populate[semi_finished_goods_master][populate][group]=*&populate[color]=*&populate[processes]=*`,
                     { headers: { Authorization: `Bearer ${token}` } }
                 );
-                console.log(response)
+                // console.log(response)
                 if (response.data?.data) {
-                    setSemiFinishedGoods(response.data.data);
+                    const data=response.data.data.filter(item=>item.qty>0);
+                    setSemiFinishedGoods(data);
                 } else {
                     setError("No Semi Finished Goods data found.");
                 }
@@ -135,7 +136,9 @@ const SemiFinishedStockReport = () => {
                             <th className="border border-gray-300 px-4 py-2 text-center">SFG ID</th>
                             <th className="border border-gray-300 px-4 py-2 text-center">Item ID</th>
                             <th className="border border-gray-300 px-4 py-2 text-center">Group Name</th>
+                            <th className="border border-gray-300 px-4 py-2 text-center">Item Name</th>
                             <th className="border border-gray-300 px-4 py-2 text-center">Color</th>
+                            <th className="border border-gray-300 px-4 py-2 text-center">Process</th>
                             <th className="border border-gray-300 px-4 py-2 text-center">Current Stock</th>
                         </tr>
                     </thead>
@@ -145,9 +148,15 @@ const SemiFinishedStockReport = () => {
                                 <td className="border border-gray-300 px-4 py-2 text-center">{item?.id}</td>
                                 <td className="border border-gray-300 px-4 py-2 text-center">{item?.semi_finished_goods_master?.id || "N/A"}</td>
                                 <td className="border border-gray-300 px-4 py-2 text-center">{item?.semi_finished_goods_master?.group?.group_name || "N/A"}</td>
-                           
+                                <td className="border border-gray-300 px-4 py-2 text-center">{item?.semi_finished_goods_master?.semi_finished_goods_name || "N/A"}</td>
                                 <td className="border border-gray-300 px-4 py-2 text-center">{item?.color?.color_name || "N/A"}</td>
-               
+                                <td className="border border-gray-300 px-4 py-2 text-center">
+                                    <div className="flex flex-wrap">
+                                        {item.processes && item.processes.map((temp, idx) => (
+                                            <div key={idx} className="bg-gray-300 rounded px-2 font-semibold">{temp?.processes}</div>
+                                        ))}
+                                    </div>
+                                </td>
                                 <td className="border border-gray-300 px-4 py-2 font-semibold text-blue-600 text-center">{item?.qty}</td>
                             </tr>
                         ))}
