@@ -420,9 +420,7 @@ const UpdateBOM = ({
       !SfgData.sfg_group ||
       !SfgData.sfg_color1 ||
       !SfgData.sfg_material ||
-      !SfgData.sfg_qty ||
-      // !SfgData.sfg_total_cost ||
-      !SfgData.sfg_description
+      !SfgData.sfg_qty
     ) {
       toast.error("Please fill all the fields.");
       return;
