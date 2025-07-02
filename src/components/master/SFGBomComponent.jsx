@@ -588,8 +588,7 @@ const SFGBomComponent = ({
       !SfgData.sfg_material ||
       !SfgData.sfg_qty ||
       !SfgData.sfg_total_cost ||
-      !SfgData.sfg_jobber ||
-      !SfgData.sfg_description
+      !SfgData.sfg_jobber
     ) {
       toast.error("Please fill all the fields.");
       return;
