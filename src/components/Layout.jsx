@@ -4,12 +4,13 @@ import Navbar from "./Navbar";
 
 const Layout = () => {
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex h-screen overflow-hidden w-full">
       {/* Sidebar */}
+
       <Sidebar />
 
       {/* Main Content */}
-      <div className="flex-1 ml-24 overflow-y-auto p-4">
+      <div className="flex-1 w-3/4 ml-64 overflow-y-auto p-4">
         <Navbar />
         <div className="mt-2">
           <Outlet />
