@@ -19,6 +19,8 @@ import { useSelector } from "react-redux";
 import Reports from "../assets/sidebar-images/Reports.png";
 import dispatch from "../assets/sidebar-images/dispatch.png"
 
+import { IoChevronDown, IoChevronUp } from "react-icons/io5";
+
 const Sidebar = () => {
   const navigate = useNavigate();
   const [hoveredIndex, setHoveredIndex] = useState(null);
@@ -30,7 +32,11 @@ const Sidebar = () => {
     {
       icon: Home,
       options: [
-        { label: "Dashboard", path: "/" },
+        { label: "Home", isModule: true },
+        {
+          label: "Dashboard",
+          path: "/",
+        },
         designation === "Admin" && {
           label: "Access Control",
           path: "/access-control",
@@ -210,68 +216,123 @@ const Sidebar = () => {
     // },
   ];
 
+  const [activeIndex, setActiveIndex] = useState(null);
+  // const navigate = useNavigate();
+
+  const toggleAccordion = (index) => {
+    setActiveIndex((prev) => (prev === index ? null : index));
+  };
+
+  // Step 1: Transform the data
+  const transformedSections = sidebarItems.flatMap((section) => {
+    const { icon, options } = section;
+
+    const cleanedOptions = options.filter(Boolean); // Remove falsy entries like false && {}
+
+    const groups = [];
+    let currentGroup = null;
+
+    for (let opt of cleanedOptions) {
+      if (opt.isModule) {
+        if (currentGroup) groups.push(currentGroup);
+        currentGroup = { type: "accordion", icon, label: opt.label, children: [] };
+      } else if (currentGroup) {
+        currentGroup.children.push(opt);
+      } else {
+        // Flat option (no module)
+        groups.push({
+          type: "flat",
+          icon,
+          label: opt.label,
+          path: opt.path,
+        });
+      }
+    }
+
+    if (currentGroup) groups.push(currentGroup);
+
+    return groups;
+  });
+
   return (
     <>
       {/* Mobile Hamburger Button */}
-      <div className="md:hidden fixed top-4 left-4 z-50">
+      <div className="md:hidden w-1/4 fixed top-4 left-4 z-50">
         <button onClick={() => setIsOpen(true)} className="text-white">
           <IoMenu size={30} />
         </button>
       </div>
 
-      {/* Fixed Sidebar */}
       <div
-        className={`fixed top-0 left-0 h-full w-24 bg-blue-900 text-white flex flex-col items-center py-6 rounded-r-3xl shadow-lg z-50 transition-transform duration-300 ${
-          isOpen ? "translate-x-0" : "-translate-x-full"
-        } md:translate-x-0`}
+        className={`fixed top-0 left-0 h-full w-64 bg-blue-900 text-white flex flex-col rounded-r-3xl shadow-lg z-50 transition-transform duration-300 ease-in-out ${isOpen ? "translate-x-0" : "-translate-x-full"
+          } md:translate-x-0`}
       >
-        {/* Mobile Close Button */}
+        {/* Close button for mobile */}
         <div className="md:hidden absolute top-4 right-4">
           <button onClick={() => setIsOpen(false)} className="text-white">
             <IoClose size={30} />
           </button>
         </div>
-        {/* Sidebar Items */}
-        <nav className="flex flex-col mt-4 space-y-9">
-          {sidebarItems.map((item, index) => (
-            <div
-              key={index}
-              className="relative flex items-center justify-center cursor-pointer"
-              onMouseEnter={() => setHoveredIndex(index)}
-              onMouseLeave={() => setHoveredIndex(null)}
-            >
-              {/* Sidebar Icon */}
-              <img
-                src={item.icon}
-                alt={`Icon ${index + 1}`}
-                className="w-7 transition-transform duration-200 hover:scale-110"
-              />
 
-              {/* Hovered Options List */}
-              {hoveredIndex === index && (
-                <div className="absolute left-full ml-1 w-72 text-start bg-white text-gray-800 shadow-lg rounded-lg p-2 z-50 ">
-                  {item.options.map((option, i) => (
-                    <div
-                      key={i}
-                      className={`px-2 py-0 rounded cursor-pointer ${
-                        option.isModule
-                          ? "text-blue-900 font-bold text-center"
-                          : "hover:text-blue-800 hover:font-bold"
-                      }`}
-                      onClick={() => {
-                        navigate(option.path, {
-                          state: { title: option.label },
-                        });
-                        setIsOpen(false); // Close sidebar on mobile after navigation
-                      }}
-                    >
-                      {option.label}
-                    </div>
-                  ))}
+        {/* Navigation Items */}
+        <nav className="flex flex-col mt-4 space-y-2 px-4">
+          {transformedSections.map((item, index) => {
+            if (item.type === "flat") {
+              return (
+                <div
+                  key={index}
+                  className="flex items-center space-x-3 p-2 rounded-lg cursor-pointer hover:bg-blue-800"
+                  onClick={() => {
+                    navigate(item.path, { state: { title: item.label } });
+                    setIsOpen(false);
+                  }}
+                >
+                  <img src={item.icon} className="w-5" />
+                  <span className="text-sm font-semibold">{item.label}</span>
                 </div>
-              )}
-            </div>
-          ))}
+              );
+            }
+
+            // Accordion item
+            return (
+              <div key={index}>
+                <div
+                  className="flex items-center justify-between p-2 rounded-lg cursor-pointer hover:bg-blue-800"
+                  onClick={() => toggleAccordion(index)}
+                >
+                  <div className="flex items-center space-x-3">
+                    <img src={item.icon} className="w-5" />
+                    <span className="text-sm font-semibold">{item.label}</span>
+                  </div>
+                  {activeIndex === index ? (
+                    <IoChevronUp className="text-xl" />
+                  ) : (
+                    <IoChevronDown className="text-xl" />
+                  )}
+                </div>
+
+                {activeIndex === index && (
+                  <div className="ml-9 mt-1 space-y-1">
+                    {item.children.map((option, i) => (
+                      <div
+                        key={i}
+                        className="text-sm px-2 py-1 rounded hover:bg-blue-800 cursor-pointer"
+                        onClick={() => {
+                          navigate(option.path, {
+                            state: { title: option.label },
+                          });
+                          setIsOpen(false);
+                          setActiveIndex(null);
+                        }}
+                      >
+                        {option.label}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </nav>
       </div>
     </>
