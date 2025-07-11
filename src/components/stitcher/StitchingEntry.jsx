@@ -255,6 +255,43 @@ const StitchingEntry = () => {
 
     // measurement modal
     const [measurementModal, setMeasurementModal] = useState(false);
+    const [showMeasurement, setShowMeasurement] = useState(false);
+
+    const [lhSh, setLhSh] = useState({
+        backLength: 0,
+        hip: 0,
+        croch: 0,
+        calf: 0,
+        others1: 0,
+        dupatta1: 0,
+        frontLength: 0,
+        waist1: 0,
+        thigh: 0,
+        knee: 0,
+        ankle: 0,
+        sideLength: 0,
+        dupatta2: 0,
+    })
+
+    const [bpGrownKurti, setBpGrownKurti] = useState({
+        yokeLength: 0,
+        shoulder: 0,
+        upperChest: 0,
+        waist2: 0,
+        backNeck: 0,
+        crossBack: 0,
+        sleeveLength: 0,
+        mori: 0,
+        grownLength: 0,
+        blouseLength: 0,
+        dartPoint: 0,
+        chest: 0,
+        frontNeck: 0,
+        crossFront: 0,
+        armhole: 0,
+        bicap: 0,
+        others2: 0,
+    })
 
     const fetchReadyToStitchSO = async () => {
         try {
@@ -354,6 +391,12 @@ const StitchingEntry = () => {
         e.preventDefault();
         setSubmitting(true);
 
+        if (showMeasurement === false){
+            toast.error("Please add measurements!!");
+            setSubmitting(false);
+            return;
+        }
+
         if (salesOrder.length === 0) {
             alert("Please select a sales order");
             setSubmitting(false);
@@ -442,7 +485,11 @@ const StitchingEntry = () => {
                 color: row?.color?.id,
                 bom_id: String(row?.id),
                 processed_qty: row?.processQty,
-            }))
+            })),
+            measurement: {
+                lehenga_sharara: lhSh,
+                bp_grown_kurti: bpGrownKurti
+            }
         };
 
         const relationKey =
@@ -698,6 +745,9 @@ const StitchingEntry = () => {
         setAllreadyProcessedQtyOfBOM({});
 
     }
+
+    console.log("lhSh: ", lhSh);
+    console.log("bpGrownKurti: ", bpGrownKurti);
 
 
     return (
@@ -1057,11 +1107,56 @@ const StitchingEntry = () => {
                             </div>
                         }
 
+                        <div className="border flex justify-center border-gray-200 rounded-xl p-4">
+                            <button type="button"
+                                onClick={() => setMeasurementModal(true)}
+                                className="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-700 transition"
+                            >Add Measurements</button>
+                        </div>
+
                         {
                             measurementModal && (
-                                <MeasurementModal setMeasurementModal={setMeasurementModal} />
+                                <MeasurementModal
+                                    setMeasurementModal={setMeasurementModal}
+                                    lhSh={lhSh}
+                                    setLhSh={setLhSh}
+                                    bpGrownKurti={bpGrownKurti}
+                                    setBpGrownKurti={setBpGrownKurti}
+                                    setShowMeasurement={setShowMeasurement}
+                                />
                             )
                         }
+
+                        {showMeasurement && (
+                            <div className="mt-6 border border-gray-300 rounded-lg p-5 shadow-sm bg-gray-50">
+                                <h2 className="text-xl font-semibold mb-4 text-gray-700 border-b pb-2">📏 Measurement Details</h2>
+
+                                {/* Lehenga / Sharara Measurements */}
+                                <div className="mb-6">
+                                    <h3 className="text-lg font-medium text-blue-600 mb-2">Lehenga / Sharara</h3>
+                                    <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                                        {Object.entries(lhSh).map(([key, val]) => (
+                                            <div key={key} className="text-sm text-gray-800">
+                                                <span className="font-medium capitalize">{key.replace(/([A-Z])/g, ' $1')}:</span> {val}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* BP / Grown / Kurti Measurements */}
+                                <div>
+                                    <h3 className="text-lg font-medium text-green-600 mb-2">BP / Grown / Kurti</h3>
+                                    <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                                        {Object.entries(bpGrownKurti).map(([key, val]) => (
+                                            <div key={key} className="text-sm text-gray-800">
+                                                <span className="font-medium capitalize">{key.replace(/([A-Z])/g, ' $1')}:</span> {val}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
 
 
                         <div className="grid grid-cols-2 gap-4">
@@ -1128,12 +1223,12 @@ const StitchingEntry = () => {
                         </div>
 
                         <div className="my-2">
-                            <div className="border flex justify-center border-gray-200 rounded-xl p-4">
+                            {/* <div className="border flex justify-center border-gray-200 rounded-xl p-4">
                                 <button type="button"
                                     onClick={() => setMeasurementModal(true)}
                                     className="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-700 transition"
                                 >Add Measurements</button>
-                            </div>
+                            </div> */}
                             {/* button */}
                             <div className="col-span-2 flex justify-end mt-4">
                                 <button

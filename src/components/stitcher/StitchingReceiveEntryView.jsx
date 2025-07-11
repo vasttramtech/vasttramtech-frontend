@@ -238,6 +238,34 @@ const StitchingReceiveEntryView = () => {
 
       )}
 
+      {stitchingData?.measurement?.lehenga_sharara && stitchingData?.measurement?.bp_grown_kurti && (<div className="mt-6 border border-gray-300 rounded-lg p-5 shadow-sm bg-gray-50">
+        <h2 className="text-xl font-semibold mb-4 text-gray-700 border-b pb-2">📏 Measurement Details</h2>
+
+        {/* Lehenga / Sharara Measurements */}
+        <div className="mb-6">
+          <h3 className="text-lg font-medium text-blue-600 mb-2">Lehenga / Sharara</h3>
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+            {Object.entries(stitchingData?.measurement?.lehenga_sharara).map(([key, val]) => (
+              <div key={key} className="text-sm text-gray-800">
+                <span className="font-medium capitalize">{key.replace(/([A-Z])/g, ' $1')}:</span> {val}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* BP / Grown / Kurti Measurements */}
+        <div>
+          <h3 className="text-lg font-medium text-green-600 mb-2">BP / Grown / Kurti</h3>
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+            {Object.entries(stitchingData?.measurement?.bp_grown_kurti).map(([key, val]) => (
+              <div key={key} className="text-sm text-gray-800">
+                <span className="font-medium capitalize">{key.replace(/([A-Z])/g, ' $1')}:</span> {val}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>)}
+
       {stitchingData?.bom && stitchingData?.bom?.length > 0 && (
         <div className="col-span-2 mt-4">
           <h2 className="text-lg font-semibold text-blue-700 mb-3 border-b border-blue-200 pb-2">
