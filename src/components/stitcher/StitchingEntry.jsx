@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { BounceLoader, PuffLoader } from "react-spinners";
 import SmartTable2 from "../../smartTable/SmartTable2";
 import { toast } from "react-toastify";
+import MeasurementModal from "./MeasurementModal";
 
 const SelectSOTable = ({
     NoOfColumns,
@@ -67,8 +68,8 @@ const SelectSOTable = ({
                     so_id: data?.so_id,
                     design_group: data?.group?.group_name,
                     design_number: data?.design_number?.design_number,
-                    date : new Date().toISOString().split("T")[0],
-                    processor : data?.processor?.id
+                    date: new Date().toISOString().split("T")[0],
+                    processor: data?.processor?.id
                 }));
                 setSalesOrder(data);
                 console.log("Data", data);
@@ -89,11 +90,11 @@ const SelectSOTable = ({
                 console.log("All boms ids", allId);
 
                 // fetching already processed data from here
-                let idsString 
-                if(allId.length > 0){
-                   idsString = allId.join(",");
+                let idsString
+                if (allId.length > 0) {
+                    idsString = allId.join(",");
                 }
-                else{
+                else {
                     idsString = " "
                 }
                 console.log("idsString", idsString);
@@ -252,6 +253,8 @@ const StitchingEntry = () => {
     // bom ids
     const [allBomIds, setAllBomIds] = useState([]);
 
+    // measurement modal
+    const [measurementModal, setMeasurementModal] = useState(false);
 
     const fetchReadyToStitchSO = async () => {
         try {
@@ -361,13 +364,13 @@ const StitchingEntry = () => {
             setSubmitting(false);
             return
         }
-           if(formData.due_date === ""){
+        if (formData.due_date === "") {
             toast.warning("Please select a due date");
             setSubmitting(false);
             return;
         }
 
-        if(formData.selected_stiitcher === ""){
+        if (formData.selected_stiitcher === "") {
             toast.warning("Please select a stitcher");
             setSubmitting(false);
             return;
@@ -562,7 +565,7 @@ const StitchingEntry = () => {
             setLoading(true);
             setSelectedSOId(null);
 
-        
+
             console.log("Designation ", designation, "  Id ", id);
 
             // if (type === "vasttram") {
@@ -582,9 +585,9 @@ const StitchingEntry = () => {
             //     });
             // }
 
-            
+
             // let url = "";
-            
+
             // console.log("type ", type);
             // if (type === "vasttram") {
             //     url = `${process.env.REACT_APP_BACKEND_URL}/api/internal-sales-order-entries?filters[order_status][$eq]=In%20Process&filters[order_status][$in]=Process%20Due&filters[order_status][$in]=readyToStitch&filters[order_status][$in]=In%20Stitching`;
@@ -604,35 +607,35 @@ const StitchingEntry = () => {
             // }
 
             // url += `&sort=id:desc&populate=*`;
-let url = '';
-let params = {
-  "filters[order_status][$in]": ["In Process", "Process Due", "readyToStitch", "In Stitching"],
-  "sort": "id:desc",
-  "populate": "*"
-};
+            let url = '';
+            let params = {
+                "filters[order_status][$in]": ["In Process", "Process Due", "readyToStitch", "In Stitching"],
+                "sort": "id:desc",
+                "populate": "*"
+            };
 
-if (type === "vasttram") {
-  url = `${process.env.REACT_APP_BACKEND_URL}/api/internal-sales-order-entries`;
-} else {
-  url = `${process.env.REACT_APP_BACKEND_URL}/api/sales-oder-entries`; 
-  params["filters[convert_id][$null]"] = true;
-}
+            if (type === "vasttram") {
+                url = `${process.env.REACT_APP_BACKEND_URL}/api/internal-sales-order-entries`;
+            } else {
+                url = `${process.env.REACT_APP_BACKEND_URL}/api/sales-oder-entries`;
+                params["filters[convert_id][$null]"] = true;
+            }
 
-if (designation === "Merchandiser" && id) {
-  params["filters[merchandiser][id][$eq]"] = id;
-} else if (designation !== "Admin" && id) {
-  params["filters[processor][id][$eq]"] = id;
-}
+            if (designation === "Merchandiser" && id) {
+                params["filters[merchandiser][id][$eq]"] = id;
+            } else if (designation !== "Admin" && id) {
+                params["filters[processor][id][$eq]"] = id;
+            }
             // make the API request
-              const response = await axios.get(url, {
-  headers: {
-    Authorization: `Bearer ${token}`,
-  },
-  params
-});
+            const response = await axios.get(url, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+                params
+            });
             console.log("Fetching sales order data ", response.data.data.length);
 
-            if(response.data.data.length === 0){
+            if (response.data.data.length === 0) {
                 toast.info("No data found");
             }
 
@@ -771,18 +774,18 @@ if (designation === "Merchandiser" && id) {
                             <div className="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50">
                                 <div className="relative w-[90vw] bg-gray-200 border shadow-2xl p-4 rounded-lg">
 
-                                        <div className="flex justify-between items-center">
-                                            <h3 className="text-2xl font-semibold">Choose Sales Order</h3>
+                                    <div className="flex justify-between items-center">
+                                        <h3 className="text-2xl font-semibold">Choose Sales Order</h3>
 
-                                            <p
-                                                className="text-xl px-2 border bg-red-600 rounded-full text-white hover:bg-red-500 cursor-pointer"
-                                                onClick={() => {
-                                                    setSelectedSOModal(false);
-                                                }}
-                                            >
-                                                X
-                                            </p>
-                                        </div>
+                                        <p
+                                            className="text-xl px-2 border bg-red-600 rounded-full text-white hover:bg-red-500 cursor-pointer"
+                                            onClick={() => {
+                                                setSelectedSOModal(false);
+                                            }}
+                                        >
+                                            X
+                                        </p>
+                                    </div>
 
                                     <div className="mt-1">
                                         <SelectSOTable
@@ -940,13 +943,13 @@ if (designation === "Merchandiser" && id) {
                                                         <td colSpan={6} className="px-6 py-4 text-gray-600 whitespace-nowrap">
                                                             {item?.processes?.length > 0 ? (
                                                                 <div className="flex flex-col gap-1 items-center">
-                                                                    
-                                                                        {item?.processes?.map((process, index) => (
-                                                                                <div>                        
-                                                                                {process?.process} - Done by - <span className="font-semibold text-green-700">{process?.jobber?.jobber_name}</span>
-                                                                                </div>
-                                                                        ))} 
-                                                             
+
+                                                                    {item?.processes?.map((process, index) => (
+                                                                        <div>
+                                                                            {process?.process} - Done by - <span className="font-semibold text-green-700">{process?.jobber?.jobber_name}</span>
+                                                                        </div>
+                                                                    ))}
+
                                                                 </div>
                                                             ) : (
                                                                 <span className="text-gray-500 italic">No Process Yet</span>
@@ -1054,7 +1057,11 @@ if (designation === "Merchandiser" && id) {
                             </div>
                         }
 
-
+                        {
+                            measurementModal && (
+                                <MeasurementModal setMeasurementModal={setMeasurementModal} />
+                            )
+                        }
 
 
                         <div className="grid grid-cols-2 gap-4">
@@ -1098,7 +1105,7 @@ if (designation === "Merchandiser" && id) {
                                     <option value="" className="text-gray-400">Select Processor</option>
                                     {
                                         availableProcessor
-                                            .filter(processor => processor.designation !== "Merchandiser") 
+                                            .filter(processor => processor.designation !== "Merchandiser")
                                             .map(processor => (
                                                 <option key={processor.id} value={processor.id}>
                                                     {processor.name + " - " + processor.designation}
@@ -1117,6 +1124,15 @@ if (designation === "Merchandiser" && id) {
                                     value={formData.remarks}
                                     onChange={formDataChangeHandler}
                                 ></textarea>
+                            </div>
+                        </div>
+
+                        <div className="my-2">
+                            <div className="border flex justify-center border-gray-200 rounded-xl p-4">
+                                <button type="button"
+                                    onClick={() => setMeasurementModal(true)}
+                                    className="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-700 transition"
+                                >Add Measurements</button>
                             </div>
                             {/* button */}
                             <div className="col-span-2 flex justify-end mt-4">
