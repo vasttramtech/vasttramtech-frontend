@@ -542,6 +542,7 @@ const Sidebar = () => {
         { label: "Sales-order", isModule: true },
         { label: "Sales Order Entry", path: "/sales-order-entry" },
         { label: "Sales Order Report", path: "/sales-order-report" },
+        { label: "Sales Return Entry", path: "/sales-return-entry" },
       ],
     },
     {

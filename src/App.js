@@ -116,6 +116,7 @@ import BoardsList from "./components/design-entry-task/BoardList";
 import DispatchReport from "./components/dispatch/DispatchReport";
 import DispatchEntry from "./components/dispatch/DispatchEntry";
 import DispatchEntryReport from "./components/dispatch/DispatchEntryReport";
+import SalesReturnForm from "./components/sales-order/SalesReturnForm";
 
 
 function App() {
@@ -322,6 +323,7 @@ function App() {
             path="/sales-order-report/report/:type/:id"
             element={<IndividualReport />}
           />
+          <Route path="/sales-return-entry" element={<SalesReturnForm />} />
 
           <Route
             path="sales-order-report/edit/:type/:id"

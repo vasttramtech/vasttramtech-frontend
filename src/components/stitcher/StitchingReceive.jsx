@@ -165,11 +165,11 @@ const StitchingReceive = () => {
             let url = `${process.env.REACT_APP_BACKEND_URL}/api/stitching-entries?populate=*&filters[stitch_status][$eq]=stitching_process`
 
 
-            if(designation === "Merchandiser"){
+            if (designation === "Merchandiser") {
                 url += `&filters[$or][0][sales_order_entry][merchandiser][id][$eq]=${id}`;
                 url += `&filters[$or][1][internal_sales_order_entry][merchandiser][id][$eq]=${id}`;
             }
-            else if(designation !== "Admin"){
+            else if (designation !== "Admin") {
                 url += `&filters[processor][id][$eq]=${id}`
             }
 
@@ -239,6 +239,8 @@ const StitchingReceive = () => {
         }
         fetchStitchingEntryData();
     }, [token]);
+
+    console.log("selectedEntry zzz: ", selectedEntry)
 
     const handleCheckboxChange = (entry, index) => {
         setReceivedItems((prevItems) => {
@@ -328,13 +330,13 @@ const StitchingReceive = () => {
             return;
         }
 
-           if(formData.receiving_date === "") {
+        if (formData.receiving_date === "") {
             toast.warning("Please select the Receiving Date.", { position: "top-right" });
             setSubmitting(false)
             return;
         }
 
-         const getStitchingStatus = () => {
+        const getStitchingStatus = () => {
             if (!selectedEntry || !selectedEntry.order_Items) return "partially_completed";
 
             const allItems = selectedEntry.order_Items;
@@ -359,109 +361,109 @@ const StitchingReceive = () => {
             return isAllDone ? "completed" : "partially_completed";
         };
 
-    //     const getStitchingStatus = () => {
-    // if (!selectedEntry) return "partially_completed";
+        //     const getStitchingStatus = () => {
+        // if (!selectedEntry) return "partially_completed";
 
-    // // Check regular stitching items
-    // const allStitchingItemsDone = selectedEntry.order_Items 
-    //     ? selectedEntry.order_Items.every(entry => {
-    //         const receivedMatch = receivedItems.find(
-    //             item => item.entryData?.group === entry.group
-    //         );
+        // // Check regular stitching items
+        // const allStitchingItemsDone = selectedEntry.order_Items 
+        //     ? selectedEntry.order_Items.every(entry => {
+        //         const receivedMatch = receivedItems.find(
+        //             item => item.entryData?.group === entry.group
+        //         );
 
-    //         if (receivedMatch) {
-    //             return (
-    //                 Number(entry.process_qty) ===
-    //                 Number(entry.already_received) + Number(receivedMatch.receive_qty)
-    //             );
-    //         } else {
-    //             return (
-    //                 Number(entry.process_qty) === Number(entry.already_received)
-    //             );
-    //         }
-    //     })
-    //     : true; // If no order items, consider them "done"
+        //         if (receivedMatch) {
+        //             return (
+        //                 Number(entry.process_qty) ===
+        //                 Number(entry.already_received) + Number(receivedMatch.receive_qty)
+        //             );
+        //         } else {
+        //             return (
+        //                 Number(entry.process_qty) === Number(entry.already_received)
+        //             );
+        //         }
+        //     })
+        //     : true; // If no order items, consider them "done"
 
-    // // Check BOM items
-    // const allBomItemsDone = selectedEntry.bom 
-    //     ? selectedEntry.bom.every(bomItem => {
-    //         const receivedMatch = receivedBom.find(
-    //             item => item.bom_id === bomItem.id
-    //         );
+        // // Check BOM items
+        // const allBomItemsDone = selectedEntry.bom 
+        //     ? selectedEntry.bom.every(bomItem => {
+        //         const receivedMatch = receivedBom.find(
+        //             item => item.bom_id === bomItem.id
+        //         );
 
-    //         if (receivedMatch) {
-    //             return (
-    //                 Number(bomItem.processed_qty) ===
-    //                 Number(receivedMatch.receive_qty)
-    //             );
-    //         } else {
-    //             // If not in receivedBom, consider it not received (0)
-    //             return Number(bomItem.processed_qty) === 0;
-    //         }
-    //     })
-    //     : true; // If no BOM items, consider them "done"
+        //         if (receivedMatch) {
+        //             return (
+        //                 Number(bomItem.processed_qty) ===
+        //                 Number(receivedMatch.receive_qty)
+        //             );
+        //         } else {
+        //             // If not in receivedBom, consider it not received (0)
+        //             return Number(bomItem.processed_qty) === 0;
+        //         }
+        //     })
+        //     : true; // If no BOM items, consider them "done"
 
-    // console.log("Stitching items done:", allStitchingItemsDone);
-    // console.log("BOM items done:", allBomItemsDone);
+        // console.log("Stitching items done:", allStitchingItemsDone);
+        // console.log("BOM items done:", allBomItemsDone);
 
-    // return (allStitchingItemsDone && allBomItemsDone) 
-    //     ? "completed" 
-    //     : "partially_completed";
-    //     };
-
-
-    console.log("Selected ", selectedEntry);
-            const salesOrder = selectedEntry?.sales_order_entry || selectedEntry?.internal_sales_order_entry;
-
-            // STEP 1: itemsNeedToReceive
-            const itemsNeedToReceive = Object.entries(salesOrder?.order_items || {}).map(([group, details]) => ({
-                ...details,
-                group,
-                qty: Number(salesOrder?.qty),
-            }));
-            console.log("itemsNeedToReceive", itemsNeedToReceive);
-
-            const updatedGroupSummary = { ...allReceivedItem.group_summary };
+        // return (allStitchingItemsDone && allBomItemsDone) 
+        //     ? "completed" 
+        //     : "partially_completed";
+        //     };
 
 
-            receivedItems.forEach((item, idx) => {
-                const groupKey = item.entryData?.group;
-                const receiveQty = Number(item.receive_qty || 0);
+        console.log("Selected ", selectedEntry);
+        const salesOrder = selectedEntry?.sales_order_entry || selectedEntry?.internal_sales_order_entry;
 
-                // Force conversion of existing value to number before adding
-                const prevQty = Number(updatedGroupSummary[groupKey] || 0);
-                updatedGroupSummary[groupKey] = prevQty + receiveQty;
+        // STEP 1: itemsNeedToReceive
+        const itemsNeedToReceive = Object.entries(salesOrder?.order_items || {}).map(([group, details]) => ({
+            ...details,
+            group,
+            qty: Number(salesOrder?.qty),
+        }));
+        console.log("itemsNeedToReceive", itemsNeedToReceive);
 
-                console.log(`🔹 Item ${idx}: groupKey=${groupKey}, receiveQty=${receiveQty}, prevQty=${prevQty}, newQty=${updatedGroupSummary[groupKey]}`);
-            });
+        const updatedGroupSummary = { ...allReceivedItem.group_summary };
 
 
-            const receivingItemsDetail = {
-                so_id: allReceivedItem.so_id,
-                group_summary: updatedGroupSummary
-            };
+        receivedItems.forEach((item, idx) => {
+            const groupKey = item.entryData?.group;
+            const receiveQty = Number(item.receive_qty || 0);
 
-            // Final check: all items fully received or not
-            const isFullyReceived = itemsNeedToReceive.every(item => {
-                const group = item.group;
-                const requiredQty = Number(item.qty);
-                const receivedQty = Number(updatedGroupSummary[group]);
+            // Force conversion of existing value to number before adding
+            const prevQty = Number(updatedGroupSummary[groupKey] || 0);
+            updatedGroupSummary[groupKey] = prevQty + receiveQty;
 
-                if (updatedGroupSummary[group] === undefined) {
-                    console.log(`roup missing in updated summary: "${group}"`);
-                    return false;
-                }
+            console.log(`🔹 Item ${idx}: groupKey=${groupKey}, receiveQty=${receiveQty}, prevQty=${prevQty}, newQty=${updatedGroupSummary[groupKey]}`);
+        });
 
-                if (requiredQty !== receivedQty) {
-                    console.log(`Qty mismatch for group "${group}" → Expected: ${requiredQty}, Received: ${receivedQty}`);
-                    return false;
-                }
 
-                console.log(`Group "${group}" is fully received with qty: ${receivedQty}`);
-                return true;
-            });
+        const receivingItemsDetail = {
+            so_id: allReceivedItem.so_id,
+            group_summary: updatedGroupSummary
+        };
 
-            console.log("Stitching Is Fully Received?", isFullyReceived);
+        // Final check: all items fully received or not
+        const isFullyReceived = itemsNeedToReceive.every(item => {
+            const group = item.group;
+            const requiredQty = Number(item.qty);
+            const receivedQty = Number(updatedGroupSummary[group]);
+
+            if (updatedGroupSummary[group] === undefined) {
+                console.log(`roup missing in updated summary: "${group}"`);
+                return false;
+            }
+
+            if (requiredQty !== receivedQty) {
+                console.log(`Qty mismatch for group "${group}" → Expected: ${requiredQty}, Received: ${receivedQty}`);
+                return false;
+            }
+
+            console.log(`Group "${group}" is fully received with qty: ${receivedQty}`);
+            return true;
+        });
+
+        console.log("Stitching Is Fully Received?", isFullyReceived);
 
 
         const postData = {
@@ -494,7 +496,8 @@ const StitchingReceive = () => {
                     color: row?.color?.id,
                     processed_qty: row?.processed_qty,
 
-                })) 
+                })),
+                measurement : selectedEntry.measurement
             },
         };
 
@@ -537,7 +540,7 @@ const StitchingReceive = () => {
                 //     },
                 // });
 
-            toast.success("Sales Order status change to Ready to Dispatch.", { position: "top-right" });
+                toast.success("Sales Order status change to Ready to Dispatch.", { position: "top-right" });
             }
 
             setSelectedEntry(null);
@@ -570,24 +573,24 @@ const StitchingReceive = () => {
     };
 
     const clearHandler = () => {
-          setSelectedEntry(null);
-            setDisplayModal(false);
-            setallStitchingEntry([]);
-            setStitcherDetail([]);
-            setReceivedItems([]);
-            setAllReceivedItem(null);
-            setFormData({
-                stitchingEntryId: "",
-                so_id: "",
-                design_group: "",
-                design_number: "",
-                entry_created_date: "",
-                due_date: "",
-                receiving_date: "",
-                selected_stiitcher: "",
-                processor: "",
-                remarks: ""
-            });
+        setSelectedEntry(null);
+        setDisplayModal(false);
+        setallStitchingEntry([]);
+        setStitcherDetail([]);
+        setReceivedItems([]);
+        setAllReceivedItem(null);
+        setFormData({
+            stitchingEntryId: "",
+            so_id: "",
+            design_group: "",
+            design_number: "",
+            entry_created_date: "",
+            due_date: "",
+            receiving_date: "",
+            selected_stiitcher: "",
+            processor: "",
+            remarks: ""
+        });
     }
 
     // console.log("allStitchingEntry: ", allStitchingEntry)
@@ -632,19 +635,19 @@ const StitchingReceive = () => {
                         {displayModal && (
                             <div className="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50">
                                 <div className="relative w-[90vw] bg-gray-200 border shadow-2xl p-4 rounded-lg">
-                         
-                                        <div className="flex justify-between items-center">
-                                            <h3 className="text-2xl font-semibold">Choose Stitching Entry</h3>
 
-                                            <p
-                                                className="text-xl px-2 border bg-red-600 rounded-full text-white hover:bg-red-500 cursor-pointer"
-                                                onClick={() => {
-                                                    setDisplayModal(false);
-                                                }}
-                                            >
-                                                X
-                                            </p>
-                                        </div>
+                                    <div className="flex justify-between items-center">
+                                        <h3 className="text-2xl font-semibold">Choose Stitching Entry</h3>
+
+                                        <p
+                                            className="text-xl px-2 border bg-red-600 rounded-full text-white hover:bg-red-500 cursor-pointer"
+                                            onClick={() => {
+                                                setDisplayModal(false);
+                                            }}
+                                        >
+                                            X
+                                        </p>
+                                    </div>
                                     <div className="">
                                         <SelectSOTable
                                             NoOfColumns={headersForTable.length}
@@ -733,6 +736,34 @@ const StitchingReceive = () => {
                                 </div>
                             </div>
                         )}
+
+                        {selectedEntry?.measurement?.lehenga_sharara && selectedEntry?.measurement?.bp_grown_kurti && (<div className="mt-6 border border-gray-300 rounded-lg p-5 shadow-sm bg-gray-50">
+                            <h2 className="text-xl font-semibold mb-4 text-gray-700 border-b pb-2">📏 Measurement Details</h2>
+
+                            {/* Lehenga / Sharara Measurements */}
+                            <div className="mb-6">
+                                <h3 className="text-lg font-medium text-blue-600 mb-2">Lehenga / Sharara</h3>
+                                <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                                    {Object.entries(selectedEntry?.measurement?.lehenga_sharara).map(([key, val]) => (
+                                        <div key={key} className="text-sm text-gray-800">
+                                            <span className="font-medium capitalize">{key.replace(/([A-Z])/g, ' $1')}:</span> {val}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* BP / Grown / Kurti Measurements */}
+                            <div>
+                                <h3 className="text-lg font-medium text-green-600 mb-2">BP / Grown / Kurti</h3>
+                                <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                                    {Object.entries(selectedEntry?.measurement?.bp_grown_kurti).map(([key, val]) => (
+                                        <div key={key} className="text-sm text-gray-800">
+                                            <span className="font-medium capitalize">{key.replace(/([A-Z])/g, ' $1')}:</span> {val}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>)}
 
                         {selectedEntry?.bom?.length > 0 && (
                             <div className="my-8 overflow-x-auto rounded-lg shadow-lg">
