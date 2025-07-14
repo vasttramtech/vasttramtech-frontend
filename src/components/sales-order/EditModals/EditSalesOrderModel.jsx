@@ -1061,7 +1061,7 @@ const EditSalesOrderModel = () => {
       )}
 
       {showConvertIdTable && (
-        <div className="fixed w-[90vw] z-10 bg-gray-200 rounded-xl px-2">
+        <div className="fixed w-[80vw] z-10 bg-gray-200 rounded-xl px-2">
           <div className="flex justify-between my-1 items-center">
             <h3 className="text-xl">Select Convert ID</h3>
             <p

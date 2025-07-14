@@ -928,7 +928,7 @@ const SalesOrderEntry = () => {
         </div>
       )}
       {showDesignTable && (
-        <div className="fixed w-[90vw] z-10 p-5 border border-gray-400 bg-gray-100 rounded-xl">
+        <div className="fixed w-[80vw] z-10 p-5 border border-gray-400 bg-gray-100 rounded-xl">
           <div className="flex justify-between items-center">
             <h3 className="text-xl font-semibold ">Select Design</h3>
             <p
@@ -951,7 +951,7 @@ const SalesOrderEntry = () => {
       )}
 
       {showConvertIdTable && (
-        <div className="fixed w-[90vw] z-10 bg-gray-200 rounded-xl p-5">
+        <div className="fixed w-[80vw] z-10 bg-gray-200 rounded-xl p-5">
           <div className="flex justify-between items-center">
             <h3 className="text-xl font-semibold">Select Convert ID</h3>
             <p
