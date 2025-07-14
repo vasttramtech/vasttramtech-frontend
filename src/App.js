@@ -117,6 +117,8 @@ import DispatchReport from "./components/dispatch/DispatchReport";
 import DispatchEntry from "./components/dispatch/DispatchEntry";
 import DispatchEntryReport from "./components/dispatch/DispatchEntryReport";
 import SalesReturnForm from "./components/sales-order/SalesReturnForm";
+import SalesReturnReports from "./components/sales-order/SalesReturnReports";
+import SalesReturnView from "./components/sales-order/SalesReturnView";
 
 
 function App() {
@@ -324,6 +326,8 @@ function App() {
             element={<IndividualReport />}
           />
           <Route path="/sales-return-entry" element={<SalesReturnForm />} />
+          <Route path="/sales-return-reports" element={<SalesReturnReports />} />
+          <Route path="/sales-return-view/:id" element={<SalesReturnView />} />
 
           <Route
             path="sales-order-report/edit/:type/:id"

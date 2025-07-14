@@ -11,9 +11,7 @@ import ViewIcon from "../../assets/Others/ViewIcon.png";
 import Pagination from '../utility/Pagination';
 
 
-
-
-const headersForTable = ["Sale Bill Id", "Design Name", "SO ID", "Date", "Bill To", "Bill To Details", "Other Charges", "Total Bill Amount", "Processor", "Details", "Print", "Cancel"];
+const headersForTable = ["Sale Bill Id", "Design Name", "SO ID", "Date", "Bill To", "Bill To Details", "Other Charges", "Total Bill Amount", "Processor", "Details", "Print"];
 
 const BillOfSalesReport = () => {
   const location = useLocation();
@@ -445,14 +443,14 @@ const BillOfSalesReport = () => {
       </div>
 
     ),
-    Cancel: (
-      <div className="flex justify-center items-center space-x-2 border p-2 rounded-lg text-white bg-gray-500 hover:bg-gray-700">
-        <button type='button' onClick={() => handleView(item)}>
-          Cancel
-        </button>
-      </div>
+    // Cancel: (
+    //   <div className="flex justify-center items-center space-x-2 border p-2 rounded-lg text-white bg-gray-500 hover:bg-gray-700">
+    //     <button type='button' onClick={() => handleView(item)}>
+    //       Cancel
+    //     </button>
+    //   </div>
 
-    )
+    // )
   }));
 
   const handleView = (rowData) => {

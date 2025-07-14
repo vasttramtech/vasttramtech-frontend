@@ -543,6 +543,7 @@ const Sidebar = () => {
         { label: "Sales Order Entry", path: "/sales-order-entry" },
         { label: "Sales Order Report", path: "/sales-order-report" },
         { label: "Sales Return Entry", path: "/sales-return-entry" },
+        { label: "Sales Return Reports", path: "/sales-return-reports" },
       ],
     },
     {
