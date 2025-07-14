@@ -131,29 +131,29 @@ const SalesReturnForm = () => {
             console.log("payload: ", payload)
 
             // const res = await axios.post("http://localhost:1337/api/sales-order-returns", payload);
-            // const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/sales-order-returns`, payload, {
-            //     headers: {
-            //         Authorization: `Bearer ${token}`,
-            //     },
-            // });
-            // const res2 = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/update-status-if-dispatched`, {
-            //         id: selectedSO?.id,
-            //         type: selectedSO?.sourceType === "internal" ? "internal-sales-order-entry" : "sales_oder_entries",
-            //         status: formData?.returnType === "Alter Items" ? "Alter" : "Return",
-            //     }, {
-            //     headers: {
-            //         Authorization: `Bearer ${token}`,
-            //     },
-            // });
+            const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/sales-order-returns`, payload, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            const res2 = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/update-status-if-dispatched`, {
+                    id: selectedSO?.id,
+                    type: selectedSO?.sourceType === "internal" ? "internal-sales-order-entry" : "sales_oder_entries",
+                    status: formData?.returnType === "Alter Items" ? "Alter" : "Return",
+                }, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
 
-            // if (res.status === 200 || res.status === 201) {
-            //     toast.success("Sales Order Return posted successfully!");
-            //     setSubmitting(false)
-            //     // Optional: reset form or navigate
-            // } else {
-            //     toast.error("Failed to post Sales Order Return.");
-            //     setSubmitting(false)
-            // }
+            if (res.status === 200 || res.status === 201) {
+                toast.success("Sales Order Return posted successfully!");
+                setSubmitting(false)
+                // Optional: reset form or navigate
+            } else {
+                toast.error("Failed to post Sales Order Return.");
+                setSubmitting(false)
+            }
 
         } catch (err) {
             console.error(err);
