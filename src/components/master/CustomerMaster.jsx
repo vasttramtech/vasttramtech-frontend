@@ -58,15 +58,17 @@ const CustomerMaster = () => {
   const [openEditModal, setOpenEditModal] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
   const dispatch = useDispatch();
- 
-  
-   //  adding pagination logic
- const [page, setPage] = useState(1);
- const [totalPages, setTotalPages] = useState(1);
- const [pageSize, setPageSize] = useState(5);
-const [paginationLoading, setPaginationLoading] = useState(false);
-  
-  
+
+
+  //  adding pagination logic
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
+  const [paginationLoading, setPaginationLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+
+
+
   const [customerMasterData, setCustomerMasterData] = useState([]);
   const [addressCategory, setAddressCategory] = useState([
     "Billing Address",
@@ -172,12 +174,12 @@ const [paginationLoading, setPaginationLoading] = useState(false);
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if(formData.company_name === ''|| formData.group_name === '' || formData.email_id === ''){
+    if (formData.company_name === '' || formData.group_name === '' || formData.email_id === '') {
       alert("Company Name, Group Name and Email is required");
       return;
     }
 
-    
+
 
     setSubmitting(true);
 
@@ -229,17 +231,17 @@ const [paginationLoading, setPaginationLoading] = useState(false);
         concerned_person: [],
       });
       setConcernedPersonDetails({
-      concerned_person_name: "",
-      mobile_number_1: "",
-      mobile_number_2: "",
-      mobile_number_3: "",
-      designation: "",
-      board_desk_no: "",
-      direct_desk_no: "",
-      email_id: "",
-      address: "",
-      alternate_email_id: "",
-    });
+        concerned_person_name: "",
+        mobile_number_1: "",
+        mobile_number_2: "",
+        mobile_number_3: "",
+        designation: "",
+        board_desk_no: "",
+        direct_desk_no: "",
+        email_id: "",
+        address: "",
+        alternate_email_id: "",
+      });
       setAddedConcernedPerson([]);
 
       fetchCustomerMasterData();
@@ -254,12 +256,18 @@ const [paginationLoading, setPaginationLoading] = useState(false);
   const fetchCustomerMasterData = async () => {
     try {
       setPaginationLoading(true);
-    
+
       const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/customer-masters?populate=*`, {
-        params:{
-          "pagination[page]" : page,
-          "pagination[pageSize]" : pageSize,
-          "sort[0]": "createdAt:desc"
+        params: {
+          "pagination[page]": page,
+          "pagination[pageSize]": pageSize,
+          "sort[0]": "createdAt:desc",
+          ...(searchTerm && {
+            "filters[$or][0][customer_id][$containsi]": searchTerm,
+            "filters[$or][1][group_name][$containsi]": searchTerm,
+            "filters[$or][2][company_name][$containsi]": searchTerm,
+            "filters[$or][3][billing_address][$containsi]": searchTerm,
+          }),
         },
         headers: {
           Authorization: `Bearer ${token}`,
@@ -290,33 +298,45 @@ const [paginationLoading, setPaginationLoading] = useState(false);
     }
   };
 
+  // useEffect(() => {
+  //   if (token) {
+  //     fetchCustomerMasterData();
+  //   } else {
+  //     navigate("/login");
+  //   }
+  // }, [token, navigate, page, pageSize]);
+
   useEffect(() => {
-    if (token) {
-      fetchCustomerMasterData();
-    } else {
-      navigate("/login");
-    }
-  }, [token, navigate, page, pageSize]);
-  
-  const clearHandler = (e) =>{
+    const delayDebounce = setTimeout(() => {
+      if (token) {
+        fetchCustomerMasterData();
+      } else {
+        navigate("/login");
+      }
+    }, 1000);
+
+    return () => clearTimeout(delayDebounce);
+  }, [searchTerm, page, pageSize, token, navigate]);
+
+  const clearHandler = (e) => {
     e.preventDefault();
-     setFormData({
-        group_name: "",
-        company_name: "",
-        fax_number: "",
-        credit_limit_days: "",
-        credit_limit_amount: "",
-        contact_number: "",
-        website: "",
-        address_category: "",
-        email_id: "",
-        billing_address: "",
-        state: "",
-        pan_number: "",
-        gstin_number: "",
-        concerned_person: [],
-      });
-      setConcernedPersonDetails({
+    setFormData({
+      group_name: "",
+      company_name: "",
+      fax_number: "",
+      credit_limit_days: "",
+      credit_limit_amount: "",
+      contact_number: "",
+      website: "",
+      address_category: "",
+      email_id: "",
+      billing_address: "",
+      state: "",
+      pan_number: "",
+      gstin_number: "",
+      concerned_person: [],
+    });
+    setConcernedPersonDetails({
       concerned_person_name: "",
       mobile_number_1: "",
       mobile_number_2: "",
@@ -328,7 +348,7 @@ const [paginationLoading, setPaginationLoading] = useState(false);
       address: "",
       alternate_email_id: "",
     });
-      setAddedConcernedPerson([]);
+    setAddedConcernedPerson([]);
   }
 
 
@@ -340,7 +360,7 @@ const [paginationLoading, setPaginationLoading] = useState(false);
           <img src={ViewIcon} alt="View" className="mr-4 w-4" />
         </button>
         <button onClick={() => handleEdit(item)}>
-          <img src={EditIcon} alt="Edit" className="w-4" />
+          <img src={EditIcon} alt="Edit" className="mr-4 w-4" />
         </button>
       </div>
     ),
@@ -858,10 +878,16 @@ const [paginationLoading, setPaginationLoading] = useState(false);
           <div className="mb-16">
             {paginationLoading ? (
               <div className="flex p-5 justify-center items-center space-x-2 mt-4 border border-gray-400 rounded-lg">
-                  <BounceLoader size={20} color="#1e3a8a" />
+                <BounceLoader size={20} color="#1e3a8a" />
               </div>
             ) : (
-              <SmartTable headers={headers} data={enhancedData} />
+              // <SmartTable headers={headers} data={enhancedData} />
+              <SmartTable
+                headers={headers}
+                data={enhancedData}
+                searchTerm={searchTerm}
+                setSearchTerm={setSearchTerm}
+              />
             )}
 
             <Pagination
@@ -879,4 +905,3 @@ const [paginationLoading, setPaginationLoading] = useState(false);
 };
 
 export default CustomerMaster;
- 

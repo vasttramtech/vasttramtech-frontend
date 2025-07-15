@@ -85,16 +85,16 @@ import { useNavigate } from "react-router-dom";
 import filter from "../assets/Others/Filter.png";
 import Search from "../assets/Others/Search.png";
 
-const SmartTable1 = ({ headers, data, onRowClick }) => {
+const SmartTable1 = ({ headers, data, onRowClick ,searchTerm, setSearchTerm }) => {
     const navigate = useNavigate();
-    const [searchTerm, setSearchTerm] = useState("");
+    // const [searchTerm, setSearchTerm] = useState("");
 
     // Filter Data Based on Search
-    const filteredData = data.filter((item) =>
-        Object.values(item).some((val) =>
-            val != null && val.toString().toLowerCase().includes(searchTerm.toLowerCase())
-        )
-    );
+    // const filteredData = data.filter((item) =>
+    //     Object.values(item).some((val) =>
+    //         val != null && val.toString().toLowerCase().includes(searchTerm.toLowerCase())
+    //     )
+    // );
 
     return (
         <div className="p-2 w-full">
@@ -132,8 +132,8 @@ const SmartTable1 = ({ headers, data, onRowClick }) => {
 
                         {/* Table Body */}
                         <tbody>
-                            {filteredData.length > 0 ? (
-                                filteredData.map((item, rowIndex) => (
+                            {data.length > 0 ? (
+                                data.map((item, rowIndex) => (
                                     <tr
                                         key={rowIndex}
                                         className="cursor-pointer hover:bg-gray-100 transition"

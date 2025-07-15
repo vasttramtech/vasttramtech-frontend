@@ -44,7 +44,7 @@ const BOMSection = ({
 
   return (
     <div>
-      <div className="fixed top-11 w-[90vw] max-h-[90vh] overflow-y-auto z-10 bg-gray-200 border border-gray-300 rounded-xl p-4">
+      <div className="fixed top-11 w-[80vw] max-h-[90vh] overflow-y-auto z-10 bg-gray-200 border border-gray-300 rounded-xl p-4">
         <div className="flex justify-between my-1 items-center">
           <h3 className="text-2xl font-bold">Add Bom</h3>
           <p

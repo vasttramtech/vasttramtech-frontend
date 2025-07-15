@@ -27,17 +27,19 @@ const ColorMaster = () => {
     const [selectedRow, setSelectedRow] = useState(null);
     const [loading, setLoading] = useState(false);
     const [openEditModal, setOpenEditModal] = useState(false);
-    const dispatch=useDispatch();
+    const dispatch = useDispatch();
     const [formData, setFormData] = useState({
-        colorId:"",
-        colorName:""
+        colorId: "",
+        colorName: ""
     });
 
-        //  adding pagination logic
+    //  adding pagination logic
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [pageSize, setPageSize] = useState(5);
     const [paginationLoading, setPaginationLoading] = useState(false);
+    const [searchTerm, setSearchTerm] = useState("");
+
 
     const handleRowClick = (rowData) => {
         navigate(`/profile/${rowData.id}`);
@@ -72,10 +74,14 @@ const ColorMaster = () => {
         try {
             setPaginationLoading(true);
             const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/colors?populate=*`, {
-                params:{
+                params: {
                     "pagination[page]": page,
                     "pagination[pageSize]": pageSize,
-                    "sort[0]": "createdAt:desc"
+                    "sort[0]": "createdAt:desc",
+                    ...(searchTerm && {
+                        "filters[$or][0][color_id][$containsi]": searchTerm,
+                        "filters[$or][1][color_name][$containsi]": searchTerm
+                    })
                 },
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -153,15 +159,27 @@ const ColorMaster = () => {
         }
     }, [token, navigate, refresh, page, pageSize]);
 
+    useEffect(() => {
+        const delayDebounce = setTimeout(() => {
+            if (token) {
+                fetchColorMasterData();
+            } else {
+                navigate("/login");
+            }
+        }, 1000)
+        return () => clearTimeout(delayDebounce);
 
-    const clearHandler = (e) =>{
+    }, [searchTerm, page, pageSize, token, navigate, refresh])
+
+
+    const clearHandler = (e) => {
         e.preventDefault();
-         setFormData({
-                colorName: "",
-                colorId: ""
-            });
+        setFormData({
+            colorName: "",
+            colorId: ""
+        });
     }
-    
+
     return (
         <div className="py-2 bg-white rounded-lg relative">
             {loading ? (
@@ -185,7 +203,7 @@ const ColorMaster = () => {
                     )}
 
                     <form className="grid grid-cols-2 gap-6 p-5 rounded-lg border border-gray-200 shadow-md mb-16" onSubmit={handleSubmit}>
-                        
+
 
                         {/* Color ID */}
                         <div className="flex flex-col">
@@ -209,9 +227,9 @@ const ColorMaster = () => {
 
                         {/* Buttons */}
                         <div className="col-span-2 flex justify-end mt-4">
-                            <button 
-                            onClick={clearHandler}
-                            type="button" className="bg-gray-200 px-4 py-1 rounded hover:bg-gray-600 hover:text-white transition">
+                            <button
+                                onClick={clearHandler}
+                                type="button" className="bg-gray-200 px-4 py-1 rounded hover:bg-gray-600 hover:text-white transition">
                                 Cancel
                             </button>
                             <button
@@ -234,22 +252,28 @@ const ColorMaster = () => {
 
                     <div className="mb-16">
                         {paginationLoading ? (
-                        <div className="flex p-5 justify-center items-center space-x-2 mt-4 border border-gray-400 rounded-lg">
-                            <BounceLoader size={20} color="#1e3a8a" />
-                        </div>
+                            <div className="flex p-5 justify-center items-center space-x-2 mt-4 border border-gray-400 rounded-lg">
+                                <BounceLoader size={20} color="#1e3a8a" />
+                            </div>
                         ) : (
-                        <SmartTable headers={headers} data={enhancedData} />
+                            // <SmartTable headers={headers} data={enhancedData} />
+                            <SmartTable
+                                headers={headers}
+                                data={enhancedData}
+                                searchTerm={searchTerm}
+                                setSearchTerm={setSearchTerm}
+                            />
                         )}
 
                         <Pagination
-                        setPage={setPage}
-                        totalPages={totalPages}
-                        page={page}
-                        setPageSize={setPageSize}
-                        pageSize={pageSize}
+                            setPage={setPage}
+                            totalPages={totalPages}
+                            page={page}
+                            setPageSize={setPageSize}
+                            pageSize={pageSize}
                         />
                     </div>
-                    
+
                 </div>
             )}
         </div>

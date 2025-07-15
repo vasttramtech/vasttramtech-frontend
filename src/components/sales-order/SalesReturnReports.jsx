@@ -9,6 +9,7 @@ import { useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ViewIcon from "../../assets/Others/ViewIcon.png";
 import Pagination from '../utility/Pagination';
+import SmartTable from '../../smartTable/SmartTable';
 
 
 
@@ -22,6 +23,7 @@ const SalesReturnReports = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
     const [salesOrderReturn, setSalesOrderReturn] = useState([]);
+    const [searchTerm, setSearchTerm] = useState("");
 
     //  adding pagination logic
     const [page, setPage] = useState(1);
@@ -106,6 +108,15 @@ const SalesReturnReports = () => {
                         designation: designation,
                         userId: id,
                         "sort[0]": "createdAt:desc",
+                        ...(searchTerm && {
+                            "filters[$or][0][so_id][$containsi]": searchTerm,
+                            "filters[$or][1][return_type][$containsi]": searchTerm,
+                            "filters[$or][2][return_date][$containsi]": searchTerm,
+                            "filters[$or][3][bill_No][$containsi]": searchTerm,
+                            "filters[$or][4][cn_no][$containsi]": searchTerm,
+                            "filters[$or][5][remarks][$containsi]": searchTerm,
+                            "filters[$or][6][customer_master][company_name][$containsi]": searchTerm
+                        }),
                     },
                 }
             );
@@ -121,13 +132,13 @@ const SalesReturnReports = () => {
             const mappedData = data.map((returns) => {
                 return {
                     id: returns.id,
-                    so_id : returns?.so_id,
-                    returnType : returns?.return_type,
-                    returnDate : returns?.return_date,
-                    customer : returns?.customer_master?.company_name || "",
-                    bill_No : returns?.bill_No,
-                    cn_no : returns?.cn_no,
-                    remarks : returns?.remarks
+                    so_id: returns?.so_id,
+                    returnType: returns?.return_type,
+                    returnDate: returns?.return_date,
+                    customer: returns?.customer_master?.company_name || "",
+                    bill_No: returns?.bill_No,
+                    cn_no: returns?.cn_no,
+                    remarks: returns?.remarks
 
                 };
             });
@@ -144,13 +155,25 @@ const SalesReturnReports = () => {
         }
     }
 
+    // useEffect(() => {
+    //     if (!token) {
+    //         navigate("/login");
+    //         return;
+    //     }
+    //     fetchSalesReturnData();
+    // }, [token, page, pageSize]);
+
     useEffect(() => {
-        if (!token) {
-            navigate("/login");
-            return;
-        }
-        fetchSalesReturnData();
-    }, [token, page, pageSize]);
+        const delayDebounce = setTimeout(() => {
+            if (!token) {
+                navigate("/login");
+                return;
+            }
+            fetchSalesReturnData();
+        }, 1000);
+
+        return () => clearTimeout(delayDebounce);
+    }, [searchTerm, page, pageSize]);
 
     console.log("salesOrderReturn: ", salesOrderReturn)
 
@@ -191,7 +214,15 @@ const SalesReturnReports = () => {
                         ) : (
                             <>
                                 {/* <SmartTable1 headers={headers} data={updateData} /> */}
-                                <SmartTable1 headers={headersForTable} data={enhancedData} />
+                                {/* <SmartTable1 headers={headersForTable} data={enhancedData} /> */}
+
+                                <SmartTable
+                                    headers={headersForTable}
+                                    data={enhancedData}
+                                    searchTerm={searchTerm}
+                                    setSearchTerm={setSearchTerm}
+                                />
+
 
                                 <Pagination
                                     setPage={setPage}

@@ -40,6 +40,7 @@ const PurchaseOrderList = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [pageSize, setPageSize] = useState(5);
   const [paginationLoading, setPaginationLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const fetchPurchaseOrderList = async () => {
     try {
@@ -48,7 +49,16 @@ const PurchaseOrderList = () => {
         params: {
           "pagination[page]": page,
           "pagination[pageSize]": pageSize,
-          "sort[0]": "createdAt:desc"
+          "sort[0]": "createdAt:desc",
+          ...(searchTerm && {
+            "filters[$or][0][id][$containsi]": searchTerm,
+            "filters[$or][1][date][$containsi]": searchTerm,
+            "filters[$or][2][supplier][company_name][$containsi]": searchTerm,
+            "filters[$or][3][remark][$containsi]": searchTerm,
+            "filters[$or][4][purchase_order_status][$containsi]": searchTerm,
+            "filters[$or][5][total][$containsi]": searchTerm,
+          }),
+
         },
         headers: {
           Authorization: `Bearer ${token}`,
@@ -80,15 +90,19 @@ const PurchaseOrderList = () => {
   };
 
   useEffect(() => {
-    if (token) {
-      fetchPurchaseOrderList();
-    } else {
-      navigate("/login");
-    }
-  }, [token, navigate, page, pageSize]);
+    const delayDebounce = setTimeout(() => {
+      if (token) {
+        fetchPurchaseOrderList();
+      } else {
+        navigate("/login");
+      }
+    }, 1000);
+
+    return () => clearTimeout(delayDebounce);
+  }, [searchTerm, page, pageSize]);
 
   const handleView = (rowData) => {
-    navigate(`/purchase-order-list/${rowData.id}` , { state: { purchase_id: rowData.purchase_id } });
+    navigate(`/purchase-order-list/${rowData.id}`, { state: { purchase_id: rowData.purchase_id } });
   };
 
   const handleEdit = (rowData) => {
@@ -134,7 +148,7 @@ const PurchaseOrderList = () => {
       } catch (error) {
         console.error("Error rejecting PO:", error);
         Swal.fire("Error!", "Something went wrong. Try again.", "error");
-      } finally{
+      } finally {
         setLoading(false);
       }
     }
@@ -176,7 +190,7 @@ const PurchaseOrderList = () => {
       } catch (error) {
         console.error("Error Closing PO:", error);
         Swal.fire("Error!", "Something went wrong. Try again.", "error");
-      } finally{
+      } finally {
         setLoading(false);
       }
     }
@@ -198,11 +212,10 @@ const PurchaseOrderList = () => {
         <button
           onClick={() => handleEdit(raw)}
           disabled={raw.status === "Complete" || raw.status === "Rejected" || raw.status === "Closed" || raw.status === "Partially Receive"}
-          className={`w-4 transition-opacity ${
-            raw.status === "Complete" || raw.status === "Rejected" || raw.status === "Closed" || raw.status === "Partially Receive"
-              ? "opacity-50 cursor-not-allowed"
-              : "opacity-100 hover:opacity-80"
-          }`}
+          className={`w-4 transition-opacity ${raw.status === "Complete" || raw.status === "Rejected" || raw.status === "Closed" || raw.status === "Partially Receive"
+            ? "opacity-50 cursor-not-allowed"
+            : "opacity-100 hover:opacity-80"
+            }`}
         >
           <img src={EditIcon} alt="Edit" className="w-4" />
         </button>
@@ -285,13 +298,19 @@ const PurchaseOrderList = () => {
             </div>
           )}
 
-            <div className="mb-16">
+          <div className="mb-16">
             {paginationLoading ? (
               <div className="flex p-5 justify-center items-center space-x-2 mt-4 border border-gray-400 rounded-lg">
-                  <BounceLoader size={20} color="#1e3a8a" />
+                <BounceLoader size={20} color="#1e3a8a" />
               </div>
             ) : (
-            <SmartTable headers={headers} data={updatedRawData} />
+              <SmartTable
+                headers={headers}
+                data={updatedRawData}
+                searchTerm={searchTerm}
+                setSearchTerm={setSearchTerm}
+              />
+
             )}
 
             <Pagination
@@ -303,7 +322,7 @@ const PurchaseOrderList = () => {
             />
           </div>
         </div>
-        )}
+      )}
     </div>
   );
 };

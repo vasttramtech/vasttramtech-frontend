@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import SmartTable1 from '../../smartTable/SmartTable1';
+import SmartTable from '../../smartTable/SmartTable';
 import { FcViewDetails } from 'react-icons/fc';
 import { MdOutlineDetails, MdPrint } from 'react-icons/md';
 import { BounceLoader, PuffLoader } from "react-spinners";
@@ -9,38 +9,40 @@ import { useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ViewIcon from "../../assets/Others/ViewIcon.png";
 import Pagination from '../utility/Pagination';
+import SmartTable1 from '../../smartTable/SmartTable1';
 
 
 
 const headersForTable = [
-    "StockIn Id", 
-    "StockIn Date",
-    "Supplier Name",
-    "Invoice No",
-    "Invoice Data",
-    "Challan No",
-    "Remarks",
-    "PO ID",
-    "State Name",
-    "Details" 
-    ];
+  "StockIn Id",
+  "StockIn Date",
+  "Supplier Name",
+  "Invoice No",
+  "Invoice Data",
+  "Challan No",
+  "Remarks",
+  "PO ID",
+  "State Name",
+  "Details"
+];
 
 
 
-const StockInReport = () => { 
+const StockInReport = () => {
   const location = useLocation()
   const title = location.state?.title || 'Stock In Report';
   const { token } = useSelector(state => state.auth);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [stockData, setBillData] = useState([]);
-  
-  
-      //  adding pagination logic
+
+
+  //  adding pagination logic
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [pageSize, setPageSize] = useState(5);
   const [paginationLoading, setPaginationLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   // Using useRef to get the table element reference
   const printableTableRef = useRef();
@@ -99,26 +101,37 @@ const StockInReport = () => {
   }
 
   function formatDate(dateString) {
-  const date = new Date(dateString);
-  const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
-  const year = String(date.getFullYear()).slice(-2); // Get last 2 digits of year
-  return `${day}/${month}/${year}`;
-}
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const year = String(date.getFullYear()).slice(-2); // Get last 2 digits of year
+    return `${day}/${month}/${year}`;
+  }
 
 
   const fetchStockInData = async () => {
     try {
-      
+
       setLoading(true);
-      const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/stock-ins`, { 
+      const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/stock-ins`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-        params:{
-          "pagination[page]" : page,
-          "pagination[pageSize]" : pageSize,
-          "sort[0]": "createdAt:desc"
+        params: {
+          "pagination[page]": page,
+          "pagination[pageSize]": pageSize,
+          "sort[0]": "createdAt:desc",
+          ...(searchTerm && {
+            "filters[$or][0][id][$containsi]": searchTerm,
+            "filters[$or][1][date][$containsi]": searchTerm,
+            "filters[$or][2][invoice_no][$containsi]": searchTerm,
+            "filters[$or][3][invoice_date][$containsi]": searchTerm,
+            "filters[$or][4][challan_no][$containsi]": searchTerm,
+            "filters[$or][5][remark][$containsi]": searchTerm,
+            "filters[$or][6][purchase_order][id][$containsi]": searchTerm,
+            "filters[$or][7][purchase_order][supplier][company_name][$containsi]": searchTerm,
+            "filters[$or][8][purchase_order][supplier][state][$containsi]": searchTerm,
+          }),
         }
       });
 
@@ -126,7 +139,7 @@ const StockInReport = () => {
       setTotalPages(response.data.meta.pagination.pageCount);
       console.log("data of stock in report : ", response.data);
       const mappedData = data?.map((stocks) => {
-        return{
+        return {
           id: stocks.id,
           date: formatDate(stocks?.date) || "N/A",
           supplier_name: stocks?.purchase_order?.supplier?.company_name || "N/A",
@@ -134,9 +147,9 @@ const StockInReport = () => {
           invoice_date: formatDate(stocks.invoice_date),
           challan_number: stocks.challan_no,
           remarks: stocks.remark,
-          po_id:  stocks?.purchase_order?.id,
+          po_id: stocks?.purchase_order?.id,
           state_name: stocks?.purchase_order?.supplier?.state
-        
+
         };
       });
 
@@ -150,18 +163,22 @@ const StockInReport = () => {
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
-    if (!token) {
-      navigate("/login");
-      return;
-    }
-    fetchStockInData();
-  }, [token, page, pageSize]);
+    const delayDebounce = setTimeout(() => {
+      if (!token) {
+        navigate("/login");
+        return;
+      }
+      fetchStockInData();
+    }, 1000);
+
+    return () => clearTimeout(delayDebounce);
+  }, [searchTerm, page, pageSize]);
 
   console.log("stockData: ", stockData)
- 
+
   const enhancedData = stockData.map((item) => ({
     ...item,
     Actions: (
@@ -191,23 +208,31 @@ const StockInReport = () => {
           <div className="my-8" ref={printableTableRef}>
 
             {paginationLoading ? (
-          <div className="flex p-5 justify-center items-center space-x-2 mt-4 border border-gray-400 rounded-lg">
-            <BounceLoader size={20} color="#1e3a8a" />
-          </div>
-        ) : (
-          <>
-            {/* <SmartTable1 headers={headers} data={updateData} /> */}
-            <SmartTable1 headers={headersForTable} data={enhancedData} />
+              <div className="flex p-5 justify-center items-center space-x-2 mt-4 border border-gray-400 rounded-lg">
+                <BounceLoader size={20} color="#1e3a8a" />
+              </div>
+            ) : (
+              <>
+                {/* <SmartTable1 headers={headers} data={updateData} /> */}
+                {/* <SmartTable1 headers={headersForTable} data={enhancedData} /> */}
 
-            <Pagination
-              setPage={setPage}
-              totalPages={totalPages}
-              page={page}
-              setPageSize={setPageSize}
-              pageSize={pageSize}
-            />
-          </>
-        )}
+                <SmartTable1
+                  headers={headersForTable}
+                  data={enhancedData}
+                  searchTerm={searchTerm}
+                  setSearchTerm={setSearchTerm}
+                />
+
+
+                <Pagination
+                  setPage={setPage}
+                  totalPages={totalPages}
+                  page={page}
+                  setPageSize={setPageSize}
+                  pageSize={pageSize}
+                />
+              </>
+            )}
           </div>
 
 

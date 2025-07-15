@@ -16,7 +16,7 @@ import { BounceLoader, PuffLoader } from "react-spinners";
 import EditSemiFinishedGoodsMaster from "./EditModals/EditSemiFinishedGoodsMaster";
 import Pagination from "../utility/Pagination";
 
-const headers = ["document_id","Id" , "Semi-Finished Goods Id", "Group", "Semi-Finished Goods Name", "Description", "Unit", "View/Edit", "Pin"];
+const headers = ["document_id", "Id", "Semi-Finished Goods Id", "Group", "Semi-Finished Goods Name", "Description", "Unit", "View/Edit", "Pin"];
 
 
 const SemiFinishedGoodsMaster = () => {
@@ -35,6 +35,7 @@ const SemiFinishedGoodsMaster = () => {
     const [refresh, setRefresh] = useState(false);
     const [colors, setColors] = useState([]);
     const [openEditModal, setOpenEditModal] = useState(false);
+    const [searchTerm, setSearchTerm] = useState("");
 
 
 
@@ -57,7 +58,7 @@ const SemiFinishedGoodsMaster = () => {
     const [dataLoading, setDataLoading] = useState(false);
 
 
-        //  adding pagination logic
+    //  adding pagination logic
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [pageSize, setPageSize] = useState(5);
@@ -67,22 +68,30 @@ const SemiFinishedGoodsMaster = () => {
         try {
             setPaginationLoading(true);
             const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/semi-finished-goods-masters?populate[unit]=*&populate[group]=*`, {
-                params:{
-                    "pagination[page]" : page,
-                    "pagination[pageSize]" : pageSize,
-                    "sort[0]": "createdAt:desc"
+                params: {
+                    "pagination[page]": page,
+                    "pagination[pageSize]": pageSize,
+                    "sort[0]": "createdAt:desc",
+                    ...(searchTerm && {
+                        "filters[$or][0][semi_finished_goods_id][$containsi]": searchTerm,
+                        "filters[$or][1][group][group_name][$containsi]": searchTerm,
+                        "filters[$or][2][semi_finished_goods_name][$containsi]": searchTerm,
+                        "filters[$or][3][description][$containsi]": searchTerm,
+                        "filters[$or][4][unit][unit_name][$containsi]": searchTerm,
+                    }),
+
                 },
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             });
-            console.log("data returned" , response);
+            console.log("data returned", response);
             const data = Array.isArray(response.data.data) ? response.data.data : [];
             setTotalPages(response.data.meta.pagination.pageCount);
 
             const mappedSFGMaterial = data.map(goods => ({
                 id: goods?.documentId,
-                item_id:goods?.id,
+                item_id: goods?.id,
                 semi_finished_goods_id: goods?.semi_finished_goods_id,
                 group: goods?.group?.group_name || "N/A",
                 semi_finished_goods_name: goods?.semi_finished_goods_name || "N/A",
@@ -102,110 +111,6 @@ const SemiFinishedGoodsMaster = () => {
     };
 
 
-    // updated checked boxes 
-    // function updateCheckedBoxes() {
-    //     setJobber((prev) =>
-    //         prev.map((j) => (
-    //             selectedJobbers.some((jobberr) => jobberr.jobber_id == j.jobber_id) ?
-    //                 {
-    //                     ...j, select: <input
-    //                         type="checkbox"
-    //                         checked
-    //                         onChange={() => handleCheckboxChange(j)}
-    //                     />
-    //                 }
-    //                 : {
-    //                     ...j, select: <input
-    //                         type="checkbox"
-    //                         onChange={() => handleCheckboxChange(j)}
-    //                     />
-    //                 }
-    //         ))
-    //     );
-    // }
-
-    // const handleAddKarigar = () => {
-
-    //     if (!formData.color || formData.color.trim() === "") {
-    //         alert("Please select the color before adding a Karigar.");
-    //         return;
-    //     }
-    //     if (!formData.unit || formData.unit.trim() === "") {
-    //         alert("Please select the unit before adding a Karigar.");
-    //         return;
-    //     }
-
-    //     setJobberModal(true);
-    // };
-
-    // const updateKarigars = () => {
-    //     if (selectedJobbers.length === 0) {
-    //         alert("Select At Least One Jobber");
-    //         return;
-    //     }
-
-    //     setFormData((prevFormData) => ({
-    //         ...prevFormData,
-    //         add_karigar: selectedJobbers.map((jobber) => ({
-    //             jobber: jobber.documentId,
-    //             notes: jobber.jobber_plan,
-    //             rate: 1
-    //         }))
-    //     }));
-    //     setAddedJobber(selectedJobbers);
-    //     setJobberModal(false);
-    // };
-
-    // function handleCheckboxChange(jobber) {
-    //     setSelectedJobbers((prevSelected) => {
-    //         if (prevSelected.some((j) => j.jobber_id === jobber.jobber_id)) {
-    //             setJobber((prev) =>
-    //                 prev.map((j) => (
-    //                     j.jobber_id === jobber.jobber_id ?
-    //                         {
-    //                             ...j, select: <input
-    //                                 type="checkbox"
-    //                                 onChange={() => handleCheckboxChange(j)}
-    //                             />
-    //                         }
-    //                         : j
-    //                 ))
-    //             );
-    //             return prevSelected.filter((j) => j.jobber_id !== jobber.jobber_id);
-    //         } else {
-    //             setJobber((prev) =>
-    //                 prev.map((j) => (
-    //                     j.jobber_id === jobber.jobber_id ?
-    //                         {
-    //                             ...j, select: <input
-    //                                 type="checkbox"
-    //                                 checked
-    //                                 onChange={() => handleCheckboxChange(j)}
-    //                             />
-    //                         }
-    //                         : j
-    //                 ))
-    //             );
-    //             return [...prevSelected, jobber];
-    //         }
-    //     });
-    // };
-
-    // const handleJobberInputChange = (id, field, value) => {
-    //     setSelectedJobbers((prev) =>
-    //         prev.map((jobber) =>
-    //             jobber.id === id ? { ...jobber, [field]: value } : jobber
-    //         )
-    //     );
-    // };
-
-    // useEffect(() => {
-    //     updateCheckedBoxes();
-    // }, [selectedJobbers, addedJobber])
-
-
-
-
     const handleRowClick = (rowData) => {
         navigate(`/profile/${rowData.id}`);
     };
@@ -217,13 +122,13 @@ const SemiFinishedGoodsMaster = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if(formData.semi_finished_goods_name == "" || formData.unit == "" || formData.group == ""){ 
+        if (formData.semi_finished_goods_name == "" || formData.unit == "" || formData.group == "") {
             alert("Semi Finished Goods Name, Unit and Group is required");
             return;
         }
 
         setSubmitting(true);
-     
+
 
         const postData = {
             data: {
@@ -254,7 +159,7 @@ const SemiFinishedGoodsMaster = () => {
 
             fetchSemiFinishedGoodsData();
             fetchSemiFinishedGoodsAndUnit();
-            
+
 
         } catch (error) {
             console.error("Error posting semifinishedgoods data:", error);
@@ -264,74 +169,24 @@ const SemiFinishedGoodsMaster = () => {
         }
     }
 
-    // const fetchSemiFinishedGoodsAndUnit = async () => {
-    //     try {
-    //         // setLoading(true);
-    //         setDataLoading(true);
-    //         const response1 = await axios.get(
-    //             `${process.env.REACT_APP_BACKEND_URL}/api/sfgm-groups?populate=*`,
-    //             {
-    //                 headers: {
-    //                     Authorization: `Bearer ${token}`,
-    //                 },
-    //             }
-    //         );
-    //         const response2 = await axios.get(
-    //             `${process.env.REACT_APP_BACKEND_URL}/api/units?populate=*`,
-    //             {
-    //                 headers: {
-    //                     Authorization: `Bearer ${token}`,
-    //                 },
-    //             }
-    //         );
-    //         const response3 = await axios.get(
-    //             `${process.env.REACT_APP_BACKEND_URL}/api/colors?populate=*`,
-    //             {
-    //                 headers: {
-    //                     Authorization: `Bearer ${token}`,
-    //                 },
-    //             }
-    //         );
-    //         const semiGoods = Array.isArray(response1.data.data)
-    //             ? response1.data.data
-    //             : [];
-    //         setSemiFinishedGoods(semiGoods);
-    //         const units = Array.isArray(response2.data.data)
-    //             ? response2.data.data
-    //             : [];
-    //         setUnit(units);
-    //         const colors = Array.isArray(response3.data.data)
-    //             ? response3.data.data
-    //             : [];
-    //         setColors(colors);
-    //     } catch (error) {
-    //         console.error("Error fetching jobber data:", error);
-    //         if (error.response?.status === 401) {
-    //             navigate("/login");
-    //         }
-    //     } finally {
-    //         setDataLoading(false);
-    //         // setLoading(false);
-    //     }
-    // };
 
     const fetchSemiFinishedGoodsAndUnit = async () => {
         try {
-            
+
             setLoading(true);
             const headers = {
                 Authorization: `Bearer ${token}`,
             };
-    
+
             const endpoints = [
                 `${process.env.REACT_APP_BACKEND_URL}/api/sfgm-groups?populate=*`,
                 `${process.env.REACT_APP_BACKEND_URL}/api/units?populate=*`,
             ];
-    
+
             const [sfgmRes, unitRes] = await Promise.all(
                 endpoints.map((url) => axios.get(url, { headers }))
             );
-    
+
             setSemiFinishedGoods(Array.isArray(sfgmRes.data.data) ? sfgmRes.data.data : []);
             setUnit(Array.isArray(unitRes.data.data) ? unitRes.data.data : []);
         } catch (error) {
@@ -343,45 +198,6 @@ const SemiFinishedGoodsMaster = () => {
             setLoading(false);
         }
     };
-    
-
-    // const fetchJobberData = async () => {
-    //     try {
-    //         setLoading(true);
-    //         const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/jobber-masters`, {
-    //             headers: {
-    //                 Authorization: `Bearer ${token}`,
-    //             },
-    //         });
-
-    //         const jobberData = Array.isArray(response.data.data) ? response.data.data : [];
-    //         setJobberDetail(jobberData);
-
-    //         const mappedJobbers = jobberData.map(jobber => ({
-    //             select: <input
-    //                 type="checkbox"
-    //                 checked={selectedJobbers.some(j => j.jobber_id === jobber.jobber_id)}
-    //                 onChange={() => handleCheckboxChange(jobber)}
-    //             />,
-    //             id: jobber.id,
-    //             jobber_id: jobber.jobber_id,
-    //             jobber_name: jobber.jobber_name,
-    //             days: jobber.days,
-    //             work_type: jobber.work_type,
-    //             address: jobber.jobber_address,
-    //         }));
-
-    //         setJobber(mappedJobbers);
-    //     } catch (error) {
-    //         console.error("Error fetching jobber data:", error);
-    //         if (error.response?.status === 401) {
-    //             navigate("/login");
-    //         }
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
-
 
     useEffect(() => {
         if (token) {
@@ -390,16 +206,29 @@ const SemiFinishedGoodsMaster = () => {
         } else {
             navigate("/login");
         }
-    }, [token, navigate, refresh ]);
+    }, [token, navigate, refresh]);
 
-    useEffect(()=>{
-        if(token){
-            fetchSemiFinishedGoodsData();
-        }
-        else{
-            navigate("/token");
-        }
-    }, [page, pageSize, refresh])
+    // useEffect(() => {
+    //     if (token) {
+    //         fetchSemiFinishedGoodsData();
+    //     }
+    //     else {
+    //         navigate("/token");
+    //     }
+    // }, [page, pageSize, refresh])
+
+    useEffect(() => {
+        const delayDebounce = setTimeout(() => {
+            if (token) {
+                fetchSemiFinishedGoodsData();
+            }
+            else {
+                navigate("/token");
+            }
+        }, 1000);
+
+        return () => clearTimeout(delayDebounce);
+    }, [searchTerm, page, pageSize, refresh]);
 
 
     const enhancedData = semiFinishedGoodsData.map((item) => ({
@@ -436,13 +265,13 @@ const SemiFinishedGoodsMaster = () => {
     };
 
     const handleCancel = () => {
-        
-            setFormData({
-                group: "",
-                semi_finished_goods_name: "",
-                unit: "",
-                description: "",
-            });
+
+        setFormData({
+            group: "",
+            semi_finished_goods_name: "",
+            unit: "",
+            description: "",
+        });
     };
 
     return (
@@ -468,9 +297,9 @@ const SemiFinishedGoodsMaster = () => {
                         </div>
                     }
 
-                  
 
-              
+
+
 
                     {openEditModal && (
                         <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50 overflow-y-auto">
@@ -514,7 +343,7 @@ const SemiFinishedGoodsMaster = () => {
                         </div>
 
 
-                     
+
 
                         {/* Semi-Finished Goods Name */}
                         <div className="flex flex-col">
@@ -563,7 +392,7 @@ const SemiFinishedGoodsMaster = () => {
 
 
 
-                      
+
 
 
 
@@ -571,7 +400,7 @@ const SemiFinishedGoodsMaster = () => {
                         <div className="col-span-2 flex justify-end mt-4">
                             <button type="button"
                                 onClick={handleCancel}
-                             className="bg-gray-200 px-4 py-1 rounded hover:bg-gray-600 hover:text-white transition">
+                                className="bg-gray-200 px-4 py-1 rounded hover:bg-gray-600 hover:text-white transition">
                                 Cancel
                             </button>
                             <button
@@ -592,23 +421,29 @@ const SemiFinishedGoodsMaster = () => {
                         </div>
                     </form>
                     <div className="mb-16">
-            {paginationLoading ? (
-              <div className="flex p-5 justify-center items-center space-x-2 mt-4 border border-gray-400 rounded-lg">
-                  <BounceLoader size={20} color="#1e3a8a" />
-              </div>
-            ) : (
-              <SmartTable headers={headers} data={enhancedData} />
-            )}
+                        {paginationLoading ? (
+                            <div className="flex p-5 justify-center items-center space-x-2 mt-4 border border-gray-400 rounded-lg">
+                                <BounceLoader size={20} color="#1e3a8a" />
+                            </div>
+                        ) : (
+                            // <SmartTable headers={headers} data={enhancedData} />
+                            <SmartTable
+                                headers={headers}
+                                data={enhancedData}
+                                searchTerm={searchTerm}
+                                setSearchTerm={setSearchTerm}
+                            />
+                        )}
 
-            <Pagination
-              setPage={setPage}
-              totalPages={totalPages}
-              page={page}
-              setPageSize={setPageSize}
-              pageSize={pageSize}
-            />
-          </div>
-        </div>
+                        <Pagination
+                            setPage={setPage}
+                            totalPages={totalPages}
+                            page={page}
+                            setPageSize={setPageSize}
+                            pageSize={pageSize}
+                        />
+                    </div>
+                </div>
             )}
         </div>
     );

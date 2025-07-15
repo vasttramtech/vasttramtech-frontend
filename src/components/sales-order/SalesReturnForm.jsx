@@ -82,6 +82,10 @@ const SalesReturnForm = () => {
 
             const dispatchedOrders = response?.data || [];
 
+            if (dispatchedOrders.length < 0){
+                toast.error("No Dispatched order found");
+            }
+
             setSalesOrders(dispatchedOrders);
             setShowModal(true);
             setLoading(false);
