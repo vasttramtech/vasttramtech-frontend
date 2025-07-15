@@ -6,7 +6,7 @@ import axios from "axios";
 import SelectionTable from "../../../smartTable/SelectionTable";
 import SelectedJobbersTable from "../component/SelectedJobbersTable"
 import SelectedRawMaterialsTable from "../component/SelectedRawMaterialsTable";
-import {  Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import Select from "react-select"
 
 const rawmaterialHeader = [
@@ -106,7 +106,7 @@ const SFGBomSection = ({
   });
 
   const sfgDataHandler = (event) => {
-  
+
     const { name, value } = event.target;
 
     // Reset dependent fields when a parent field changes
@@ -178,10 +178,10 @@ const SFGBomSection = ({
       finalSelectedRawMaterials.map((row) =>
         row.id === id
           ? {
-              ...row,
-              Qty: newQty,
-              Total: newQty * (row.price_per_unit || 0),
-            }
+            ...row,
+            Qty: newQty,
+            Total: newQty * (row.price_per_unit || 0),
+          }
           : row
       )
     );
@@ -237,9 +237,9 @@ const SFGBomSection = ({
       finalSelectedJobbers.map((row) =>
         row.id === id
           ? {
-              ...row,
-              Rate: newRate,
-            }
+            ...row,
+            Rate: newRate,
+          }
           : row
       )
     );
@@ -250,9 +250,9 @@ const SFGBomSection = ({
       finalSelectedJobbers.map((row) =>
         row.id === id
           ? {
-              ...row,
-              jobber_description: value,
-            }
+            ...row,
+            jobber_description: value,
+          }
           : row
       )
     );
@@ -311,7 +311,7 @@ const SFGBomSection = ({
       !SfgData.sfg_color1 ||
       !SfgData.sfg_material ||
       !SfgData.sfg_qty ||
-      !SfgData.sfg_total_cost 
+      !SfgData.sfg_total_cost
     ) {
       toast.error("Please fill all the fields.");
       return;
@@ -449,11 +449,11 @@ const SFGBomSection = ({
   }, [rawMaterialTotalCost, jobberTotalCost]);
 
   return (
-    <div>
+    <div className="w-[77vw]">
       {/* Raw Material Selection Modal */}
       {displayRawMaterialModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50">
-          <div className="relative w-[90vw] bg-gray-100 border shadow-2xl p-4 rounded-lg">
+        <div className="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50 ml-56">
+          <div className="relative w-[70vw] bg-gray-100 border shadow-2xl p-4 rounded-lg">
             <button
               className="absolute top-2 right-2 text-gray-700 hover:text-red-500 text-2xl font-bold"
               onClick={() => setDisplayRawMaterialModal(false)}
@@ -490,8 +490,8 @@ const SFGBomSection = ({
 
       {/* Jobber Selection Modal */}
       {displayJobberModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50">
-          <div className="relative w-[90vw] bg-gray-100 border shadow-2xl p-4 rounded-lg">
+        <div className="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50 ml-56">
+          <div className="relative w-[80vw] bg-gray-100 border shadow-2xl p-4 rounded-lg">
             <button
               className="absolute top-2 right-2 text-gray-700 hover:text-red-500 text-2xl font-bold"
               onClick={() => setDisplayJobberModal(false)}
@@ -532,218 +532,192 @@ const SFGBomSection = ({
       </div>
 
 
-        <div className="mt-2 border bg-white border-gray-400 shadow-xl rounded-xl p-5">
-          <div className="mt-2 grid grid-cols-2 gap-6 ">
-            {/* SFG Group */}
-            <div className="flex flex-col">
-              <FormLabel title={"SFG Group"} />
-              <select
-                name="sfg_group"
-                className="border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                defaultValue=""
-                onChange={sfgDataHandler}
-                value={SfgData.sfg_group}
-              >
-                <option value="" disabled>
-                  Select SFG Group
-                </option>
-                {sfgmGroup &&
-                  Array.isArray(sfgmGroup) &&
-                  sfgmGroup.map((group, index) => (
-                    <option key={index} value={group.id}>
-                      {group.group_name}
-                    </option>
-                  ))}
-              </select>
-            </div>
+      <div className="mt-2 border bg-white border-gray-400 shadow-xl rounded-xl p-5">
+        <div className="mt-2 grid grid-cols-2 gap-6 ">
+          {/* SFG Group */}
+          <div className="flex flex-col">
+            <FormLabel title={"SFG Group"} />
+            <select
+              name="sfg_group"
+              className="border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              defaultValue=""
+              onChange={sfgDataHandler}
+              value={SfgData.sfg_group}
+            >
+              <option value="" disabled>
+                Select SFG Group
+              </option>
+              {sfgmGroup &&
+                Array.isArray(sfgmGroup) &&
+                sfgmGroup.map((group, index) => (
+                  <option key={index} value={group.id}>
+                    {group.group_name}
+                  </option>
+                ))}
+            </select>
+          </div>
 
-            {/* SFG Material */}
-            {/* <div className="flex flex-col">
-              <label className="text-gray-700 font-semibold">
-                SFG Material
-              </label>
-              <select
-                name="sfg_material"
-                onChange={sfgDataHandler}
-                value={SfgData.sfg_material}
-                className="border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                defaultValue=""
-                disabled={!SfgData.sfg_group}
-              >
-                <option value="" disabled>
-                  Select SFG Material
-                </option>
-                {sfgMaterials &&
-                  sfgMaterials.length > 0 &&
-                  sfgMaterials.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-              </select>
-            </div> */}
 
-            
-<div className="flex flex-col">
-  <label className="text-gray-700 font-semibold mb-1">
-    SFG Material
-  </label>
-  <Select
-  name="sfg_material"
-  classNames={
-      "border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"}
-  isLoading={sfgLoader}
-    isDisabled={!SfgData.sfg_group}
-    placeholder={ sfgLoader ? "Loading SFG Materials..." : "Select SFG Material"}
-    options={
-      sfgMaterials?.map((item) => ({
-        label: item,
-        value: item,
-      })) || []
-    }
-    value={
-      SfgData.sfg_material
-        ? { label: SfgData.sfg_material, value: SfgData.sfg_material }
-        : null
-    }
-    onChange={(selectedOption) =>
-      sfgDataHandler({
-        target: {
-          name: "sfg_material",
-          value: selectedOption?.value || "",
-        },
-      })
-    }
-    className="react-select-container"
-    classNamePrefix="react-select"
-  />
-</div>
+          <div className="flex flex-col">
+            <label className="text-gray-700 font-semibold mb-1">
+              SFG Material
+            </label>
+            <Select
+              name="sfg_material"
+              classNames={
+                "border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"}
+              isLoading={sfgLoader}
+              isDisabled={!SfgData.sfg_group}
+              placeholder={sfgLoader ? "Loading SFG Materials..." : "Select SFG Material"}
+              options={
+                sfgMaterials?.map((item) => ({
+                  label: item,
+                  value: item,
+                })) || []
+              }
+              value={
+                SfgData.sfg_material
+                  ? { label: SfgData.sfg_material, value: SfgData.sfg_material }
+                  : null
+              }
+              onChange={(selectedOption) =>
+                sfgDataHandler({
+                  target: {
+                    name: "sfg_material",
+                    value: selectedOption?.value || "",
+                  },
+                })
+              }
+              className="react-select-container"
+              classNamePrefix="react-select"
+            />
+          </div>
 
-            {/* Color1 */}
-            <div className="flex flex-col">
-              <label className="text-gray-700 font-semibold">Color </label>
-              <select
-                name="sfg_color1"
-                className="border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                defaultValue=""
-                onChange={sfgDataHandler}
-                value={SfgData.sfg_color1}
-              >
-                <option value="" disabled>
-                  Select Color
-                </option>
-                {sfgCustomColor &&
-                  sfgCustomColor.length > 0 &&
-                  sfgCustomColor.map((item, idx) => (
-                    <option key={idx} value={item.id}>
-                      {item.color_name}
-                    </option>
-                  ))}
-              </select>
-            </div>
+          {/* Color1 */}
+          <div className="flex flex-col">
+            <label className="text-gray-700 font-semibold">Color </label>
+            <select
+              name="sfg_color1"
+              className="border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              defaultValue=""
+              onChange={sfgDataHandler}
+              value={SfgData.sfg_color1}
+            >
+              <option value="" disabled>
+                Select Color
+              </option>
+              {sfgCustomColor &&
+                sfgCustomColor.length > 0 &&
+                sfgCustomColor.map((item, idx) => (
+                  <option key={idx} value={item.id}>
+                    {item.color_name}
+                  </option>
+                ))}
+            </select>
+          </div>
 
-            {/* Qty */}
-            <div className="flex flex-col">
-              <label className="text-gray-700 font-semibold">Qty</label>
-              <input
-                className="p-2 border bg-gray-100 border-gray-300 rounded-md"
-                type="number"
-                placeholder="0.0"
-                name="sfg_qty"
-                onChange={sfgDataHandler}
-                value={SfgData.sfg_qty}
-              />
-            </div>
-            {/* Sfg Description */}
-            <div className="flex flex-col">
-              <label className="text-gray-700 font-semibold">Remarks</label>
-              <textarea
-                className="p-2 border bg-gray-100 border-gray-300 rounded-md"
-                placeholder="Enter Remarks here"
-                name="sfg_description"
-                onChange={sfgDataHandler}
-                value={SfgData.sfg_description}
-              />
-            </div>
-      
-      </div>
+          {/* Qty */}
+          <div className="flex flex-col">
+            <label className="text-gray-700 font-semibold">Qty</label>
+            <input
+              className="p-2 border bg-gray-100 border-gray-300 rounded-md"
+              type="number"
+              placeholder="0.0"
+              name="sfg_qty"
+              onChange={sfgDataHandler}
+              value={SfgData.sfg_qty}
+            />
+          </div>
+          {/* Sfg Description */}
+          <div className="flex flex-col">
+            <label className="text-gray-700 font-semibold">Remarks</label>
+            <textarea
+              className="p-2 border bg-gray-100 border-gray-300 rounded-md"
+              placeholder="Enter Remarks here"
+              name="sfg_description"
+              onChange={sfgDataHandler}
+              value={SfgData.sfg_description}
+            />
+          </div>
+
+        </div>
 
         <div className=" flex flex-col gap-3 p-4">
-            {/* Selection buttons */}
-            <div className=" w-1/2">
-              <button
-                className="p-2 bg-blue-900 hover:bg-blue-800 text-white rounded-md w-full"
-                type="button"
-                onClick={handleSelectRawMaterial}
-              >
-                Choose Raw Material
-              </button>
-            </div>
+          {/* Selection buttons */}
+          <div className=" w-1/2">
+            <button
+              className="p-2 bg-blue-900 hover:bg-blue-800 text-white rounded-md w-full"
+              type="button"
+              onClick={handleSelectRawMaterial}
+            >
+              Choose Raw Material
+            </button>
+          </div>
 
-            <div className="w-1/2 ">
-              <button
-                className="p-2 bg-blue-900 hover:bg-blue-800 text-white rounded-md  w-full"
-                type="button"
-                onClick={handleSelectJobber}
-              >
-                Choose Jobber
-              </button>
-            </div>
+          <div className="w-1/2 ">
+            <button
+              className="p-2 bg-blue-900 hover:bg-blue-800 text-white rounded-md  w-full"
+              type="button"
+              onClick={handleSelectJobber}
+            >
+              Choose Jobber
+            </button>
+          </div>
 
-            {/* Raw Materials Section */}
-            {finalSelectedRawMaterials.length > 0 && (
-              <div className="col-span-2 flex flex-col justify-center items-center">
-                <h3 className="text-xl font-semibold mb-1">
-                  Selected Raw Materials
-                </h3>
-                <SelectedRawMaterialsTable
-                  selectedMaterials={finalSelectedRawMaterials}
-                  updateQuantity={updateRawMaterialQty}
-                  removeItem={removeRawMaterial}
-                  onTotalCostChange={handleRawMaterialTotalCostChange}
-                  new_sfg={SavedSfgData?.new_sfg!==false}
-                />
-              </div>
-            )}
-
-            {/* Jobbers Section */}
-            {finalSelectedJobbers.length > 0 && (
-              <div className="col-span-2 flex flex-col justify-center items-center">
-                <h3 className="text-xl font-semibold mb-1">Selected Jobbers</h3>
-                <SelectedJobbersTable
-                  selectedJobbers={finalSelectedJobbers}
-                  updateJobberRate={updateJobberRate}
-                  removeJobber={removeJobber}
-                  onTotalCostChange={handleJobberTotalCostChange}
-                  updateDescription={updateDescription}
-                />
-              </div>
-            )}
-            {/* Total Cost */}
-            <div className="flex flex-col">
-              <label className="text-gray-700 font-semibold">Total Cost</label>
-              <input
-                value={SfgData.sfg_total_cost}
-                className="p-2 border bg-gray-100 border-gray-300 rounded-md"
-                type="text"
-                placeholder="0.0"
-                name="sfg_total_cost"
-                disabled
+          {/* Raw Materials Section */}
+          {finalSelectedRawMaterials.length > 0 && (
+            <div className="col-span-2 flex flex-col justify-center items-center">
+              <h3 className="text-xl font-semibold mb-1">
+                Selected Raw Materials
+              </h3>
+              <SelectedRawMaterialsTable
+                selectedMaterials={finalSelectedRawMaterials}
+                updateQuantity={updateRawMaterialQty}
+                removeItem={removeRawMaterial}
+                onTotalCostChange={handleRawMaterialTotalCostChange}
+                new_sfg={SavedSfgData?.new_sfg !== false}
               />
             </div>
+          )}
+
+          {/* Jobbers Section */}
+          {finalSelectedJobbers.length > 0 && (
+            <div className="col-span-2 flex flex-col justify-center items-center">
+              <h3 className="text-xl font-semibold mb-1">Selected Jobbers</h3>
+              <SelectedJobbersTable
+                selectedJobbers={finalSelectedJobbers}
+                updateJobberRate={updateJobberRate}
+                removeJobber={removeJobber}
+                onTotalCostChange={handleJobberTotalCostChange}
+                updateDescription={updateDescription}
+              />
+            </div>
+          )}
+          {/* Total Cost */}
+          <div className="flex flex-col">
+            <label className="text-gray-700 font-semibold">Total Cost</label>
+            <input
+              value={SfgData.sfg_total_cost}
+              className="p-2 border bg-gray-100 border-gray-300 rounded-md"
+              type="text"
+              placeholder="0.0"
+              name="sfg_total_cost"
+              disabled
+            />
           </div>
-          
-          <div className="flex justify-end">
+        </div>
+
+        <div className="flex justify-end">
 
           <button
-          type="button"
-          className="bg-green-600 hover:bg-green-700 flex items-center  gap-3 text-center rounded-md px-4 py-3 text-white font-semibold text-md"
-          onClick={(event) => updateSFGdata(event)}
-        >
-          Add <Plus className="w-4 h-4" />
-        </button>
+            type="button"
+            className="bg-green-600 hover:bg-green-700 flex items-center  gap-3 text-center rounded-md px-4 py-3 text-white font-semibold text-md"
+            onClick={(event) => updateSFGdata(event)}
+          >
+            Add <Plus className="w-4 h-4" />
+          </button>
         </div>
-          </div>
+      </div>
 
     </div>
   );

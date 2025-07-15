@@ -67,6 +67,7 @@ const IndividualReport = () => {
         toast.error("Error at getting data");
       } else {
         // await fetchStock();
+        console.log(response.data);
         setData(response.data);
         // console.log(response.data);
         const transformedData = (

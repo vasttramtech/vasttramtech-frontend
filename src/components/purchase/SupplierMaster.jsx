@@ -80,11 +80,12 @@ const SupplierMaster = () => {
   const [openEditModal, setOpenEditModal] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
 
-   //  adding pagination logic
- const [page, setPage] = useState(1);
- const [totalPages, setTotalPages] = useState(1);
- const [pageSize, setPageSize] = useState(5);
-const [paginationLoading, setPaginationLoading] = useState(false);
+  //  adding pagination logic
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
+  const [paginationLoading, setPaginationLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
 
   const [AddedConcernedPerson, setAddedConcernedPerson] = useState([]);
@@ -208,18 +209,18 @@ const [paginationLoading, setPaginationLoading] = useState(false);
         concerned_person: [],
       });
       setConcernedPersonDetails({
-      concerned_person_name: "",
-      mobile_number_1: "",
-      mobile_number_2: "",
-      mobile_number_3: "",
-      designation: "",
-      board_desk_no: "",
-      direct_desk_no: "",
-      email_id: "",
-      address: "",
-      alternate_email_id: "",
-    });
-  
+        concerned_person_name: "",
+        mobile_number_1: "",
+        mobile_number_2: "",
+        mobile_number_3: "",
+        designation: "",
+        board_desk_no: "",
+        direct_desk_no: "",
+        email_id: "",
+        address: "",
+        alternate_email_id: "",
+      });
+
       setAddedConcernedPerson([]);
 
       fetchSupplierMasterData();
@@ -236,9 +237,16 @@ const [paginationLoading, setPaginationLoading] = useState(false);
     try {
       setLoading(true);
       const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/supplier-masters?populate=*`, {
-        params:{
+        params: {
           "pagination[page]": page,
           "pagination[pageSize]": pageSize,
+          "sort[0]": "createdAt:desc",
+          ...(searchTerm && {
+            "filters[$or][0][supplier_id][$containsi]": searchTerm,
+            "filters[$or][1][group_name][$containsi]": searchTerm,
+            "filters[$or][2][company_name][$containsi]": searchTerm,
+          }),
+
         },
         headers: {
           Authorization: `Bearer ${token}`,
@@ -268,12 +276,16 @@ const [paginationLoading, setPaginationLoading] = useState(false);
   };
 
   useEffect(() => {
-    if (token) {
-      fetchSupplierMasterData();
-    } else {
-      navigate("/login");
-    }
-  }, [token, navigate, page, pageSize]);
+    const delayDebounce = setTimeout(() => {
+      if (token) {
+        fetchSupplierMasterData();
+      } else {
+        navigate("/login");
+      }
+    }, 1000);
+
+    return () => clearTimeout(delayDebounce);
+  }, [searchTerm, page, pageSize, token, navigate]);
 
   const handleView = (rowData) => {
     navigate(`/supplier-master/${rowData.id}`);
@@ -285,26 +297,26 @@ const [paginationLoading, setPaginationLoading] = useState(false);
     setOpenEditModal(true);
   };
 
-  const clearHandler = (e) =>{
+  const clearHandler = (e) => {
     e.preventDefault();
-       setFormData({
-        group_name: "",
-        company_type: "",
-        company_name: "",
-        state: "",
-        credit_limit: "",
-        credit_limit_days: "",
-        contact_number: "",
-        website: "",
-        address_category: "",
-        address: "",
-        email_id: "",
-        pan_number: "",
-        gstin_number: "",
-        concerned_person: [],
-      });
+    setFormData({
+      group_name: "",
+      company_type: "",
+      company_name: "",
+      state: "",
+      credit_limit: "",
+      credit_limit_days: "",
+      contact_number: "",
+      website: "",
+      address_category: "",
+      address: "",
+      email_id: "",
+      pan_number: "",
+      gstin_number: "",
+      concerned_person: [],
+    });
 
-      setConcernedPersonDetails({
+    setConcernedPersonDetails({
       concerned_person_name: "",
       mobile_number_1: "",
       mobile_number_2: "",
@@ -315,8 +327,8 @@ const [paginationLoading, setPaginationLoading] = useState(false);
       email_id: "",
       address: "",
       alternate_email_id: "",
-    });      
-      setAddedConcernedPerson([]);
+    });
+    setAddedConcernedPerson([]);
   }
   const enhancedData = supplierData.map((item) => ({
     ...item,
@@ -733,7 +745,7 @@ const [paginationLoading, setPaginationLoading] = useState(false);
               {/* Buttons */}
               <div className="col-span-2 flex justify-end mt-4">
                 <button
-                onClick={clearHandler}
+                  onClick={clearHandler}
                   type="button"
                   className="bg-gray-200 px-4 py-1 rounded hover:bg-gray-600 hover:text-white transition"
                 >
@@ -757,10 +769,15 @@ const [paginationLoading, setPaginationLoading] = useState(false);
               </div>
             </form>
             <div className="mb-16">
-              <SmartTable headers={headers} data={enhancedData} />
-              
+              <SmartTable
+                headers={headers}
+                data={enhancedData}
+                searchTerm={searchTerm}
+                setSearchTerm={setSearchTerm}
+              />
+
               <Pagination setPage={setPage} totalPages={totalPages}
-                      page={page} setPageSize={setPageSize} pageSize={pageSize} />
+                page={page} setPageSize={setPageSize} pageSize={pageSize} />
             </div>
           </div>
         </div>)}

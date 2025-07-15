@@ -17,7 +17,7 @@ import EditRawMaterialMaster from "./EditModals/EditRawMaterialMaster";
 import Pagination from "../utility/Pagination";
 import AddKarigar from "./AddKarigar";
 
-const headers = ["document_id", "Item Id", "Group", "Item Name", "Unit", "HSN/SAC Code", "Description", "Color","Price/unit", "Edit", ""];
+const headers = ["document_id", "Item Id", "Group", "Item Name", "Unit", "HSN/SAC Code", "Description", "Color", "Price/unit", "Edit", ""];
 
 const RawMaterialMaster = () => {
     const location = useLocation();
@@ -42,11 +42,11 @@ const RawMaterialMaster = () => {
         item_name: "",
         description: "",
         unit: "",
-        pricePerUnit:"",
+        pricePerUnit: "",
         group: "",
         color: "",
         hsn_sac_code: "",
-        add_jobber:[]
+        add_jobber: []
     });
 
     // //  jobber states
@@ -56,12 +56,14 @@ const RawMaterialMaster = () => {
     // const [jobberDetail, setJobberDetail] = useState([]);
     // const [addedJobber, setAddedJobber] = useState([]);
 
-        //  adding pagination logic
+    //  adding pagination logic
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [pageSize, setPageSize] = useState(5);
     const [paginationLoading, setPaginationLoading] = useState(false);
-    const [dataLoading, setDataLoading] = useState(false)
+    const [dataLoading, setDataLoading] = useState(false);
+    const [searchTerm, setSearchTerm] = useState("");
+
 
     const handleRowClick = (rowData) => {
         navigate(`/profile/${rowData.id}`);
@@ -101,99 +103,38 @@ const RawMaterialMaster = () => {
         ),
     }));
 
-    // const fetchDropDownData = async () => {
-    //     try {
-    //         setLoading(true);
-    //         const response1 = await axios.get(
-    //             `${process.env.REACT_APP_BACKEND_URL}/api/row-material-groups?populate=*`,
-    //             {
-    //                 headers: {
-    //                     Authorization: `Bearer ${token}`,
-    //                 },
-    //             }
-    //         );
-    //         const response2 = await axios.get(
-    //             `${process.env.REACT_APP_BACKEND_URL}/api/units?populate=*`,
-    //             {
-    //                 headers: {
-    //                     Authorization: `Bearer ${token}`,
-    //                 },
-    //             }
-    //         );
-    //         const response3 = await axios.get(
-    //             `${process.env.REACT_APP_BACKEND_URL}/api/hsn-sac-code-masters?populate=*`,
-    //             {
-    //                 headers: {
-    //                     Authorization: `Bearer ${token}`,
-    //                 },
-    //             }
-    //         );
-    //         const response4 = await axios.get(
-    //             `${process.env.REACT_APP_BACKEND_URL}/api/colors?populate=*`,
-    //             {
-    //                 headers: {
-    //                     Authorization: `Bearer ${token}`,
-    //                 },
-    //             }
-    //         );
-    //         const materialGroups = Array.isArray(response1.data.data)
-    //             ? response1.data.data
-    //             : [];
-    //         setMaterialGroup(materialGroups);
-    //         const units = Array.isArray(response2.data.data)
-    //             ? response2.data.data
-    //             : [];
-    //         setUnit(units);
-    //         const HSN_SAC_Code_group = Array.isArray(response3.data.data)
-    //             ? response3.data.data
-    //             : [];
-    //         setHSN_SAC_Code(HSN_SAC_Code_group);
-    //         const colorGroup = Array.isArray(response4.data.data)
-    //             ? response4.data.data
-    //             : [];
-    //         setColors(colorGroup);
-    //     } catch (error) {
-    //         console.error("Error fetching jobber data:", error);
-    //         if (error.response?.status === 401) {
-    //             navigate("/login");
-    //         }
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
-
     const fetchDropDownData = async () => {
         try {
-          setLoading(true);
-          const headers = {
-            Authorization: `Bearer ${token}`,
-          };
-      
-          const endpoints = [
-            `${process.env.REACT_APP_BACKEND_URL}/api/row-material-groups?populate=*`,
-            `${process.env.REACT_APP_BACKEND_URL}/api/units?populate=*`,
-            `${process.env.REACT_APP_BACKEND_URL}/api/hsn-sac-code-masters?populate=*`,
-            `${process.env.REACT_APP_BACKEND_URL}/api/colors?populate=*`,
-          ];
-      
-          const [res1, res2, res3, res4] = await Promise.all(
-            endpoints.map((url) => axios.get(url, { headers }))
-          );
-      
-          setMaterialGroup(Array.isArray(res1.data.data) ? res1.data.data : []);
-          setUnit(Array.isArray(res2.data.data) ? res2.data.data : []);
-          setHSN_SAC_Code(Array.isArray(res3.data.data) ? res3.data.data : []);
-          setColors(Array.isArray(res4.data.data) ? res4.data.data : []);
+            setLoading(true);
+            const headers = {
+                Authorization: `Bearer ${token}`,
+            };
+
+            const endpoints = [
+                `${process.env.REACT_APP_BACKEND_URL}/api/row-material-groups?populate=*`,
+                `${process.env.REACT_APP_BACKEND_URL}/api/units?populate=*`,
+                `${process.env.REACT_APP_BACKEND_URL}/api/hsn-sac-code-masters?populate=*`,
+                `${process.env.REACT_APP_BACKEND_URL}/api/colors?populate=*`,
+            ];
+
+            const [res1, res2, res3, res4] = await Promise.all(
+                endpoints.map((url) => axios.get(url, { headers }))
+            );
+
+            setMaterialGroup(Array.isArray(res1.data.data) ? res1.data.data : []);
+            setUnit(Array.isArray(res2.data.data) ? res2.data.data : []);
+            setHSN_SAC_Code(Array.isArray(res3.data.data) ? res3.data.data : []);
+            setColors(Array.isArray(res4.data.data) ? res4.data.data : []);
         } catch (error) {
-          console.error("Error fetching dropdown data:", error);
-          if (error.response?.status === 401) {
-            navigate("/login");
-          }
+            console.error("Error fetching dropdown data:", error);
+            if (error.response?.status === 401) {
+                navigate("/login");
+            }
         } finally {
-          setLoading(false);
+            setLoading(false);
         }
-      };
-      
+    };
+
 
     const fetchRawMaterialData = async () => {
         try {
@@ -202,7 +143,16 @@ const RawMaterialMaster = () => {
                 params: {
                     "pagination[page]": page,
                     "pagination[pageSize]": pageSize,
-                    "sort[0]": "createdAt:desc"
+                    "sort[0]": "createdAt:desc",
+                    ...(searchTerm && {
+                        "filters[$or][0][group][group_name][$containsi]": searchTerm,
+                        "filters[$or][1][item_name][$containsi]": searchTerm,
+                        "filters[$or][2][unit][unit_name][$containsi]": searchTerm,
+                        "filters[$or][3][hsn_sac_code][hsn_sac_code][$containsi]": searchTerm,
+                        "filters[$or][4][description][$containsi]": searchTerm,
+                        "filters[$or][5][color][color_name][$containsi]": searchTerm,
+                        "filters[$or][6][price_per_unit][$containsi]": searchTerm,
+                    }),
                 },
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -213,7 +163,7 @@ const RawMaterialMaster = () => {
 
             setRawMaterialData(data);
             setTotalPages(response.data.meta.pagination.pageCount);
-            console.log("data: ",data)
+            console.log("data: ", data)
 
             const mappedRawMaterial = data.map(material => ({
                 id: material?.documentId,
@@ -224,7 +174,7 @@ const RawMaterialMaster = () => {
                 hsn_sac_code: material.hsn_sac_code?.hsn_sac_code || "N/A",
                 description: material.description || "N/A",
                 color: material.color?.color_name || "N/A",
-                price:material?.price_per_unit || "N/A"
+                price: material?.price_per_unit || "N/A"
             }));
 
             setRawMaterial(mappedRawMaterial);
@@ -238,213 +188,6 @@ const RawMaterialMaster = () => {
         }
     };
 
-    // const fetchJobberData = async () => {
-    //     try {
-    //         setLoading(true);
-    //         const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/jobber-master/work-type-dye`, {
-    //             headers: {
-    //                 Authorization: `Bearer ${token}`,
-    //             },
-    //         });
-
-    //         console.log("Dye Jobber data: ", response.data);
-    //         const jobberData = Array.isArray(response.data) ? response.data : [];
-    //         setJobberDetail(jobberData);
-
-    //         const mappedJobbers = jobberData?.map(jobber => ({
-    //             select: <input
-    //                 type="checkbox"
-    //                 checked={selectedJobbers?.some(j => j.jobber_id === jobber.jobber_id)}
-    //                 onChange={() => handleCheckboxChange(jobber)}
-    //             />,
-    //             id: jobber.id,
-    //             jobber_name: jobber.jobber_name,
-    //             days: jobber.days,
-    //             work_type: jobber.work_type,
-    //             address: jobber.jobber_address,
-    //         }));
-
-    //         setJobber(mappedJobbers);
-    //     } catch (error) {
-    //         toast.error("Can't fetch jobbers data")
-    //         console.error("Error fetching jobber data:", error);
-    //         if (error.response?.status === 401) {
-    //             navigate("/login");
-    //         }
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
-
-    // useEffect(() => {
-    //     fetchJobberData();
-    // },[])
-
-    // const handleJobberInputChange = (id, field, value) => {
-    //     setSelectedJobbers((prev) =>
-    //         prev.map((jobber) =>
-    //             jobber.id === id ? { ...jobber, [field]: value } : jobber
-    //         )
-    //     );
-    // };
-
-    
-//     function handleCheckboxChange(jobber) {
-//         setSelectedJobbers((prevSelected) => {
-//             if (prevSelected?.some((j) => j.id === jobber.id)) {
-//                 setJobber((prev) =>
-//                     prev.map((j) => (
-//                         j.id === jobber.id ?
-//                             {
-//                                 ...j, select: <input
-//                                     type="checkbox"
-//                                     onChange={() => handleCheckboxChange(j)}
-//                                 />
-//                             }
-//                             : j
-//                     ))
-//                 );
-//                 return prevSelected?.filter((j) => j.id !== jobber.id);
-//             } else {
-//                 setJobber((prev) =>
-//                     prev.map((j) => (
-//                         j.jd === jobber.id ?
-//                             {
-//                                 ...j, select: <input
-//                                     type="checkbox"
-//                                     checked
-//                                     onChange={() => handleCheckboxChange(j)}
-//                                 />
-//                             }
-//                             : j
-//                     ))
-//                 );
-//                 return [...prevSelected, jobber];
-//             }
-//         });
-//     };
-    
-    
-//     function handleCheckboxChange2(jobber) {
-//     // Toggle checkbox UI in jobber list
-//     setJobber((prevJobbers) =>
-//         prevJobbers.map((j) =>
-//             j.id === jobber.id
-//                 ? { ...j, isSelected: !j.isSelected }
-//                 : j
-//         )
-//     );
-
-//     setSelectedJobbers((prevSelected) => {
-//     const selected = Array.isArray(prevSelected) ? prevSelected : [];
-
-//     if (selected.some((j) => j.id === jobber.id)) {
-//         setJobber((prev) =>
-//             prev.map((j) =>
-//                 j.id === jobber.id
-//                     ? {
-//                           ...j,
-//                           select: (
-//                               <input
-//                                   type="checkbox"
-//                                   onChange={() => handleCheckboxChange(j)}
-//                               />
-//                           ),
-//                       }
-//                     : j
-//             )
-//         );
-//         return selected.filter((j) => j.id !== jobber.id);
-//     } else {
-//         setJobber((prev) =>
-//             prev.map((j) =>
-//                 j.id === jobber.id
-//                     ? {
-//                           ...j,
-//                           select: (
-//                               <input
-//                                   type="checkbox"
-//                                   checked
-//                                   onChange={() => handleCheckboxChange(j)}
-//                               />
-//                           ),
-//                       }
-//                     : j
-//             )
-//         );
-//         return [...selected, jobber];
-//     }
-// });
-
-// }
-
-    
-//     function updateCheckedBoxes() {
-//         setJobber((prev) =>
-//             prev.map((j) => (
-//                 selectedJobbers.some((jobberr) => jobberr.id == j.id) ?
-//                     {
-//                         ...j, select: <input
-//                             type="checkbox"
-//                             checked
-//                             onChange={() => handleCheckboxChange(j)}
-//                         />
-//                     }
-//                     : {
-//                         ...j, select: <input
-//                             type="checkbox"
-//                             onChange={() => handleCheckboxChange(j)}
-//                         />
-//                     }
-//             ))
-//         );
-//     }
-
-//     const handleAddJobberButton = () => {
-
-//         if (!formData.color || formData.color.trim() === "") {
-//             alert("Please select the color before adding a Jobber.");
-//             return;
-//         }
-//         if (!formData.unit || formData.unit.trim() === "") {
-//             alert("Please select the unit before adding a Jobber.");
-//             return;
-//         }
-
-//         setJobberModal(true);
-//         };
-
-
-
-//         const updateJobbers = () => {
-//             if (selectedJobbers.length === 0) {
-//                 alert("Select At Least One Jobber");
-//                 return;
-//             }
-
-//             setFormData((prevFormData) => (
-//                 {
-//                 ...prevFormData,
-//                 add_jobber: selectedJobbers.map((jobber) => ({
-//                     jobber: jobber.id,
-//                     notes: jobber.notes,
-//                     rate: 1
-//                 }))
-//             }));
-//             setAddedJobber(selectedJobbers);
-//             setJobberModal(false);
-//         };
-
-
-
-//     useEffect(() => {
-//         updateCheckedBoxes();
-//     }, [selectedJobbers, addedJobber])
-
-
-
-
-
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -456,13 +199,13 @@ const RawMaterialMaster = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
-        if( formData.item_name === '' || formData.unit === '' || formData.group === ''){ 
+
+        if (formData.item_name === '' || formData.unit === '' || formData.group === '') {
             alert("Item Name, Unit and Group is required");
             return;
         }
-            
-            setSubmitting(true);
+
+        setSubmitting(true);
 
         // const formattedJobbers = selectedJobbers.map(jobber => ({
         //     jobber: jobber.id,  // Ensure this matches API structure
@@ -475,11 +218,11 @@ const RawMaterialMaster = () => {
                 item_name: formData.item_name,
                 description: formData.description,
                 unit: formData.unit,  // These should be IDs
-                price_per_unit:formData.pricePerUnit,
+                price_per_unit: formData.pricePerUnit,
                 group: formData.group,
                 color: formData.color,
                 hsn_sac_code: formData.hsn_sac_code,
-            
+
             }
         };
 
@@ -487,10 +230,10 @@ const RawMaterialMaster = () => {
         try {
             const respoonse = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/raw-material-masters`, postData, {
                 headers: {
-                    Authorization: `Bearer ${token}`, 
+                    Authorization: `Bearer ${token}`,
                 },
             });
- 
+
             console.log("Posting Raw Material Data:", respoonse);
             toast.success("Raw Material data saved successfully!", { position: "top-right" });
 
@@ -498,17 +241,17 @@ const RawMaterialMaster = () => {
                 item_name: "",
                 description: "",
                 unit: "",
-                pricePerUnit:"",
+                pricePerUnit: "",
                 group: "",
                 color: "",
                 hsn_sac_code: "",
             });
 
-       
+
             fetchRawMaterialData();
 
         } catch (error) {
-            console.error("Error posting raw material data:", error );
+            console.error("Error posting raw material data:", error);
             toast.error(error?.response?.data?.error?.message);
         } finally {
             setSubmitting(false); // Stop the spinner
@@ -522,29 +265,42 @@ const RawMaterialMaster = () => {
             navigate("/login");
         }
     }, [token, navigate, refresh]);
-    
-    useEffect(()=>{
-        if(token){
-            fetchRawMaterialData();
-        }
-        else{
-            navigate("/login")
-        }
 
-    }, [page, pageSize])
+    // useEffect(() => {
+    //     if (token) {
+    //         fetchRawMaterialData();
+    //     }
+    //     else {
+    //         navigate("/login")
+    //     }
+
+    // }, [page, pageSize])
+
+    useEffect(() => {
+        const delayDebounce = setTimeout(() => {
+            if (token) {
+                fetchRawMaterialData();
+            }
+            else {
+                navigate("/login")
+            }
+        }, 1000);
+
+        return () => clearTimeout(delayDebounce);
+    }, [searchTerm, page, pageSize]);
 
 
-    const clearHandler = (e) =>{
+    const clearHandler = (e) => {
         e.preventDefault();
-            setFormData({
-                item_name: "",
-                description: "",
-                unit: "",
-                pricePerUnit:"",
-                group: "",
-                color: "",
-                hsn_sac_code: "",
-            });
+        setFormData({
+            item_name: "",
+            description: "",
+            unit: "",
+            pricePerUnit: "",
+            group: "",
+            color: "",
+            hsn_sac_code: "",
+        });
 
     }
     return (
@@ -592,7 +348,7 @@ const RawMaterialMaster = () => {
                         </div>
                     )}
 
-                 
+
 
                     <form className="grid grid-cols-2 gap-6 p-5 rounded-lg border border-gray-200 shadow-md mb-16" onSubmit={handleSubmit}>
                         {/* Group */}
@@ -727,14 +483,14 @@ const RawMaterialMaster = () => {
 
 
 
-                   
+
 
 
                         {/* Buttons */}
                         <div className="col-span-2 flex justify-end mt-4">
-                            <button 
-                            onClick={clearHandler}
-                            type="button" className="bg-gray-200 px-4 py-1 rounded hover:bg-gray-600 hover:text-white transition">
+                            <button
+                                onClick={clearHandler}
+                                type="button" className="bg-gray-200 px-4 py-1 rounded hover:bg-gray-600 hover:text-white transition">
                                 Cancel
                             </button>
                             <button
@@ -757,22 +513,28 @@ const RawMaterialMaster = () => {
 
                     <div className="mb-16">
                         {paginationLoading ? (
-                        <div className="flex p-5 justify-center items-center space-x-2 mt-4 border border-gray-400 rounded-lg">
-                            <BounceLoader size={20} color="#1e3a8a" />
-                        </div>
+                            <div className="flex p-5 justify-center items-center space-x-2 mt-4 border border-gray-400 rounded-lg">
+                                <BounceLoader size={20} color="#1e3a8a" />
+                            </div>
                         ) : (
-                        <SmartTable headers={headers} data={enhancedData} />
+                            // <SmartTable headers={headers} data={enhancedData} />
+                            <SmartTable
+                                headers={headers}
+                                data={enhancedData}
+                                searchTerm={searchTerm}
+                                setSearchTerm={setSearchTerm}
+                            />
                         )}
 
                         <Pagination
-                        setPage={setPage}
-                        totalPages={totalPages}
-                        page={page}
-                        setPageSize={setPageSize}
-                        pageSize={pageSize}
+                            setPage={setPage}
+                            totalPages={totalPages}
+                            page={page}
+                            setPageSize={setPageSize}
+                            pageSize={pageSize}
                         />
                     </div>
-         </div>
+                </div>
             )}
         </div>
     );

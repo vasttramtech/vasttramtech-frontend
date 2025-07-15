@@ -38,6 +38,7 @@ const SalesOrderReport = () => {
   const [paginationLoading, setPaginationLoading] = useState(false);
 
   const { token, email, designation, id } = useSelector((state) => state.auth);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const navigate = useNavigate();
   // console.log(salesDatas);
@@ -118,11 +119,77 @@ const SalesOrderReport = () => {
     );
   }, [salesDatas]);
 
+  // const fetchSalesData = async () => {
+  //   try {
+  //     setPaginationLoading(true);
+  //     const response = await axios.get(
+  //       `${process.env.REACT_APP_BACKEND_URL}/api/sales-oder-entries/get-all-orders?page=${page}&pageSize=${pageSize}&designation=${designation}&userId=${id}`,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       }
+  //     );
+
+  //     if (!response?.data?.data) {
+  //       toast.error("Error fetching sales data");
+  //       return;
+  //     }
+
+  //     const salesData = response.data.data.map((item) => ({
+  //       id: item?.id,
+  //       so_id: item?.so_id,
+  //       convert_id: item?.orders?.[0]?.external_orders || "N/A",
+  //       order_no: item?.order_no,
+  //       customer_name: item?.customer?.company_name || "Vasttram Admin",
+  //       group_name: item?.group?.group_name || "",
+  //       design_name: item?.design_number?.design_number || "",
+  //       order_date: formateDate(item?.order_date),
+  //       delivery_date: formateDate(item?.delivery_date),
+  //       qty: item?.qty,
+  //       status: item?.order_status,
+  //     }));
+
+  //     // Assuming backend gives pagination meta like totalPages
+  //     setTotalPages(response.data.totalPages || 1);
+  //     setSalesData(salesData);
+  //   } catch (error) {
+  //     console.error("Error fetching sales orders:", error);
+  //     toast.error(
+  //       error?.response?.data?.message || "Failed to load sales orders"
+  //     );
+  //   } finally {
+  //     setPaginationLoading(false);
+  //     setLoading(false);
+  //   }
+  // };
+
+
   const fetchSalesData = async () => {
     try {
       setPaginationLoading(true);
+
+      const params = new URLSearchParams({
+        page: page,
+        pageSize: pageSize,
+        designation: designation,
+        userId: id,
+      });
+
+      if (searchTerm) {
+        params.append("filters[$or][0][so_id][$containsi]", searchTerm);
+        params.append("filters[$or][1][order_no][$containsi]", searchTerm);
+        params.append("filters[$or][2][customer][company_name][$containsi]", searchTerm);
+        params.append("filters[$or][3][group][group_name][$containsi]", searchTerm);
+        params.append("filters[$or][4][design_number][design_number][$containsi]", searchTerm);
+        params.append("filters[$or][5][order_date][$containsi]", searchTerm);
+        params.append("filters[$or][6][delivery_date][$containsi]", searchTerm);
+        params.append("filters[$or][7][qty][$containsi]", searchTerm);
+        params.append("filters[$or][8][order_status][$containsi]", searchTerm);
+      }
+
       const response = await axios.get(
-        `${process.env.REACT_APP_BACKEND_URL}/api/sales-oder-entries/get-all-orders?page=${page}&pageSize=${pageSize}&designation=${designation}&userId=${id}`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/sales-oder-entries/get-all-orders?${params.toString()}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -149,7 +216,6 @@ const SalesOrderReport = () => {
         status: item?.order_status,
       }));
 
-      // Assuming backend gives pagination meta like totalPages
       setTotalPages(response.data.totalPages || 1);
       setSalesData(salesData);
     } catch (error) {
@@ -163,9 +229,18 @@ const SalesOrderReport = () => {
     }
   };
 
+  // useEffect(() => {
+  //   fetchSalesData();
+  // }, [page, pageSize]);
+
   useEffect(() => {
-    fetchSalesData();
-  }, [page, pageSize]);
+    const delayDebounce = setTimeout(() => {
+      fetchSalesData();
+    }, 1000);
+
+    return () => clearTimeout(delayDebounce);
+  }, [searchTerm, page, pageSize]);
+
 
   const formateDate = (date) => {
     const options = { year: "numeric", month: "long", day: "numeric" };
@@ -204,7 +279,14 @@ const SalesOrderReport = () => {
           </div>
         ) : updateData && (
           <>
-            <SmartTable headers={headers} data={updateData} />
+            {/* <SmartTable headers={headers} data={updateData} /> */}
+            <SmartTable
+              headers={headers}
+              data={updateData}
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+            />
+
 
             <Pagination
               setPage={setPage}

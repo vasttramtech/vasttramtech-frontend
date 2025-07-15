@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import SmartTable2 from '../../smartTable/SmartTable2';
 import { BounceLoader } from 'react-spinners';
-const headersForTable = ["Id", "SO ID","Convert ID", "Customer Name",  "Design Group", "Design Name", "Qty", "Urgent"];
+const headersForTable = ["Id", "SO ID", "Convert ID", "Customer Name", "Design Group", "Design Name", "Qty", "Urgent", "Order Status"];
 
 
 const SelectSOTable = ({
@@ -38,7 +38,9 @@ const SelectSOTable = ({
     const [updatedHeader] = useState(["select", ...headers]);
 
 
-    const handleClick = async (id) => {
+    const handleClick = async (id, convertId, status, so_id) => {
+
+        console.log(convertId, status, so_id)
 
         setSelectedSOId(id);
         let so_type;
@@ -52,16 +54,38 @@ const SelectSOTable = ({
                     Authorization: `Bearer ${token}`,
                 },
             });
+
+            // let data;
+
+            // if (status === "Alter") {
+            //     const returnId = convertId !== "" ? convertId : so_id;
+            //     const response = await axios.get(
+            //         `${process.env.REACT_APP_BACKEND_URL}/api/sales-order-returns/${returnId}/details`,
+            //         {
+            //             headers: {
+            //                 Authorization: `Bearer ${token}`,
+            //             },
+            //         }
+            //     );
+            //     data = response.data;
+            // } else {
+            //     const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/${so_type}/find-by-id/${id}`, {
+            //         headers: {
+            //             Authorization: `Bearer ${token}`,
+            //         },
+            //     });
+            //     data = response.data;
+            // }
             console.log("Fetch data", data);
 
             if (data) {
                 console.log("This is response:", data);
-                
+
                 setOrderItem(data?.order_items);
                 setSelectedSO(data);
-                
+
                 let so_id = data?.so_id;
-                if(so_type === "internal-sales-order-entry"){
+                if (so_type === "internal-sales-order-entry") {
                     so_id = data?.orders[0]?.external_orders;
                 }
                 setFormData(pre => ({
@@ -89,13 +113,14 @@ const SelectSOTable = ({
         setSOViewModal(true);
         setSelectedSOModal(false);
     };
+    console.log("data:   zz", data)
 
     useEffect(() => {
         const updatedValues = data.map((item) => ({
             select: (
                 <input
                     type="checkbox"
-                    onChange={() => handleClick(item.id)}
+                    onChange={() => handleClick(item.id, item?.convert_id, item?.status, item?.so_id)}
                     key={item.id}
                 />
             ),
@@ -232,14 +257,15 @@ const DispatchEntry = () => {
 
             let url = '';
             let params = {
-                "filters[order_status][$in]": ["readyToDispatch"],
+                "filters[order_status][$in]": ["readyToDispatch", "Alter", "Return"],
                 "sort": "id:desc",
                 "populate": "*"
             };
 
             if (type === "vasttram") {
                 url = `${process.env.REACT_APP_BACKEND_URL}/api/internal-sales-order-entries`;
-                params["filters[orders][external_orders][$notNull]"] = true;
+                // params["filters[orders][external_orders][$notNull]"] = true;
+                params["filters[orders][id][$notNull]"] = true;
             } else {
                 url = `${process.env.REACT_APP_BACKEND_URL}/api/sales-oder-entries`;
                 params["filters[convert_id][$null]"] = true;
@@ -275,14 +301,15 @@ const DispatchEntry = () => {
                     design_number: order?.design_number?.design_number,
                     // order_items: order?.order_items,
                     qty: order?.qty,
-                    urgent: (order?.urgent === true) ? "Yes" : "No"
+                    urgent: (order?.urgent === true) ? "Yes" : "No",
+                    status: order?.order_status
                 }
             ))
 
 
             setSalesOrderList(data);
             if (OrderData.length > 0) setSelectedSOModal(true);
-        
+
 
         } catch (error) {
             console.log(error);
@@ -297,12 +324,12 @@ const DispatchEntry = () => {
 
 
     //  save handler for form submission
-    const saveHandler = async(e) => {
+    const saveHandler = async (e) => {
         e.preventDefault();
 
         let data = salesOrder;
-    
-        
+
+
         let postData = {
             so_id: formData.so_id,
             customer_master: salesOrder?.customer?.id,
@@ -311,20 +338,20 @@ const DispatchEntry = () => {
             cn_no: formData.cn_no,
             invoice_date: formData.invoice_date,
             remarks: formData.remarks,
-            invoice_no: formData.invoice_no,   
+            invoice_no: formData.invoice_no,
         }
         console.log(type);
-        
-        if(type === "internal-sales-order-entries"){
-            postData =  {
+
+        if (type === "internal-sales-order-entries") {
+            postData = {
                 ...postData,
                 convert_id: data?.so_id,
                 internal_sales_order_entry: data?.id,
                 sales_oder_entry: null
             }
         }
-        else{
-            postData =  {
+        else {
+            postData = {
                 ...postData,
                 sales_oder_entry: data?.id,
                 internal_sales_order_entry: null,
@@ -332,11 +359,11 @@ const DispatchEntry = () => {
             }
         }
         console.log(postData);
-        
+
         try {
             setLoading(true);
             const url = `${process.env.REACT_APP_BACKEND_URL}/api/dispatch-entries`;
-            const response = await axios.post(url, {data:postData}, {
+            const response = await axios.post(url, { data: postData }, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -345,25 +372,25 @@ const DispatchEntry = () => {
             console.log(response.data);
             toast.success("Dispatch Entry Saved Successfully");
 
-            if(!response.data?.data){
+            if (!response.data?.data) {
                 toast.error("Error while saving dispatch entry");
                 return
             }
 
-            if(response.data?.data){
+            if (response.data?.data) {
                 const endpoint = (type === "internal-sales-order-entries")
-            ? `${process.env.REACT_APP_BACKEND_URL}/api/internal-sales-order-entry/update-status/${data?.so_id}/dispatched`
-            : `${process.env.REACT_APP_BACKEND_URL}/api/sales-order-entry/update-status/${data?.so_id}/dispatched`;
+                    ? `${process.env.REACT_APP_BACKEND_URL}/api/internal-sales-order-entry/update-status/${data?.so_id}/dispatched`
+                    : `${process.env.REACT_APP_BACKEND_URL}/api/sales-order-entry/update-status/${data?.so_id}/dispatched`;
 
-                await axios.put(endpoint,{}, {
+                await axios.put(endpoint, {}, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
                 });
 
-          toast.success("Sales Order status change to Dispatched.", {
-            position: "top-right",
-          });
+                toast.success("Sales Order status change to Dispatched.", {
+                    position: "top-right",
+                });
 
             }
 
@@ -372,256 +399,256 @@ const DispatchEntry = () => {
             toast.error("Error while saving dispatch entry");
             console.log(error);
         }
-        finally{
+        finally {
             setLoading(false);
         }
-    
+
     }
 
     return (
         <div>
-  {loading || load ? (
+            {loading || load ? (
                 <div className="absolute inset-0 flex justify-center items-center mt-64 bg-opacity-50 bg-gray-200 z-10">
                     <BounceLoader size={100} color={"#1e3a8a"} loading={loading} />
                 </div>
             ) : (
 
 
-            <div>
-                <h1 className="text-3xl font-bold text-blue-900 mb-4">{title}</h1>
-                <div className=' border-gray-200 border p-5 rounded-xl shadow-xl'>
-                    <form action="">
+                <div>
+                    <h1 className="text-3xl font-bold text-blue-900 mb-4">{title}</h1>
+                    <div className=' border-gray-200 border p-5 rounded-xl shadow-xl'>
+                        <form action="">
 
-                        <div className=' flex items-center justify-center gap-4'>
+                            <div className=' flex items-center justify-center gap-4'>
 
 
-                            <div className='relative flex items-center justify-center gap-4'>
-                                <label htmlFor="chooseSalesOrder">From SO Id:</label>
-                                <button
-                                    id='chooseSalesOrder'
-                                    type='button'
-                                    onClick={() => setDisplayModal(true)}
-                                    className='p-2 bg-blue-500 rounded-md text-white hover:bg-blue-600 hover:scale-105'>
-                                    Choose Sales Order
-                                </button>
-                                {displayModal && (
-                                    <div className="absolute top-full mt-2 left-0 bg-white border border-gray-200 shadow-lg rounded-md p-3 z-20 w-72">
+                                <div className='relative flex items-center justify-center gap-4'>
+                                    <label htmlFor="chooseSalesOrder">From SO Id:</label>
+                                    <button
+                                        id='chooseSalesOrder'
+                                        type='button'
+                                        onClick={() => setDisplayModal(true)}
+                                        className='p-2 bg-blue-500 rounded-md text-white hover:bg-blue-600 hover:scale-105'>
+                                        Choose Sales Order
+                                    </button>
+                                    {displayModal && (
+                                        <div className="absolute top-full mt-2 left-0 bg-white border border-gray-200 shadow-lg rounded-md p-3 z-20 w-72">
 
-                                        <div className="flex justify-end">
+                                            <div className="flex justify-end">
+                                                <button
+                                                    className=" text-gray-700 hover:text-red-500 text-sm font-bold"
+                                                    onClick={() => setDisplayModal(false)}
+                                                >
+                                                    ✖
+                                                </button>
+                                            </div>
+
                                             <button
-                                                className=" text-gray-700 hover:text-red-500 text-sm font-bold"
-                                                onClick={() => setDisplayModal(false)}
+                                                type="button"
+                                                className="w-full px-4 py-2 text-left rounded hover:bg-blue-100 transition"
+                                                onClick={() => {
+                                                    handleSalesOrderType('vasttram');
+                                                    setDisplayModal(false);
+                                                }
+                                                }
                                             >
-                                                ✖
+                                                Vasttram Sales Order
+                                            </button>
+                                            <button
+                                                type="button"
+                                                className="w-full px-4 py-2 text-left rounded hover:bg-blue-100 transition"
+                                                onClick={() => {
+                                                    handleSalesOrderType('customer');
+                                                    setDisplayModal(false);
+                                                }}
+                                            >
+                                                Customer Sales Order
                                             </button>
                                         </div>
+                                    )}
 
-                                        <button
-                                            type="button"
-                                            className="w-full px-4 py-2 text-left rounded hover:bg-blue-100 transition"
-                                            onClick={() => {
-                                                handleSalesOrderType('vasttram');
-                                                setDisplayModal(false);
-                                            }
-                                            }
-                                        >
-                                            Vasttram Sales Order
-                                        </button>
-                                        <button
-                                            type="button"
-                                            className="w-full px-4 py-2 text-left rounded hover:bg-blue-100 transition"
-                                            onClick={() => {
-                                                handleSalesOrderType('customer');
-                                                setDisplayModal(false);
-                                            }}
-                                        >
-                                            Customer Sales Order
-                                        </button>
-                                    </div>
-                                )}
+                                    {selectedSOModal && (
+                                        <div className="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50">
+                                            <div className="relative w-[90vw] bg-gray-200 border shadow-2xl p-4 rounded-lg">
 
-                                {selectedSOModal && (
-                                    <div className="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50">
-                                        <div className="relative w-[90vw] bg-gray-200 border shadow-2xl p-4 rounded-lg">
+                                                <div className="flex justify-between items-center">
+                                                    <h3 className="text-2xl font-semibold">Choose Sales Order</h3>
 
-                                            <div className="flex justify-between items-center">
-                                                <h3 className="text-2xl font-semibold">Choose Sales Order</h3>
+                                                    <p
+                                                        className="text-xl px-2 border bg-red-600 rounded-full text-white hover:bg-red-500 cursor-pointer"
+                                                        onClick={() => {
+                                                            setSelectedSOModal(false);
+                                                        }}
+                                                    >
+                                                        X
+                                                    </p>
+                                                </div>
 
-                                                <p
-                                                    className="text-xl px-2 border bg-red-600 rounded-full text-white hover:bg-red-500 cursor-pointer"
-                                                    onClick={() => {
-                                                        setSelectedSOModal(false);
-                                                    }}
-                                                >
-                                                    X
-                                                </p>
-                                            </div>
-
-                                            <div className="mt-1">
-                                                <SelectSOTable
-                                                    NoOfColumns={headersForTable.length}
-                                                    data={salesOrderList}
-                                                    headers={headersForTable}
-                                                    setSelectedRow={setSelectedRows}
-                                                    selectedRow={selectedRow}
-                                                    setSelectedSO={setSelectedSO}
-                                                    setSelectedSOId={setSelectedSOId}
-                                                    setFormData={setFormData}
-                                                    setOrderItem={setOrderItem}
-                                                    setLoading={setLoading}
-                                                    setBom={setBom}
-                                                    type={type}
-                                                    setSalesOrder={setSalesOrder}
-                                                    setSOViewModal={setSOViewModal}
-                                                    setSelectedSOModal={setSelectedSOModal}
-                                                    setAllBomIds={setAllBomIds}
-                                                    allBomIds={allBomIds}
-                                                    allreadyProcessedQtyOfBOM={allreadyProcessedQtyOfBOM}
-                                                    setAllreadyProcessedQtyOfBOM={setAllreadyProcessedQtyOfBOM}
-                                                    allreadyProcessedOrderItems={allreadyProcessedOrderItems}
-                                                    setAllreadyProcessedOrderItems={setAllreadyProcessedOrderItems}
-                                                />
+                                                <div className="mt-1">
+                                                    <SelectSOTable
+                                                        NoOfColumns={headersForTable.length}
+                                                        data={salesOrderList}
+                                                        headers={headersForTable}
+                                                        setSelectedRow={setSelectedRows}
+                                                        selectedRow={selectedRow}
+                                                        setSelectedSO={setSelectedSO}
+                                                        setSelectedSOId={setSelectedSOId}
+                                                        setFormData={setFormData}
+                                                        setOrderItem={setOrderItem}
+                                                        setLoading={setLoading}
+                                                        setBom={setBom}
+                                                        type={type}
+                                                        setSalesOrder={setSalesOrder}
+                                                        setSOViewModal={setSOViewModal}
+                                                        setSelectedSOModal={setSelectedSOModal}
+                                                        setAllBomIds={setAllBomIds}
+                                                        allBomIds={allBomIds}
+                                                        allreadyProcessedQtyOfBOM={allreadyProcessedQtyOfBOM}
+                                                        setAllreadyProcessedQtyOfBOM={setAllreadyProcessedQtyOfBOM}
+                                                        allreadyProcessedOrderItems={allreadyProcessedOrderItems}
+                                                        setAllreadyProcessedOrderItems={setAllreadyProcessedOrderItems}
+                                                    />
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                )}
+                                    )}
+                                </div>
+
+                            </div>
+                            <div className=' grid grid-cols-2 gap-6 mt-5'>
+                                <div>
+                                    <label htmlFor="so_id">So Id:</label>
+                                    <input
+                                        type="text"
+                                        id="so_id"
+                                        placeholder="Enter So Id"
+                                        value={formData.so_id}
+                                        name='so_id'
+                                        className='p-2 border border-gray-400 bg-gray-100 rounded-md w-full'
+                                        onChange={formDataHandler}
+                                        disabled
+                                        required
+                                    />
+                                </div>
+                                {/* Customer */}
+                                <div>
+                                    <label htmlFor="customer">Customer:</label>
+                                    <input
+                                        type="text"
+                                        id="customer"
+                                        placeholder="Enter Customer Name"
+                                        value={formData.customer}
+                                        className='p-2 border border-gray-400 bg-gray-100 rounded-md w-full'
+                                        name='customer'
+                                        onChange={formDataHandler}
+                                        required
+                                        disabled
+                                    />
+                                </div>
+
+                                {/* Design Name */}
+                                <div>
+                                    <label htmlFor="design_name">Design Name:</label>
+                                    <input
+                                        type="text"
+                                        id="design_name"
+                                        placeholder="Enter Design Name"
+                                        className='p-2 border border-gray-400 bg-gray-100 rounded-md w-full'
+                                        value={formData.design_name}
+                                        name='design_name'
+                                        onChange={formDataHandler}
+                                        required
+                                        disabled
+                                    />
+                                </div>
+                                {/* Quantity */}
+                                <div>
+                                    <label htmlFor="so_qty"> SO Qty:</label>
+                                    <input
+                                        type="text"
+                                        id="so_qty"
+                                        placeholder="Enter SO Qty"
+                                        value={formData.so_qty}
+                                        name='so_qty'
+                                        className='p-2 border border-gray-400 bg-gray-100 rounded-md w-full'
+                                        onChange={formDataHandler}
+                                        required
+                                        disabled
+                                    />
+                                </div>
+                                {/* CN no */}
+                                <div>
+                                    <label htmlFor="cn_no"> CN No:</label>
+                                    <input
+                                        type="text"
+                                        id="cn_no"
+                                        placeholder="Enter CN No"
+                                        value={formData.cn_no}
+                                        name='cn_no'
+                                        className='p-2 border border-gray-400 rounded-md w-full'
+                                        onChange={formDataHandler}
+                                        required
+                                    />
+                                </div>
+
+                                {/*  date */}
+                                <div>
+                                    <label htmlFor="invoice_date">Invoice Date:</label>
+                                    <input
+                                        type="date"
+                                        id="invoice_date"
+                                        name="invoice_date"
+                                        value={formData.invoice_date}
+                                        onChange={formDataHandler}
+                                        required
+                                        className='p-2 border border-gray-400 rounded-md w-full'
+                                    />
+                                </div>
+                                {/* // remarks and stitch remarks  */}
+                                <div className='w-full'>
+                                    <label htmlFor="remarks">Remarks:</label>
+                                    <textarea
+                                        name="remarks"
+                                        value={formData.remarks}
+                                        onChange={formDataHandler}
+                                        className='p-4 border border-gray-400 rounded-md w-full'
+                                        id="" />
+                                </div>
+
+                                {/*  invoice no */}
+                                <div>
+                                    <label htmlFor="invoice_no">Invoice No:</label>
+                                    <input
+                                        type="text"
+                                        id="invoice_no"
+                                        name="invoice_no"
+                                        value={formData.invoice_no}
+                                        onChange={formDataHandler}
+                                        required
+                                        className='p-2 border border-gray-400 rounded-md w-full'
+                                    />
+                                </div>
+
                             </div>
 
-                        </div>
-                        <div className=' grid grid-cols-2 gap-6 mt-5'>
-                            <div>
-                                <label htmlFor="so_id">So Id:</label>
-                                <input
-                                    type="text"
-                                    id="so_id"
-                                    placeholder="Enter So Id"
-                                    value={formData.so_id}
-                                    name='so_id'
-                                    className='p-2 border border-gray-400 bg-gray-100 rounded-md w-full'
-                                    onChange={formDataHandler}
-                                    disabled
-                                    required
-                                />
+
+
+
+                            <div className=' flex justify-center items-center m-5 gap-2 text-white'>
+                                <button
+                                    type='submit'
+                                    onClick={saveHandler}
+                                    className='p-3 bg-green-500 rounded-md hover:bg-green-600 hover:scale-105 transition-all duration-100 ease-in-out'> Save </button>
+
+                                <button
+                                    onClick={clearButtonHandler}
+                                    className='p-3 bg-yellow-500 rounded-md hover:bg-yellow-600 hover:scale-105 transition-all duration-100 ease-in-out'> Clear </button>
+
                             </div>
-                            {/* Customer */}
-                            <div>
-                                <label htmlFor="customer">Customer:</label>
-                                <input
-                                    type="text"
-                                    id="customer"
-                                    placeholder="Enter Customer Name"
-                                    value={formData.customer}
-                                    className='p-2 border border-gray-400 bg-gray-100 rounded-md w-full'
-                                    name='customer'
-                                    onChange={formDataHandler}
-                                    required
-                                    disabled
-                                />
-                            </div>
-
-                            {/* Design Name */}
-                            <div>
-                                <label htmlFor="design_name">Design Name:</label>
-                                <input
-                                    type="text"
-                                    id="design_name"
-                                    placeholder="Enter Design Name"
-                                    className='p-2 border border-gray-400 bg-gray-100 rounded-md w-full'
-                                    value={formData.design_name}
-                                    name='design_name'
-                                    onChange={formDataHandler}
-                                    required
-                                    disabled
-                                />
-                            </div>
-                            {/* Quantity */}
-                            <div>
-                                <label htmlFor="so_qty"> SO Qty:</label>
-                                <input
-                                    type="text"
-                                    id="so_qty"
-                                    placeholder="Enter SO Qty"
-                                    value={formData.so_qty}
-                                    name='so_qty'
-                                    className='p-2 border border-gray-400 bg-gray-100 rounded-md w-full'
-                                    onChange={formDataHandler}
-                                    required
-                                    disabled
-                                />
-                            </div>
-                            {/* CN no */}
-                            <div>
-                                <label htmlFor="cn_no"> CN No:</label>
-                                <input
-                                    type="text"
-                                    id="cn_no"
-                                    placeholder="Enter CN No"
-                                    value={formData.cn_no}
-                                    name='cn_no'
-                                    className='p-2 border border-gray-400 rounded-md w-full'
-                                    onChange={formDataHandler}
-                                    required
-                                />
-                            </div>
-
-                            {/*  date */}
-                            <div>
-                                <label htmlFor="invoice_date">Invoice Date:</label>
-                                <input
-                                    type="date"
-                                    id="invoice_date"
-                                    name="invoice_date"
-                                    value={formData.invoice_date}
-                                    onChange={formDataHandler}
-                                    required
-                                    className='p-2 border border-gray-400 rounded-md w-full'
-                                />
-                            </div>
-                            {/* // remarks and stitch remarks  */}
-                            <div className='w-full'>
-                                <label htmlFor="remarks">Remarks:</label>
-                                <textarea
-                                    name="remarks"
-                                    value={formData.remarks}
-                                    onChange={formDataHandler}
-                                    className='p-4 border border-gray-400 rounded-md w-full'
-                                    id="" />
-                            </div>
-
-                            {/*  invoice no */}
-                            <div>
-                                <label htmlFor="invoice_no">Invoice No:</label>
-                                <input
-                                    type="text"
-                                    id="invoice_no"
-                                    name="invoice_no"
-                                    value={formData.invoice_no}
-                                    onChange={formDataHandler}
-                                    required
-                                    className='p-2 border border-gray-400 rounded-md w-full'
-                                />
-                            </div>
-
-                        </div>
-
-
-
-
-                        <div className=' flex justify-center items-center m-5 gap-2 text-white'>
-                            <button
-                                type='submit'
-                                onClick={saveHandler}
-                                className='p-3 bg-green-500 rounded-md hover:bg-green-600 hover:scale-105 transition-all duration-100 ease-in-out'> Save </button>
-
-                            <button
-                                onClick={clearButtonHandler}
-                                className='p-3 bg-yellow-500 rounded-md hover:bg-yellow-600 hover:scale-105 transition-all duration-100 ease-in-out'> Clear </button>
-
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
-            </div>
-        )}
+            )}
         </div>
 
     )

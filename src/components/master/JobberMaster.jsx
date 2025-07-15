@@ -13,7 +13,7 @@ import ViewIcon from "../../assets/Others/ViewIcon.png";
 import Pagination from "../utility/Pagination";
 
 
-const headers = ["document_id","Jobber id", "Jobber Name", "Jobber Pan", "Jobber GSTIN", "Jobber Address", "Jobber Code", "State Name", "Days", "Work Type", "Edit"];
+const headers = ["document_id", "Jobber id", "Jobber Name", "Jobber Pan", "Jobber GSTIN", "Jobber Address", "Jobber Code", "State Name", "Days", "Work Type", "Edit"];
 
 const statesOfIndia = [
     "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh",
@@ -39,6 +39,7 @@ const JobberMaster = () => {
     const { token } = useSelector(state => state.auth);
     const dispatch = useDispatch();
     const [openEditModal, setOpenEditModal] = useState(false);
+    const [searchTerm, setSearchTerm] = useState("");
 
 
     //  adding pagination logic
@@ -92,7 +93,17 @@ const JobberMaster = () => {
                 params: {
                     "pagination[page]": page,
                     "pagination[pageSize]": pageSize,
-                    "sort[0]": "createdAt:desc"
+                    "sort[0]": "createdAt:desc",
+                    ...(searchTerm && {
+                        "filters[$or][0][jobber_name][$containsi]": searchTerm,
+                        "filters[$or][1][jobber_id][$containsi]": searchTerm,
+                        "filters[$or][2][jobber_gstin][$containsi]": searchTerm,
+                        "filters[$or][3][jobber_plan][$containsi]": searchTerm,
+                        "filters[$or][4][jobber_code][$containsi]": searchTerm,
+                        "filters[$or][5][jobber_address][$containsi]": searchTerm,
+                        "filters[$or][6][state][$containsi]": searchTerm,
+                        "filters[$or][7][work_type][$containsi]": searchTerm,
+                    }),
                 },
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -104,7 +115,7 @@ const JobberMaster = () => {
             setJobberData(jobberData);
 
             const mappedJobbers = jobberData.map(jobber => ({
-                id:jobber.documentId,
+                id: jobber.documentId,
                 jobber_id: jobber.jobber_id,
                 jobber_name: jobber.jobber_name,
                 jobber_plan: jobber.jobber_plan,
@@ -125,16 +136,28 @@ const JobberMaster = () => {
         } finally {
             setLoading(false);
         }
-    }, [page, token, pageSize, navigate])
+    }, [page, token, pageSize, navigate , searchTerm])
 
     // Fetch jobber data when component mounts
+    // useEffect(() => {
+    //     if (!token) {
+    //         navigate("/login");
+    //         return;
+    //     }
+    //     fetchJobberData();
+    // }, [token, page, pageSize]);
+
     useEffect(() => {
-    if (!token) {
-        navigate("/login");
-        return;
-    }
-    fetchJobberData();
-}, [token, page, pageSize]);
+        const delayDebounce = setTimeout(() => {
+            if (!token) {
+                navigate("/login");
+                return;
+            }
+            fetchJobberData();
+        }, 1000);
+
+        return () => clearTimeout(delayDebounce);
+    }, [searchTerm, page, pageSize]);
 
 
     const handleInputChange = (e) => {
@@ -155,7 +178,7 @@ const JobberMaster = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if(formData.jobber_name == "" || formData.jobber_gstin == "" || formData.work_type == ""){
+        if (formData.jobber_name == "" || formData.jobber_gstin == "" || formData.work_type == "") {
             alert("Jobber Name, Jobber GSTIN and Work Type is required");
             return;
         }
@@ -209,7 +232,7 @@ const JobberMaster = () => {
         e.preventDefault();
         setUpdateSubmitting(true);
 
-    
+
         const updateData = {
             data: {
                 jobber_name: updateFormData.jobber_name,
@@ -222,16 +245,16 @@ const JobberMaster = () => {
                 days: updateFormData.days,
             },
         };
-    
+
         try {
             await axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/jobber-masters/${updateFormData.id}`, updateData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             });
-    
+
             toast.success("Jobber data updated successfully!", { position: "top-right" });
-    
+
             // Clear form after update
             setUpdateFormData({
                 jobber_name: "",
@@ -244,7 +267,7 @@ const JobberMaster = () => {
                 days: "",
             });
             setOpenEditModal(false);
-    
+
             fetchJobberData();
             dispatch(fetchJobberMasters(token));
         } catch (error) {
@@ -254,8 +277,8 @@ const JobberMaster = () => {
             setUpdateSubmitting(false);
         }
     };
-    
-    
+
+
 
     const enhancedData = jobbers.map((item) => ({
         ...item,
@@ -272,7 +295,7 @@ const JobberMaster = () => {
     }));
 
     // clear function
-    const clearFunction = (e) =>{
+    const clearFunction = (e) => {
         e.preventDefault();
         setFormData({
             jobber_name: "",
@@ -284,9 +307,9 @@ const JobberMaster = () => {
             work_type: "",
             days: "",
         });
-       
 
-        
+
+
     }
 
     return (
@@ -489,10 +512,10 @@ const JobberMaster = () => {
 
                         {/* Buttons aligned to the right */}
                         <div className="col-span-2 flex justify-end mt-4">
-                            <button 
-                            onClick={clearFunction}
+                            <button
+                                onClick={clearFunction}
 
-                            type="button" className="bg-gray-200 px-4 py-1 rounded hover:bg-gray-600 hover:text-white transition">
+                                type="button" className="bg-gray-200 px-4 py-1 rounded hover:bg-gray-600 hover:text-white transition">
                                 Cancel
                             </button>
                             <button
@@ -514,12 +537,19 @@ const JobberMaster = () => {
                     </form>
 
                     <div className="mb-16">
-                        <SmartTable headers={headers} data={enhancedData}
+                        {/* <SmartTable headers={headers} data={enhancedData}
                         // onRowClick={handleRowClick} 
+                        /> */}
+
+                        <SmartTable
+                            headers={headers}
+                            data={enhancedData}
+                            searchTerm={searchTerm}
+                            setSearchTerm={setSearchTerm}
                         />
-                        
-                    <Pagination setPage={setPage} totalPages={totalPages}
-                        page={page} setPageSize={setPageSize} pageSize={pageSize} />
+
+                        <Pagination setPage={setPage} totalPages={totalPages}
+                            page={page} setPageSize={setPageSize} pageSize={pageSize} />
                     </div>
                 </div>
             )}

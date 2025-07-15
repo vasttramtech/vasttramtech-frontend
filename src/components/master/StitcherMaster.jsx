@@ -39,6 +39,7 @@ const StitcherMaster = () => {
     const { token } = useSelector(state => state.auth);
     const dispatch = useDispatch();
     const [openEditModal, setOpenEditModal] = useState(false);
+    const [searchTerm, setSearchTerm] = useState("");
 
 
     //  adding pagination logic
@@ -85,7 +86,14 @@ const StitcherMaster = () => {
                 params: {
                     "pagination[page]": page,
                     "pagination[pageSize]": pageSize,
-                    "sort[0]": "createdAt:desc"
+                    "sort[0]": "createdAt:desc",
+                    ...(searchTerm && {
+                        "filters[$or][0][stitcher_name][$containsi]": searchTerm,
+                        "filters[$or][1][stitcher_type][$containsi]": searchTerm,
+                        "filters[$or][2][stitcher_code][$containsi]": searchTerm,
+                        "filters[$or][3][address][$containsi]": searchTerm,
+                        "filters[$or][4][remarks][$containsi]": searchTerm,
+                    }),
                 },
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -113,16 +121,29 @@ const StitcherMaster = () => {
         } finally {
             setLoading(false);
         }
-    }, [page, token, pageSize, navigate])
+    }, [page, token, pageSize, navigate, searchTerm])
 
     // Fetch jobber data when component mounts
+    // useEffect(() => {
+    //     if (!token) {
+    //         navigate("/login");
+    //         return;
+    //     }
+    //     fetchStitcherData();
+    // }, [token, page, pageSize]);
+
     useEffect(() => {
-        if (!token) {
-            navigate("/login");
-            return;
-        }
-        fetchStitcherData();
-    }, [token, page, pageSize]);
+        const delayDebounce = setTimeout(() => {
+            if (!token) {
+                navigate("/login");
+                return;
+            }
+            fetchStitcherData();
+        }, 1000);
+
+        return () => clearTimeout(delayDebounce);
+    }, [searchTerm, page, pageSize]);
+
 
 
     const handleInputChange = (e) => {
@@ -143,7 +164,7 @@ const StitcherMaster = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if(formData.stitcher_name == "" || formData.stitcher_type == "" ) {
+        if (formData.stitcher_name == "" || formData.stitcher_type == "") {
             alert("Stitcher Name, Stitcher Address and Type is required");
             return;
         }
@@ -244,8 +265,8 @@ const StitcherMaster = () => {
             </div >
         )
     }));
-    
-    const clearHandler = (e) =>{
+
+    const clearHandler = (e) => {
         e.preventDefault();
         setFormData({
             stitcher_name: "",
@@ -409,9 +430,9 @@ const StitcherMaster = () => {
 
                         {/* Buttons aligned to the right */}
                         <div className="col-span-2 flex justify-end mt-4">
-                            <button 
-                            onClick={clearHandler}
-                            type="button" className="bg-gray-200 px-4 py-1 rounded hover:bg-gray-600 hover:text-white transition">
+                            <button
+                                onClick={clearHandler}
+                                type="button" className="bg-gray-200 px-4 py-1 rounded hover:bg-gray-600 hover:text-white transition">
                                 Cancel
                             </button>
                             <button
@@ -433,8 +454,15 @@ const StitcherMaster = () => {
                     </form>
 
                     <div className="mb-16">
-                        <SmartTable headers={headers} data={enhancedData}
+                        {/* <SmartTable headers={headers} data={enhancedData}
                         // onRowClick={handleRowClick} 
+                        /> */}
+
+                        <SmartTable
+                            headers={headers}
+                            data={enhancedData}
+                            searchTerm={searchTerm}
+                            setSearchTerm={setSearchTerm}
                         />
 
                         <Pagination setPage={setPage} totalPages={totalPages}

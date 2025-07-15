@@ -83,6 +83,8 @@ const DesignMaster = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
   const [hasTriggered, setHasTriggered] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  
 
   // const [rmLoader, setRmLoader] = useState(false);
   // const [sfgLoader, setSfgLoader] = useState(false);
@@ -230,192 +232,21 @@ const DesignMaster = () => {
             color: "",
           });
         }
-
-        // toast.error(
-        //   <div>
-        //     <strong>{err?.message || "Error checking design uniqueness."}</strong>
-        //     <div>{typeof err?.details === "string" ? err.details : JSON.stringify(err?.details)}</div>
-        //   </div>
-        // );
         setLoading(false);
         setHasTriggered(false);
-        // setTimeout(() => {
-        //   navigate(location.pathname, { replace: true });
-        // }, 2000);
 
       }
     }
   };
 
+  useEffect(() => {
+    const delayDebounce = setTimeout(() => {
+      fetchDesignMasterData();
+    }, 1000);
 
+    return () => clearTimeout(delayDebounce);
+  }, [searchTerm, page, pageSize]);
 
-  // console.log(FinalSFGData);
-  // useEffect(() => {
-  //   if (!SfgData.sfg_group) return;
-  //   setSfgData({
-  //     ...SfgData,
-  //     sfg_color: "",
-  //     sfg_jobber: "",
-  //     sfg_qty: "",
-  //     sfg_total_cost: 0,
-  //     sfg_description: "",
-  //   });
-  //   setAvailableSFGBasedOnMaterial([]);
-  //   setAvailableSFGBasedOnColor([]);
-  //   setSfgColors([]);
-  //   setSfgJobber([]);
-  //   setSelectedJobber();
-  //   const options = new Set();
-  //   availableSFG.map((sfg) => {
-  //     options.add(sfg.semi_finished_goods_name);
-  //   });
-  //   setsfgMaterials(Array.from(options));
-  // }, [availableSFG]);
-
-  // useEffect(() => {
-  //   if (!SfgData.sfg_material) return;
-  //   setSfgData({ ...SfgData, sfg_color: "", sfg_jobber: "" });
-  //   setAvailableSFGBasedOnColor([]);
-  //   setSfgJobber([]);
-  //   setSelectedJobber();
-  //   setAvailableSFGBasedOnMaterial(
-  //     availableSFG.filter(
-  //       (sfg) => sfg.semi_finished_goods_name == SfgData.sfg_material
-  //     )
-  //   );
-  // }, [SfgData.sfg_material]);
-
-  // const handleSfgDelete = (ind) => {
-  //   setSavedSfgData(SavedSfgData.filter((item, index) => index !== ind));
-  //   setFinalSFGData(FinalSFGData.filter((item, index) => index !== ind));
-  // };
-  // useEffect(() => {
-  //   if (!SfgData.sfg_material) return;
-  //   const options = new Set();
-  //   availableSFGBasedOnMaterial.map((sfg) => {
-  //     options.add(sfg.color.color_name);
-  //   });
-  //   setSfgColors(Array.from(options));
-  // }, [availableSFGBasedOnMaterial]);
-
-  // useEffect(() => {
-  //   if (!SfgData.sfg_color) return;
-  //   setSelectedJobber();
-  //   setSfgData({ ...SfgData, sfg_jobber: "" });
-  //   setSfgJobber([]);
-  //   setAvailableSFGBasedOnColor(
-  //     availableSFGBasedOnMaterial.find(
-  //       (sfg) => sfg.color.color_name == SfgData.sfg_color
-  //     ) || {}
-  //   );
-  // }, [SfgData.sfg_color]);
-
-  // useEffect(() => {
-  //   if (
-  //     !SfgData.sfg_color ||
-  //     !availableSFGBasedOnColor ||
-  //     !availableSFGBasedOnColor.add_karigar ||
-  //     availableSFGBasedOnColor.add_karigar.length == 0
-  //   )
-  //     return;
-  //   const option = new Set();
-  //   availableSFGBasedOnColor.add_karigar.map((sfg) => {
-  //     option.add(sfg);
-  //   });
-  //   setSfgJobber(Array.from(option));
-  // }, [availableSFGBasedOnColor]);
-
-  // useEffect(() => {
-  //   if (!SfgData.sfg_jobber) return;
-  //   // console.log(sfgJobber);
-  //   setSelectedJobber(
-  //     sfgJobber.find((jobber) => jobber.id == SfgData.sfg_jobber)
-  //   );
-  // }, [SfgData.sfg_jobber]);
-
-  // const UpdateSFGdata = (event) => {
-  //   event.preventDefault();
-
-  //   if (
-  //     !SfgData.sfg_group ||
-  //     !SfgData.sfg_color ||
-  //     !SfgData.sfg_material ||
-  //     !SfgData.sfg_qty ||
-  //     !SfgData.sfg_total_cost ||
-  //     !SfgData.sfg_jobber ||
-  //     !SfgData.sfg_description
-  //   ) {
-  //     toast.error("Please fill all the fields.");
-  //     return;
-  //   }
-
-  //   setFinalSFGData([
-  //     ...FinalSFGData,
-  //     {
-  //       semi_finished_goods: availableSFGBasedOnColor.id,
-  //       jobber_master: Number(selectedJobber.jobber.id),
-  //       qty: Number(SfgData.sfg_qty),
-  //       total_price: Number(SfgData.sfg_total_cost),
-  //       sfg_description: SfgData.sfg_description,
-  //     },
-  //   ]);
-  //   // console.log(selectedJobber)
-  //   setSavedSfgData([
-  //     ...SavedSfgData,
-  //     {
-  //       ...SfgData,
-  //       sfg_jobber:
-  //         selectedJobber.jobber.jobber_name +
-  //         "-" +
-  //         selectedJobber.jobber.work_type,
-  //     },
-  //   ]);
-
-  //   setSfgData({
-  //     sfg_group: "",
-  //     sfg_material: "",
-  //     sfg_color: "",
-  //     sfg_jobber: "",
-  //     sfg_qty: 0,
-  //     sfg_total_cost: "",
-  //     sfg_description: "",
-  //   });
-
-  //   setAvailableSFGBasedOnMaterial([]);
-  //   setAvailableSFGBasedOnColor([]);
-  //   setSfgColors([]);
-  //   setSfgJobber([]);
-  //   setsfgMaterials([]);
-  //   setSelectedJobber({});
-  // };
-
-  // useEffect(() => {
-  //   // console.log(selectedJobber);
-  //   if (
-  //     !SfgData.sfg_material ||
-  //     !SfgData.sfg_color ||
-  //     !SfgData.sfg_qty ||
-  //     !selectedJobber ||
-  //     !availableSFGBasedOnColor
-  //   ) {
-  //     SfgData.sfg_total_cost = 0;
-  //     return;
-  //   }
-  //   // console.log(selectedJobber.rate)
-  //   setSfgData({
-  //     ...SfgData,
-  //     sfg_total_cost:
-  //       (Number(availableSFGBasedOnColor.price_per_unit) +
-  //         Number(selectedJobber.rate)) *
-  //       Number(SfgData.sfg_qty),
-  //   });
-  // }, [
-  //   selectedJobber,
-  //   SfgData.sfg_qty,
-  //   SfgData.sfg_color,
-  //   SfgData.sfg_material,
-  //   SfgData.sfg_group,
-  // ]);
 
 
 
@@ -469,10 +300,56 @@ const DesignMaster = () => {
     }
   };
 
+  // const fetchDesignMasterData = async () => {
+  //   try {
+  //     // setLoading(true);
+  //     setPaginationLoading(true);
+  //     const response = await axios.get(
+  //       `${process.env.REACT_APP_BACKEND_URL}/api/design-masters?populate=*`,
+  //       {
+  //         params: {
+  //           "pagination[page]": page,
+  //           "pagination[pageSize]": pageSize,
+  //           "sort[0]": "createdAt:desc",
+  //         },
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       }
+  //     );
+  //     setTotalPages(response.data.meta.pagination.pageCount);
+  //     const designData = Array.isArray(response.data.data)
+  //       ? response.data.data
+  //       : [];
+
+  //     //   console.log("designData: ", designData);
+
+  //     const mappedDesign = designData.map((design) => ({
+  //       id: design?.documentId,
+  //       group: design?.design_group?.group_name,
+  //       design_number: design.design_number,
+  //       color: design.color?.color_name,
+  //       description: design.description,
+  //       unit: design?.unit?.unit_name,
+  //       item_id: design?.id,
+  //     }));
+  //     setRefreshTable((prev) => prev + 1);
+  //     setDesignMaster(mappedDesign);
+  //   } catch (error) {
+  //     console.error("Error fetching design master data:", error);
+  //     if (error.response?.status === 401) {
+  //       navigate("/login");
+  //     }
+  //   } finally {
+  //     setPaginationLoading(false);
+  //     // setLoading(false);
+  //   }
+  // };
+
   const fetchDesignMasterData = async () => {
     try {
-      // setLoading(true);
       setPaginationLoading(true);
+
       const response = await axios.get(
         `${process.env.REACT_APP_BACKEND_URL}/api/design-masters?populate=*`,
         {
@@ -480,18 +357,24 @@ const DesignMaster = () => {
             "pagination[page]": page,
             "pagination[pageSize]": pageSize,
             "sort[0]": "createdAt:desc",
+            ...(searchTerm && {
+              "filters[$or][0][design_number][$containsi]": searchTerm,
+              "filters[$or][1][description][$containsi]": searchTerm,
+              "filters[$or][2][color][color_name][$containsi]": searchTerm,
+              "filters[$or][3][design_group][group_name][$containsi]": searchTerm,
+            }),
           },
           headers: {
             Authorization: `Bearer ${token}`,
           },
         }
       );
+
       setTotalPages(response.data.meta.pagination.pageCount);
+
       const designData = Array.isArray(response.data.data)
         ? response.data.data
         : [];
-
-      //   console.log("designData: ", designData);
 
       const mappedDesign = designData.map((design) => ({
         id: design?.documentId,
@@ -502,6 +385,7 @@ const DesignMaster = () => {
         unit: design?.unit?.unit_name,
         item_id: design?.id,
       }));
+
       setRefreshTable((prev) => prev + 1);
       setDesignMaster(mappedDesign);
     } catch (error) {
@@ -511,57 +395,9 @@ const DesignMaster = () => {
       }
     } finally {
       setPaginationLoading(false);
-      // setLoading(false);
     }
   };
 
-  // console.log(jobberList);
-
-  // const fetchIndividualGroupData = async () => {
-  //   try {
-  //     if (!SfgData.sfg_group) {
-  //       // alert("Please select a group first.");
-  //       return;
-  //     }
-  //     // console.log("SFG data fetching")
-  //     setSfgData({
-  //       ...SfgData,
-  //       sfg_material: "",
-  //       sfg_color: "",
-  //       sfg_jobber: "",
-  //       sfg_qty: "",
-  //       sfg_total_cost: "",
-  //       sfg_description: "",
-  //     });
-
-  //     setSfgLoader(true);
-  //     const response = await axios.get(
-  //       `${process.env.REACT_APP_BACKEND_URL}/api/custom-semi-finished-goods/group/${SfgData.sfg_group}`,
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       }
-  //     );
-  //     // console.log(response);
-  //     if (!response || !response.data) {
-  //       setAvailableSFG([]);
-  //     } else {
-  //       setAvailableSFG(response.data);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching jobber data:", error);
-  //     if (error.response?.status === 401) {
-  //       navigate("/login");
-  //     }
-  //   } finally {
-  //     setSfgLoader(false);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   fetchIndividualGroupData();
-  // }, [SfgData.sfg_group]);
 
   useEffect(() => {
     if (FinalSFGData.length === 0) {
@@ -1116,7 +952,13 @@ const DesignMaster = () => {
                 <BounceLoader size={20} color="#1e3a8a" />
               </div>
             ) : (
-              <SmartTable headers={headers} data={enhancedData} />
+              // <SmartTable headers={headers} data={enhancedData} />
+              <SmartTable
+                headers={headers}
+                data={enhancedData}
+                searchTerm={searchTerm}
+                setSearchTerm={setSearchTerm}
+              />
             )}
 
             <Pagination
