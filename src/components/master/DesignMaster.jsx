@@ -84,7 +84,7 @@ const DesignMaster = () => {
   const [previewImage, setPreviewImage] = useState(null);
   const [hasTriggered, setHasTriggered] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  
+
 
   // const [rmLoader, setRmLoader] = useState(false);
   // const [sfgLoader, setSfgLoader] = useState(false);
@@ -246,6 +246,10 @@ const DesignMaster = () => {
 
     return () => clearTimeout(delayDebounce);
   }, [searchTerm, page, pageSize]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [searchTerm]);
 
 
 

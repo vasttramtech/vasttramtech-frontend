@@ -177,6 +177,10 @@ const StockInReport = () => {
     return () => clearTimeout(delayDebounce);
   }, [searchTerm, page, pageSize]);
 
+  useEffect(() => {
+    setPage(1);
+  }, [searchTerm]);
+
   console.log("stockData: ", stockData)
 
   const enhancedData = stockData.map((item) => ({

@@ -11,7 +11,7 @@ import ViewIcon from "../../assets/Others/ViewIcon.png";
 import Pagination from '../utility/Pagination';
 
 
-const headersForTable = ["Sale Bill Id", "Design Name", "SO ID", "Date", "Bill To", "Bill To Details", "Other Charges", "Total Bill Amount", "Processor", "Details", "Print"];
+const headersForTable = ["Sale Bill Id", "Design Name", "SO ID", "Date", "Bill To", "Bill To Details", "Other Charges", "Total Bill Amount", "Processor", "Status", "Details", "Print"];
 
 const BillOfSalesReport = () => {
   const location = useLocation();
@@ -29,6 +29,7 @@ const BillOfSalesReport = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [pageSize, setPageSize] = useState(5);
   const [paginationLoading, setPaginationLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   // Using useRef to get the table element reference
   const printableTableRef = useRef();
@@ -94,44 +95,199 @@ const BillOfSalesReport = () => {
     return `${day}/${month}/${year}`;
   }
 
+  // const fetchBillOfSales = async () => {
+  //   try {
+  //     setLoading(true);
+  //     const response = await axios.get(
+  //       `${process.env.REACT_APP_BACKEND_URL}/api/bill-of-sales`,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //         params: {
+  //           "pagination[page]": page,
+  //           "pagination[pageSize]": pageSize,
+  //           "sort[0]": "createdAt:desc",
+  //           // "filters[designation][$eq]": designation,
+  //           // populate if needed
+  //           "populate[design]": "*",
+  //           "populate[processor]": "*",
+  //           "populate[sales_order_entry]": "*",
+  //           "populate[internal_sales_order_entry]": "*",
+  //           "populate[bom_billOfSale][populate][jobber]": "*",
+  //         },
+  //       }
+  //     );
+
+  //     console.log("response: ", response)
+  //     // const data = Array.isArray(response.data.data) ? response.data.data : [];
+  //     // setTotalPages(response.data.meta.pagination.pageCount);
+  //     // console.log("data: ", response.data);
+
+  //     // Extract the actual data and pagination info
+  //     const data = response.data.data || [];
+  //     const pagination = response.data.meta.pagination || {};
+
+  //     // Correctly set total pages from pagination data
+  //     setTotalPages(pagination.pageCount || 1);
+  //     const mappedData = data.map((bills) => {
+  //       const isInternal = bills.internal_sales_order_entry;
+  //       const isSales = bills.sales_order_entry;
+
+  //       return {
+  //         id: bills.id,
+  //         design_name: bills?.design?.design_number,
+  //         so_id: isInternal?.so_id || isSales?.so_id || "",
+  //         date: formatDate(bills.ex_date),
+  //         billTo: bills?.bom_billOfSale?.jobber?.jobber_name,
+  //         billToDetails: bills?.bom_billOfSale?.jobber?.jobber_gstin,
+  //         otherCharges: bills?.other_charges,
+  //         Total_Amount: bills?.Total_Bill_of_sales_Amount,
+  //         processor: bills.processor?.id ? (bills.processor?.name + "-" + bills.processor?.designation) : "N/A",
+  //       };
+  //     });
+
+  //     setBillData(mappedData);
+
+  //   } catch (error) {
+  //     console.error("Error fetching jobber data:", error);
+  //     if (error.response?.status === 401) {
+  //       navigate("/login");
+  //     }
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // }
+
+
+  //   const fetchBillOfSales = async () => {
+  //     try {
+  //       setLoading(true);
+  //       // const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/bill-of-sales?`, {
+  //       //   headers: {
+  //       //     Authorization: `Bearer ${token}`,
+  //       //   },
+  //       //   params:{
+  //       //     "pagination[page]" : page,
+  //       //     "pagination[pageSize]" : pageSize,
+  //       //     "sort[0]": "createdAt:desc",
+  //       //   }
+  //       // });
+  //     const response = await axios.get(
+  //   `${process.env.REACT_APP_BACKEND_URL}/api/custom-get-bill-of-sales?page=${page}&pageSize=${pageSize}`, 
+  //   {
+  //     headers: {
+  //       Authorization: `Bearer ${token}`,
+  //     },
+  //     params: {
+  //       designation: designation,
+  //       userId: id,
+  //       "sort[0]": "createdAt:desc",
+  //     },
+  //   }
+  // );
+
+  //       console.log("response: ", response)
+  //       // const data = Array.isArray(response.data.data) ? response.data.data : [];
+  //       // setTotalPages(response.data.meta.pagination.pageCount);
+  //       // console.log("data: ", response.data);
+
+  //       // Extract the actual data and pagination info
+  //       const data = response.data.data || [];
+  //       const pagination = response.data.meta.pagination || {};
+
+  //       // Correctly set total pages from pagination data
+  //       setTotalPages(pagination.pageCount || 1);
+  //       const mappedData = data.map((bills) => {
+  //         const isInternal = bills.internal_sales_order_entry;
+  //         const isSales = bills.sales_order_entry;
+
+  //         return {
+  //           id: bills.id,
+  //           design_name: bills?.design?.design_number,
+  //           so_id: isInternal?.so_id || isSales?.so_id || "",
+  //           date: formatDate(bills.ex_date),
+  //           billTo: bills?.bom_billOfSale?.jobber?.jobber_name,
+  //           billToDetails: bills?.bom_billOfSale?.jobber?.jobber_gstin,
+  //           otherCharges: bills?.other_charges,
+  //           Total_Amount: bills?.Total_Bill_of_sales_Amount,
+  //           processor: bills.processor?.id ? (bills.processor?.name + "-" + bills.processor?.designation) : "N/A",
+  //         };
+  //       });
+
+  //       setBillData(mappedData);
+
+  //     } catch (error) {
+  //       console.error("Error fetching jobber data:", error);
+  //       if (error.response?.status === 401) {
+  //         navigate("/login");
+  //       }
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   }
+
+
   const fetchBillOfSales = async () => {
     try {
       setLoading(true);
-      // const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/bill-of-sales?`, {
-      //   headers: {
-      //     Authorization: `Bearer ${token}`,
-      //   },
-      //   params:{
-      //     "pagination[page]" : page,
-      //     "pagination[pageSize]" : pageSize,
-      //     "sort[0]": "createdAt:desc",
-      //   }
-      // });
-    const response = await axios.get(
-  `${process.env.REACT_APP_BACKEND_URL}/api/custom-get-bill-of-sales?page=${page}&pageSize=${pageSize}`, 
-  {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    params: {
-      designation: designation,
-      userId: id,
-      "sort[0]": "createdAt:desc",
-    },
-  }
-);
 
-      console.log("response: ", response)
-      // const data = Array.isArray(response.data.data) ? response.data.data : [];
-      // setTotalPages(response.data.meta.pagination.pageCount);
-      // console.log("data: ", response.data);
+      const params = {
+        "pagination[page]": page,
+        "pagination[pageSize]": pageSize,
+        "sort[0]": "createdAt:desc",
 
-      // Extract the actual data and pagination info
+        // Populate all required relations
+        "populate[design]": "*",
+        "populate[processor]": "*",
+        "populate[sales_order_entry][populate][merchandiser]": "*",
+        "populate[sales_order_entry][populate][processor]": "*",
+        "populate[sales_order_entry][populate][so_items]": "*",
+        "populate[internal_sales_order_entry][populate][merchandiser]": "*",
+        "populate[internal_sales_order_entry][populate][processor]": "*",
+        "populate[internal_sales_order_entry][populate][so_items]": "*",
+        "populate[bom_billOfSale][populate][jobber]": "*",
+        "populate[bom_billOfSale][populate][raw_material_qty][populate][raw_material_master]": "*",
+        "populate[bom_billOfSale][populate][sfg_qty][populate][semi_finished_goods_master]": "*",
+
+      };
+
+      if (designation !== "Admin") {
+        if (designation === "Merchandiser") {
+          params["filters[$or][0][sales_order_entry][merchandiser][id][$eq]"] = id;
+          params["filters[$or][1][internal_sales_order_entry][merchandiser][id][$eq]"] = id;
+        } else {
+          params["filters[$or][0][sales_order_entry][processor][id][$eq]"] = id;
+          params["filters[$or][1][internal_sales_order_entry][processor][id][$eq]"] = id;
+        }
+      }
+
+      if (searchTerm) {
+        params["filters[$or][2][internal_sales_order_entry][so_id][$containsi]"] = searchTerm;
+        params["filters[$or][3][sales_order_entry][so_id][$containsi]"] = searchTerm;
+        params["filters[$or][4][design][design_number][$containsi]"] = searchTerm;
+        params["filters[$or][5][bom_billOfSale][jobber][jobber_name][$containsi]"] = searchTerm;
+        params["filters[$or][6][bom_billOfSale][jobber][jobber_gstin][$containsi]"] = searchTerm;
+        params["filters[$or][7][processor][name][$containsi]"] = searchTerm;
+        params["filters[$or][8][processor][designation][$containsi]"] = searchTerm;
+        params["filters[$or][9][billOfSales_status][$containsi]"] = searchTerm;
+      }
+
+      const response = await axios.get(
+        `${process.env.REACT_APP_BACKEND_URL}/api/bill-of-sales`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          params,
+        }
+      );
+      console.log("Data: ", response.data.data)
       const data = response.data.data || [];
       const pagination = response.data.meta.pagination || {};
-
-      // Correctly set total pages from pagination data
       setTotalPages(pagination.pageCount || 1);
+
+
       const mappedData = data.map((bills) => {
         const isInternal = bills.internal_sales_order_entry;
         const isSales = bills.sales_order_entry;
@@ -145,29 +301,49 @@ const BillOfSalesReport = () => {
           billToDetails: bills?.bom_billOfSale?.jobber?.jobber_gstin,
           otherCharges: bills?.other_charges,
           Total_Amount: bills?.Total_Bill_of_sales_Amount,
-          processor: bills.processor?.id ? (bills.processor?.name + "-" + bills.processor?.designation) : "N/A",
+          processor: bills.processor?.id
+            ? `${bills.processor.name} - ${bills.processor.designation}`
+            : "N/A",
+          status: bills?.billOfSales_status
         };
       });
 
       setBillData(mappedData);
-
     } catch (error) {
-      console.error("Error fetching jobber data:", error);
+      console.error("Error fetching bill of sales:", error);
       if (error.response?.status === 401) {
         navigate("/login");
       }
     } finally {
       setLoading(false);
     }
-  }
+  };
+
+
+  // useEffect(() => {
+  //   if (!token) {
+  //     navigate("/login");
+  //     return;
+  //   }
+  //   fetchBillOfSales();
+  // }, [token, page, pageSize]);
 
   useEffect(() => {
-    if (!token) {
-      navigate("/login");
-      return;
-    }
-    fetchBillOfSales();
-  }, [token, page, pageSize]);
+    const delayDebounce = setTimeout(() => {
+      if (!token) {
+        navigate("/login");
+        return;
+      }
+      fetchBillOfSales();
+    }, 1000);
+
+    return () => clearTimeout(delayDebounce);
+  }, [searchTerm, page, pageSize]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [searchTerm]);
+
 
   console.log("billData: ", billData)
 
@@ -477,7 +653,15 @@ const BillOfSalesReport = () => {
             ) : (
               <>
                 {/* <SmartTable1 headers={headers} data={updateData} /> */}
-                <SmartTable1 headers={headersForTable} data={enhancedData} />
+                {/* <SmartTable1 headers={headersForTable} data={enhancedData} /> */}
+
+                <SmartTable1
+                  headers={headersForTable}
+                  data={enhancedData}
+                  searchTerm={searchTerm}
+                  setSearchTerm={setSearchTerm}
+                />
+
 
                 <Pagination
                   setPage={setPage}

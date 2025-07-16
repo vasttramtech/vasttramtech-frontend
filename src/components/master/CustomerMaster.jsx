@@ -318,6 +318,10 @@ const CustomerMaster = () => {
     return () => clearTimeout(delayDebounce);
   }, [searchTerm, page, pageSize, token, navigate]);
 
+  useEffect(() => {
+      setPage(1);
+    }, [searchTerm]);
+
   const clearHandler = (e) => {
     e.preventDefault();
     setFormData({

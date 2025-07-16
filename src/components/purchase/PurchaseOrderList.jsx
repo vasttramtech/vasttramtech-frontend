@@ -101,6 +101,10 @@ const PurchaseOrderList = () => {
     return () => clearTimeout(delayDebounce);
   }, [searchTerm, page, pageSize]);
 
+  useEffect(() => {
+    setPage(1);
+  }, [searchTerm]);
+
   const handleView = (rowData) => {
     navigate(`/purchase-order-list/${rowData.id}`, { state: { purchase_id: rowData.purchase_id } });
   };

@@ -375,7 +375,7 @@ function App() {
           <Route path="/kanban" element={<BoardsList />} />
 
           {/*  Reports */}
-          <Route path="/dispatch-report" element={<DispatchReport />} />
+          <Route path="/dispatched-reports" element={<DispatchReport />} />
           <Route path="/stitch-report" element={<StitchReport />} />
           <Route path="/sale-bill-report" element={<SaleBillReport />} />
           <Route
@@ -386,7 +386,7 @@ function App() {
             path="/stitch-clear-report"
             element={<StitchClearDateWiseReport />}
           />
-          <Route path="/so-return-report" element={<SoReturnReports />} />
+          <Route path="/so-return-report" element={<SalesReturnReports />} />
           <Route
             path="/dyer-wise-sale-purchase-report"
             element={<DyerWiseSalePurchaseReport />}

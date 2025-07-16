@@ -580,7 +580,7 @@ const Sidebar = () => {
         { label: "Reports", isModule: true },
         { label: "Stitch Report", path: "/stitch-report" },
         { label: "Stitch Clear Report", path: "/stitch-clear-report" },
-        { label: "Dispatch Report", path: "/dispatch-reports" },
+        { label: "Dispatch Report", path: "/dispatched-reports" },
         { label: "Sale Bill Report", path: "/sale-bill-report" },
         { label: "Purchase Bill Report", path: "/purchase-bill-report" },
         { label: "SO Return Report", path: "/so-return-report" },

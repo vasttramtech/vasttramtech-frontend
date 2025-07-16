@@ -9,7 +9,7 @@ import Pagination from "./utility/Pagination";
 import { useSelector } from "react-redux";
 import CountsDashboard from "./CountsDashboard";
 
-const Dashboard = ({  company, setSelectedSOId, setSalesOrder, setBom, setFormData, setFromDashboard, setSelectedItem }) => {
+const Dashboard = ({ company, setSelectedSOId, setSalesOrder, setBom, setFormData, setFromDashboard, setSelectedItem }) => {
   const [salesDatas, setSalesData] = useState([]);
   const [headers] = useState([
     " ",
@@ -30,7 +30,7 @@ const Dashboard = ({  company, setSelectedSOId, setSalesOrder, setBom, setFormDa
   const [loading, setLoading] = useState(true);
   const [updateData, setUpdatedData] = useState([]);
   const [DisplayEditModal, setDisplayEditModal] = useState(false);
-  const {token,email,designation , id  } = useSelector((state) => state.auth);
+  const { token, email, designation, id } = useSelector((state) => state.auth);
 
   //  adding pagination logic
   const [page, setPage] = useState(1);
@@ -38,6 +38,7 @@ const Dashboard = ({  company, setSelectedSOId, setSalesOrder, setBom, setFormDa
   const [pageSize, setPageSize] = useState(10);
   const [paginationLoading, setPaginationLoading] = useState(false);
   const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState("");
   // console.log(designation , id)
 
   //  tabs logic
@@ -83,8 +84,8 @@ const Dashboard = ({  company, setSelectedSOId, setSalesOrder, setBom, setFormDa
 
             <Link
               to={`/bill-of-sales?type1=${item.customer_name === "Vasttram Admin"
-                  ? "internal-sales-order-entries"
-                  : "sales-oder-entries"
+                ? "internal-sales-order-entries"
+                : "sales-oder-entries"
                 }&dashId=${item.id}`}
               className="bg-blue-700 px-4 py-1 rounded-lg hover:bg-blue-900 transition duration-150 ease-in-out ml-4 text-white"
             >
@@ -108,36 +109,274 @@ const Dashboard = ({  company, setSelectedSOId, setSalesOrder, setBom, setFormDa
     );
   }, [salesDatas]);
 
+  // const fetchSalesData = async () => {
+  //   if (!designation || !id) return; 
+  //   try {
+  //     setPaginationLoading(true);
+  //     const response = await axios.get(
+  //       `${process.env.REACT_APP_BACKEND_URL}/api/sales-oder-entries/get-all-orders?designation=${designation}&userId=${id}&page=${page}&pageSize=${pageSize}`,
+  //       {}
+  //     );
+
+  //     if (!response?.data?.data) {
+  //       toast.error("Error fetching sales data");
+  //       return;
+  //     }
+
+  //     const salesData = response.data.data.map((item) => ({
+  //       id: item?.id,
+  //       so_id: item?.so_id,
+  //       convert_id: item?.orders?.[0]?.external_orders || "",
+  //       order_no: item?.order_no,
+  //       customer_name: item?.customer?.company_name || "Vasttram Admin",
+  //       group_name: item?.group?.group_name || "",
+  //       design_name: item?.design_number?.design_number || "",
+  //       order_date: item?.order_date,
+  //       delivery_date: item?.delivery_date,
+  //       qty: item?.qty,
+  //       status: item?.order_status
+  //     }));
+
+  //     // Assuming backend gives pagination meta like totalPages
+  //     setTotalPages(response.data.totalPages || 1);
+  //     setSalesData(salesData);
+  //   } catch (error) {
+  //     console.error("Error fetching sales orders:", error);
+  //     toast.error(
+  //       error?.response?.data?.message || "Failed to load sales orders"
+  //     );
+  //   } finally {
+  //     setPaginationLoading(false);
+  //     setLoading(false);
+  //   }
+  // };
+
+
+  // const fetchSalesData = async () => {
+  //   if (!designation || !id) return;
+
+  //   try {
+  //     setPaginationLoading(true);
+
+  //     const commonFilters = {
+  //       ...(designation === "Merchandiser"
+  //         ? { "filters[merchandiser][id][$eq]": id }
+  //         : designation === "Admin"
+  //           ? {}
+  //           : { "filters[processor][id][$eq]": id }),
+  //     };
+
+  //     const populateParams = {
+  //       "populate[customer]": true,
+  //       "populate[group]": true,
+  //       "populate[design_number]": true,
+  //       // "populate[orders]": true, // only for internal-sales-order-entry
+  //     };
+
+  //     const baseParams = {
+  //       "pagination[page]": 1, // fetch all for now (pagination on frontend)
+  //       "pagination[pageSize]": 1000, // large enough number
+  //       "sort[0]": "order_date:desc",
+  //       ...commonFilters,
+  //       ...populateParams,
+  //     };
+
+  //     // Fetch external orders
+  //     const extRes = await axios.get(
+  //       `${process.env.REACT_APP_BACKEND_URL}/api/sales-oder-entries`,
+  //       {
+  //         headers: { Authorization: `Bearer ${token}` },
+  //         params: baseParams,
+  //       }
+  //     );
+
+  //     // Fetch internal orders
+  //     const intRes = await axios.get(
+  //       `${process.env.REACT_APP_BACKEND_URL}/api/internal-sales-order-entries`,
+  //       {
+  //         headers: { Authorization: `Bearer ${token}` },
+  //         params: baseParams,
+  //       }
+  //     );
+
+  //     const extData = extRes.data.data || [];
+  //     const intData = intRes.data.data || [];
+
+  //     // Merge and sort by order_date descending
+  //     const combinedData = [...extData, ...intData].sort(
+  //       (a, b) => new Date(b.attributes.order_date) - new Date(a.attributes.order_date)
+  //     );
+
+  //     // Apply pagination on frontend
+  //     const startIndex = (page - 1) * pageSize;
+  //     const endIndex = page * pageSize;
+  //     const paginated = combinedData.slice(startIndex, endIndex);
+
+  //     const salesData = paginated.map((item) => {
+  //       const attr = item.attributes;
+  //       const customer = attr.customer?.data?.attributes?.company_name;
+  //       const group = attr.group?.data?.attributes?.group_name;
+  //       const design = attr.design_number?.data?.attributes?.design_number;
+
+  //       return {
+  //         id: item.id,
+  //         so_id: attr?.so_id,
+  //         convert_id: attr?.orders?.data?.[0]?.attributes?.external_orders || "",
+  //         order_no: attr?.order_no,
+  //         customer_name: customer || "Vasttram Admin",
+  //         group_name: group || "",
+  //         design_name: design || "",
+  //         order_date: attr?.order_date,
+  //         delivery_date: attr?.delivery_date,
+  //         qty: attr?.qty,
+  //         status: attr?.order_status,
+  //       };
+  //     });
+
+  //     setTotalPages(Math.ceil(combinedData.length / pageSize));
+  //     setSalesData(salesData);
+  //   } catch (error) {
+  //     console.error("Error fetching sales orders:", error);
+  //     toast.error(
+  //       error?.response?.data?.message || "Failed to load sales orders"
+  //     );
+  //   } finally {
+  //     setPaginationLoading(false);
+  //     setLoading(false);
+  //   }
+  // };
+
   const fetchSalesData = async () => {
-    if (!designation || !id) return; 
+    if (!designation || !id) return;
+
     try {
       setPaginationLoading(true);
-      const response = await axios.get(
-        `${process.env.REACT_APP_BACKEND_URL}/api/sales-oder-entries/get-all-orders?designation=${designation}&userId=${id}&page=${page}&pageSize=${pageSize}`,
-        {}
+
+      // Split pagination for both APIs
+      const halfPageSize = Math.ceil(pageSize / 2);
+
+      // Common filters
+      const commonFilters = {
+        ...(designation === "Merchandiser"
+          ? { "filters[merchandiser][id][$eq]": id }
+          : designation === "Admin"
+            ? {}
+            : { "filters[processor][id][$eq]": id }),
+      };
+
+      const searchFilters = searchTerm
+        ? {
+          "filters[$or][0][so_id][$containsi]": searchTerm,
+          "filters[$or][1][order_no][$containsi]": searchTerm,
+          "filters[$or][2][design_number][design_number][$containsi]": searchTerm,
+          "filters[$or][3][customer][company_name][$containsi]": searchTerm,
+          "filters[$or][4][group][group_name][$containsi]": searchTerm,
+          "filters[$or][5][order_status][$containsi]": searchTerm,
+        }
+        : {};
+
+      const internalSearchFilters = searchTerm
+        ? {
+          "filters[$or][0][so_id][$containsi]": searchTerm,
+          "filters[$or][1][order_no][$containsi]": searchTerm,
+          "filters[$or][2][design_number][design_number][$containsi]": searchTerm,
+          "filters[$or][3][customer][company_name][$containsi]": searchTerm,
+          "filters[$or][4][group][group_name][$containsi]": searchTerm,
+          "filters[$or][5][orders][external_orders][$containsi]": searchTerm,
+          "filters[$or][6][order_status]": searchTerm,
+        }
+        : {};
+
+      const basePopulate = {
+        "populate[customer]": true,
+        "populate[group]": true,
+        "populate[design_number]": true,
+      };
+
+      const externalParams = {
+        "pagination[page]": page,
+        "pagination[pageSize]": halfPageSize,
+        "sort[0]": "order_date:desc",
+        ...commonFilters,
+        ...searchFilters,
+        ...basePopulate,
+      };
+
+      const internalParams = {
+        "pagination[page]": page,
+        "pagination[pageSize]": halfPageSize,
+        "sort[0]": "order_date:desc",
+        ...commonFilters,
+        ...internalSearchFilters,
+        ...basePopulate,
+        "populate[orders]": true, // only for internal orders
+      };
+
+      const [extRes, intRes] = await Promise.all([
+        axios.get(
+          `${process.env.REACT_APP_BACKEND_URL}/api/sales-oder-entries`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+            params: externalParams,
+          }
+        ),
+        axios.get(
+          `${process.env.REACT_APP_BACKEND_URL}/api/internal-sales-order-entries`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+            params: internalParams,
+          }
+        ),
+      ]);
+
+      const extData = extRes.data?.data || [];
+      const intData = intRes.data?.data || [];
+
+      console.log("extData: ", extData)
+      console.log("intData: ", intData)
+
+      // Combine and sort by order_date descending
+      const combinedData = [...extData, ...intData].sort(
+        (a, b) =>
+          new Date(b.attributes?.order_date).getTime() -
+          new Date(a.attributes?.order_date).getTime()
       );
+      const salesData = combinedData.map((item) => {
+        const isInternal = !!item.orders; // only internal-sales-order-entries have `orders`
 
-      if (!response?.data?.data) {
-        toast.error("Error fetching sales data");
-        return;
-      }
+        const customer =
+          item.customer?.data?.attributes?.company_name || item.customer?.company_name;
+        const group =
+          item.group?.data?.attributes?.group_name || item.group?.group_name;
+        const design =
+          item.design_number?.data?.attributes?.design_number || item.design_number?.design_number;
 
-      const salesData = response.data.data.map((item) => ({
-        id: item?.id,
-        so_id: item?.so_id,
-        convert_id: item?.orders?.[0]?.external_orders || "",
-        order_no: item?.order_no,
-        customer_name: item?.customer?.company_name || "Vasttram Admin",
-        group_name: item?.group?.group_name || "",
-        design_name: item?.design_number?.design_number || "",
-        order_date: item?.order_date,
-        delivery_date: item?.delivery_date,
-        qty: item?.qty,
-        status: item?.order_status
-      }));
+        const convert_id = isInternal
+          ? item.orders?.data?.[0]?.attributes?.external_orders || ""
+          : "";
 
-      // Assuming backend gives pagination meta like totalPages
-      setTotalPages(response.data.totalPages || 1);
+        return {
+          id: item.id,
+          so_id: item.so_id,
+          convert_id: item?.orders?.[0]?.external_orders || "",
+          order_no: item.order_no,
+          customer_name: customer || "Vasttram Admin",
+          group_name: group || "",
+          design_name: design || "",
+          order_date: item.order_date,
+          delivery_date: item.delivery_date,
+          qty: item.qty,
+          status: item.order_status,
+        };
+      });
+
+      // Assuming external + internal total count can be derived later
+      // setTotalPages(Math.ceil((extData.length + intData.length) / pageSize));
+      const extTotal = extRes.data?.meta?.pagination?.total || 0;
+      const intTotal = intRes.data?.meta?.pagination?.total || 0;
+      const totalCombined = extTotal + intTotal;
+
+      setTotalPages(Math.ceil(totalCombined / pageSize));
       setSalesData(salesData);
     } catch (error) {
       console.error("Error fetching sales orders:", error);
@@ -150,15 +389,27 @@ const Dashboard = ({  company, setSelectedSOId, setSalesOrder, setBom, setFormDa
     }
   };
 
-  // useEffect(() => {
-  //   fetchSalesData();
-  // }, [page, pageSize]);
+  console.log("salesDatas: ", salesDatas)
 
   useEffect(() => {
     if (designation && id) {
       fetchSalesData();
     }
   }, [designation, id, page, pageSize]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [searchTerm]);
+
+  useEffect(() => {
+    const delayDebounce = setTimeout(() => {
+      if (designation && id) {
+        fetchSalesData();
+      }
+    }, 1000);
+
+    return () => clearTimeout(delayDebounce);
+  }, [searchTerm, page, pageSize]);
 
   if (loading)
     return (
@@ -168,64 +419,69 @@ const Dashboard = ({  company, setSelectedSOId, setSalesOrder, setBom, setFormDa
     );
 
   return (
-    <div className="  ">
+    <div className="py-2 bg-white rounded-lg relative">
+
       <h1 className="text-3xl font-bold text-blue-900 mb-4">DashBoard</h1>
 
 
       <div className="flex w-full justify-end gap-5">
-        {activeTab === 'dashboard' && 
+        {activeTab === 'dashboard' &&
           <div className="border  rounded-lg px-4 py-2 bg-green-500 cursor-pointer hover:bg-green-600 transition-all ease-out duration-200">
             <h1 className="text-xl text-white font-bold">Export to XLS</h1>
           </div>
-          }
-      <div className="flex">
-         <div
-          onClick={() => setActiveTab("dashboard")}
-          className={`border rounded-l-lg px-4 py-2 cursor-pointer transition-all duration-200 ${
-            activeTab === "dashboard" ? "bg-blue-900 hover:bg-blue-700" : "bg-gray-300 hover:bg-gray-400"
-          }`}
-        >
-          <h1 className="text-xl text-white font-bold">Dashboard</h1>
+        }
+        <div className="flex">
+          <div
+            onClick={() => setActiveTab("dashboard")}
+            className={`border rounded-l-lg px-4 py-2 cursor-pointer transition-all duration-200 ${activeTab === "dashboard" ? "bg-blue-900 hover:bg-blue-700" : "bg-gray-300 hover:bg-gray-400"
+              }`}
+          >
+            <h1 className="text-xl text-white font-bold">Dashboard</h1>
+          </div>
+
+          {/* Counts Dashboard Tab */}
+          <div
+            onClick={() => setActiveTab("counts")}
+            className={`border rounded-r-lg px-4 py-2 cursor-pointer transition-all duration-200 ${activeTab === "counts" ? "bg-blue-900 hover:bg-blue-700" : "bg-gray-300 hover:bg-gray-400"
+              }`}
+          >
+            <h1 className="text-xl text-white font-bold">Counts Dashboard</h1>
+          </div>
         </div>
 
-        {/* Counts Dashboard Tab */}
-        <div
-          onClick={() => setActiveTab("counts")}
-          className={`border rounded-r-lg px-4 py-2 cursor-pointer transition-all duration-200 ${
-            activeTab === "counts" ? "bg-blue-900 hover:bg-blue-700" : "bg-gray-300 hover:bg-gray-400"
-          }`}
-        >
-          <h1 className="text-xl text-white font-bold">Counts Dashboard</h1>
-        </div>
-      </div>
-        
       </div>
 
       {activeTab === "dashboard" &&
-      <>
-        {paginationLoading ? (
-          <div className="flex p-5 justify-center items-center space-x-2 mt-4 border border-gray-400 rounded-lg">
-            <BounceLoader size={20} color="#1e3a8a" />
-          </div>
-        ) : updateData && (
-          <>
-            <SmartTable headers={headers} data={updateData} />
+        <>
+          {paginationLoading ? (
+            <div className="flex p-5 justify-center items-center space-x-2 mt-4 border border-gray-400 rounded-lg">
+              <BounceLoader size={20} color="#1e3a8a" />
+            </div>
+          ) : updateData && (
+            <>
+              {/* <SmartTable headers={headers} data={updateData} /> */}
+              <SmartTable
+                headers={headers}
+                data={updateData}
+                searchTerm={searchTerm}
+                setSearchTerm={setSearchTerm}
+              />
 
-            <Pagination
-              setPage={setPage}
-              totalPages={totalPages}
-              page={page}
-              setPageSize={setPageSize}
-              pageSize={pageSize}
-            />
-          </>
-        ) 
-        }
+              <Pagination
+                setPage={setPage}
+                totalPages={totalPages}
+                page={page}
+                setPageSize={setPageSize}
+                pageSize={pageSize}
+              />
+            </>
+          )
+          }
         </>
       }
 
       {activeTab === "counts" && (
-        <CountsDashboard data={salesDatas}/>
+        <CountsDashboard data={salesDatas} />
       )}
     </div>
   );

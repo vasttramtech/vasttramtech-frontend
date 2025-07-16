@@ -171,6 +171,10 @@ const ColorMaster = () => {
 
     }, [searchTerm, page, pageSize, token, navigate, refresh])
 
+    useEffect(() => {
+        setPage(1);
+      }, [searchTerm]);
+
 
     const clearHandler = (e) => {
         e.preventDefault();
