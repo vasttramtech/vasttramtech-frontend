@@ -52,6 +52,7 @@ const BillOfPurchaseReport = () => {
   const [pageSize, setPageSize] = useState(5);
   const [paginationLoading, setPaginationLoading] = useState(false);
   const printableTableRef = useRef();
+  const [searchTerm, setSearchTerm] = useState("");
 
 
   const handlePrint = () => {
@@ -108,73 +109,313 @@ const BillOfPurchaseReport = () => {
   }
 
 
+  // const fetchBillOfPurchase = async () => {
+  //   try {
+  //     setLoading(true);
+  //     let url = `${process.env.REACT_APP_BACKEND_URL}/api/bill-of-purchase/get-all-billOfPurchase?page=${page}&pageSize=${pageSize}`;
+
+  //     const params = {
+  //       "pagination[page]": page,
+  //       "pagination[pageSize]": pageSize,
+  //       "sort[0]": "createdAt:desc",
+
+  //       // Populate all required relations
+  //       "populate[design]": "*",
+  //       "populate[processor]": "*",
+  //       "populate[sales_order_entry][populate][merchandiser]": "*",
+  //       "populate[sales_order_entry][populate][processor]": "*",
+  //       "populate[sales_order_entry][populate][so_items]": "*",
+  //       "populate[internal_sales_order_entry][populate][merchandiser]": "*",
+  //       "populate[internal_sales_order_entry][populate][processor]": "*",
+  //       "populate[internal_sales_order_entry][populate][so_items]": "*",
+  //       "populate[bom_billOfSale][populate][jobber]": "*",
+  //       "populate[bom_billOfSale][populate][raw_material_qty][populate][raw_material_master]": "*",
+  //       "populate[bom_billOfSale][populate][sfg_qty][populate][semi_finished_goods_master]": "*",
+
+  //     };
+
+  //     // Add filters based on designation and id
+  //     if (designation && id) {
+  //       if (designation !== "Merchandiser" && designation !== "Admin") {
+  //         params += `&filters[processor][id][$eq]=${encodeURIComponent(id)}`;
+  //       } else if (designation === "Merchandiser") {
+  //         params += `&filters[merchandiser][id][$eq]=${encodeURIComponent(id)}`;
+  //       }
+  //     }
+
+  //     `${process.env.REACT_APP_BACKEND_URL}/api/bill-of-purchases`,
+  //     {
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //       params,
+  //     }
+  //     const data = Array.isArray(response.data.data) ? response.data.data : [];
+  //     console.log("Data: ", response)
+  //     setTotalPages(response.data.totalPages);
+  //     // setTotalPages(response.data.meta.pagination.pageCount);
+  //     const mappedData = data.map((bills) => {
+  //       const isInternal = bills.billOfSale?.internal_sales_order_entry;
+  //       const isSales = bills.billOfSale?.sales_order_entry;
+
+  //       return {
+  //         purchaseId: bills?.id,
+  //         so_id: bills?.so_id,
+  //         BillId: bills?.billOfSale?.id,
+  //         // type: bills?.billOfSale?.type === "internal-sales-order-entries" ? "Vasttram Sales Order" : "Customer Sales Order", 
+  //         BillTo: bills?.bom_billOfPurchase?.jobber?.jobber_name,
+  //         processor: bills.processor?.name + "-" + bills.processor?.designation,
+  //         billDate: bills?.date,
+  //         releaseDate: bills.clearDate,
+  //         exDate: bills.ex_date,
+  //         designName: bills.design,
+  //         jobNote: bills.jobNote,
+  //         remarks: bills?.remarks,
+  //         otherCharges: bills?.other_charges,
+  //         totalBillAmount: bills?.Total_Bill_Amount_Bop
+  //       };
+  //     });
+
+  //     setBillOfPurchase(mappedData);
+
+  //   } catch (error) {
+  //     console.error("Error fetching jobber data:", error);
+  //     if (error.response?.status === 401) {
+  //       navigate("/login");
+  //     }
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // }
+
+  console.log("")
+
+  // const fetchBillOfPurchase = async () => {
+  //   try {
+  //     setLoading(true);
+
+  //     const params = {
+  //       "pagination[page]": page,
+  //       "pagination[pageSize]": pageSize,
+  //       "sort[0]": "createdAt:desc",
+
+  //       // ✅ Populate relations used in the controller
+  //       "populate[billOfSale]": true,
+  //       "populate[processor]": true,
+  //       "populate[merchandiser]": true,
+  //       "populate[bom_billOfPurchase][populate][jobber]": true,
+  //       "populate[bom_billOfPurchase][populate][bom_detail]": true,
+  //     };
+
+  //     // ✅ Apply filters based on designation
+  //     if (designation && id) {
+  //       if (designation !== "Merchandiser" && designation !== "Admin") {
+  //         params["filters[processor][id][$eq]"] = id;
+  //       } else if (designation === "Merchandiser") {
+  //         params["filters[merchandiser][id][$eq]"] = id;
+  //       }
+  //     }
+
+
+
+  //     const response = await axios.get(
+  //       `${process.env.REACT_APP_BACKEND_URL}/api/bill-of-purchases`,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //         params,
+  //       }
+  //     );
+
+  //     const data = Array.isArray(response.data.data) ? response.data.data : [];
+  //     setTotalPages(response.data.meta.pagination.pageCount);
+  //     const mappedData = data.map((bills) => {
+  //       const billOfSale = bills?.billOfSale;
+  //       const processor = bills?.processor;
+
+  //       return {
+  //         purchaseId: bills.id,
+  //         so_id: bills?.so_id,
+  //         BillId: billOfSale?.id,
+  //         BillTo: bills?.bom_billOfPurchase?.jobber?.jobber_name || "",
+  //         processor: processor
+  //           ? `${processor.name} - ${processor.designation}`
+  //           : "N/A",
+  //         billDate: bills?.date,
+  //         releaseDate: bills?.clearDate,
+  //         exDate: bills?.ex_date,
+  //         designName: bills?.design,
+  //         jobNote: bills?.jobNote,
+  //         remarks: bills?.remarks,
+  //         otherCharges: bills?.other_charges,
+  //         totalBillAmount: bills?.Total_Bill_Amount_Bop,
+  //       };
+  //     });
+
+  //     console.log("Mapped Data sent to table:", mappedData);
+
+  //     setBillOfPurchase(mappedData);
+  //   } catch (error) {
+  //     console.error("Error fetching bill of purchase data:", error);
+  //     if (error.response?.status === 401) {
+  //       navigate("/login");
+  //     }
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  console.log("")
+
   const fetchBillOfPurchase = async () => {
     try {
       setLoading(true);
-      let url = `${process.env.REACT_APP_BACKEND_URL}/api/bill-of-purchase/get-all-billOfPurchase?page=${page}&pageSize=${pageSize}`;
 
-      // Add filters based on designation and id
+      const params = {
+        "pagination[page]": page,
+        "pagination[pageSize]": pageSize,
+        "sort[0]": "createdAt:desc",
+
+        // ✅ Populate relations used in the controller
+        "populate[billOfSale]": true,
+        "populate[processor]": true,
+        "populate[merchandiser]": true,
+        "populate[bom_billOfPurchase][populate][jobber]": true,
+        "populate[bom_billOfPurchase][populate][bom_detail]": true,
+      };
+
+      // ✅ Apply filters based on designation
       if (designation && id) {
         if (designation !== "Merchandiser" && designation !== "Admin") {
-          url += `&filters[processor][id][$eq]=${encodeURIComponent(id)}`;
+          params["filters[processor][id][$eq]"] = id;
         } else if (designation === "Merchandiser") {
-          url += `&filters[merchandiser][id][$eq]=${encodeURIComponent(id)}`;
+          params["filters[merchandiser][id][$eq]"] = id;
         }
       }
 
-      // Optional: add sorting if needed (example)
-      url += `&sort=id:desc`;
+      if (searchTerm) {
+        params["filters[$or][2][so_id][$containsi]"] = searchTerm;
+        params["filters[$or][3][so_id][$containsi]"] = searchTerm;
+        params["filters[$or][4][design][$containsi]"] = searchTerm;
+        params["filters[$or][5][bom_billOfPurchase][jobber][jobber_name][$containsi]"] = searchTerm;
+        params["filters[$or][6][bom_billOfPurchase][jobber][jobber_gstin][$containsi]"] = searchTerm;
+        params["filters[$or][7][processor][name][$containsi]"] = searchTerm;
+        params["filters[$or][8][processor][designation][$containsi]"] = searchTerm;
+      }
 
-      // const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/bill-of-purchase/get-all-billOfPurchase?page=${page}&pageSize=${pageSize}`, {
-      //   headers: {
-      //     Authorization: `Bearer ${token}`,
-      //   },
-      // });
-      const response = await axios.get(url, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        params: {
-          designation, userId:id
+      const response = await axios.get(
+        `${process.env.REACT_APP_BACKEND_URL}/api/bill-of-purchases`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          params,
         }
-      });
+      );
+
       const data = Array.isArray(response.data.data) ? response.data.data : [];
-      console.log("Data: ", response)
-      setTotalPages(response.data.totalPages);
-      // setTotalPages(response.data.meta.pagination.pageCount);
+      setTotalPages(response.data.meta.pagination.pageCount);
       const mappedData = data.map((bills) => {
-        const isInternal = bills.billOfSale?.internal_sales_order_entry;
-        const isSales = bills.billOfSale?.sales_order_entry;
+        const billOfSale = bills?.billOfSale;
+        const processor = bills?.processor;
 
         return {
-          purchaseId: bills?.id,
+          purchaseId: bills.id,
           so_id: bills?.so_id,
-          BillId: bills?.billOfSale?.id,
-          // type: bills?.billOfSale?.type === "internal-sales-order-entries" ? "Vasttram Sales Order" : "Customer Sales Order", 
-          BillTo: bills?.bom_billOfPurchase?.jobber?.jobber_name,
-          processor: bills.processor?.name + "-" + bills.processor?.designation,
+          BillId: billOfSale?.id,
+          BillTo: bills?.bom_billOfPurchase?.jobber?.jobber_name || "",
+          processor: processor
+            ? `${processor.name} - ${processor.designation}`
+            : "N/A",
           billDate: bills?.date,
-          releaseDate: bills.clearDate,
-          exDate: bills.ex_date,
-          designName: bills.design,
-          jobNote: bills.jobNote,
+          releaseDate: bills?.clearDate,
+          exDate: bills?.ex_date,
+          designName: bills?.design,
+          jobNote: bills?.jobNote,
           remarks: bills?.remarks,
           otherCharges: bills?.other_charges,
-          totalBillAmount: bills?.Total_Bill_Amount_Bop
+          totalBillAmount: bills?.Total_Bill_Amount_Bop,
         };
       });
 
-      setBillOfPurchase(mappedData);
+      console.log("Mapped Data sent to table:", mappedData);
 
+      setBillOfPurchase(mappedData);
     } catch (error) {
-      console.error("Error fetching jobber data:", error);
+      console.error("Error fetching bill of purchase data:", error);
       if (error.response?.status === 401) {
         navigate("/login");
       }
     } finally {
       setLoading(false);
     }
-  }
+  };
+
+
+
+
+  // const fetchBillOfPurchase = async () => {
+  //   try {
+  //     setLoading(true);
+  //     let url = `${process.env.REACT_APP_BACKEND_URL}/api/bill-of-purchase/get-all-billOfPurchase?page=${page}&pageSize=${pageSize}`;
+
+  //     // Add filters based on designation and id
+  //     if (designation && id) {
+  //       if (designation !== "Merchandiser" && designation !== "Admin") {
+  //         url += `&filters[processor][id][$eq]=${encodeURIComponent(id)}`;
+  //       } else if (designation === "Merchandiser") {
+  //         url += `&filters[merchandiser][id][$eq]=${encodeURIComponent(id)}`;
+  //       }
+  //     }
+
+  //     // Optional: add sorting if needed (example)
+  //     url += `&sort=id:desc`;
+  //     const response = await axios.get(url, {
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //       params: {
+  //         designation, userId:id
+  //       }
+  //     });
+  //     const data = Array.isArray(response.data.data) ? response.data.data : [];
+  //     console.log("Data: ", response)
+  //     setTotalPages(response.data.totalPages);
+  //     // setTotalPages(response.data.meta.pagination.pageCount);
+  //     const mappedData = data.map((bills) => {
+  //       const isInternal = bills.billOfSale?.internal_sales_order_entry;
+  //       const isSales = bills.billOfSale?.sales_order_entry;
+
+  //       return {
+  //         purchaseId: bills?.id,
+  //         so_id: bills?.so_id,
+  //         BillId: bills?.billOfSale?.id,
+  //         // type: bills?.billOfSale?.type === "internal-sales-order-entries" ? "Vasttram Sales Order" : "Customer Sales Order", 
+  //         BillTo: bills?.bom_billOfPurchase?.jobber?.jobber_name,
+  //         processor: bills.processor?.name + "-" + bills.processor?.designation,
+  //         billDate: bills?.date,
+  //         releaseDate: bills.clearDate,
+  //         exDate: bills.ex_date,
+  //         designName: bills.design,
+  //         jobNote: bills.jobNote,
+  //         remarks: bills?.remarks,
+  //         otherCharges: bills?.other_charges,
+  //         totalBillAmount: bills?.Total_Bill_Amount_Bop
+  //       };
+  //     });
+
+  //     setBillOfPurchase(mappedData);
+
+  //   } catch (error) {
+  //     console.error("Error fetching jobber data:", error);
+  //     if (error.response?.status === 401) {
+  //       navigate("/login");
+  //     }
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // }
 
   useEffect(() => {
     if (!token) {
@@ -183,6 +424,22 @@ const BillOfPurchaseReport = () => {
     }
     fetchBillOfPurchase();
   }, [token, page, pageSize]);
+
+  useEffect(() => {
+    const delayDebounce = setTimeout(() => {
+      if (!token) {
+        navigate("/login");
+        return;
+      }
+      fetchBillOfPurchase();
+    }, 1000);
+
+    return () => clearTimeout(delayDebounce);
+  }, [searchTerm, page, pageSize]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [searchTerm]);
 
   const enhancedData = BillOfPurchase.map((item) => ({
     ...item,
@@ -218,7 +475,15 @@ const BillOfPurchaseReport = () => {
             ) : (
               <>
                 {/* <SmartTable1 headers={headers} data={updateData} /> */}
-                <SmartTable1 headers={headers} data={enhancedData} />
+                {/* <SmartTable1 headers={headers} data={enhancedData} /> */}
+
+                <SmartTable1
+                  headers={headers}
+                  data={enhancedData}
+                  searchTerm={searchTerm}
+                  setSearchTerm={setSearchTerm}
+                />
+
 
                 <Pagination
                   setPage={setPage}

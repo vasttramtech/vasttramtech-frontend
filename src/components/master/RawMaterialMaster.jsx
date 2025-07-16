@@ -289,6 +289,10 @@ const RawMaterialMaster = () => {
         return () => clearTimeout(delayDebounce);
     }, [searchTerm, page, pageSize]);
 
+    useEffect(() => {
+        setPage(1);
+      }, [searchTerm]);
+
 
     const clearHandler = (e) => {
         e.preventDefault();

@@ -136,7 +136,7 @@ const JobberMaster = () => {
         } finally {
             setLoading(false);
         }
-    }, [page, token, pageSize, navigate , searchTerm])
+    }, [page, token, pageSize, navigate, searchTerm])
 
     // Fetch jobber data when component mounts
     // useEffect(() => {
@@ -158,6 +158,10 @@ const JobberMaster = () => {
 
         return () => clearTimeout(delayDebounce);
     }, [searchTerm, page, pageSize]);
+
+    useEffect(() => {
+        setPage(1);
+    }, [searchTerm]);
 
 
     const handleInputChange = (e) => {

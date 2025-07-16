@@ -11,26 +11,26 @@ import Pagination from '../utility/Pagination';
 
 
 const headersForTable = [
-    "Clients",  
-    "Design Number", 
-    "Qty", 
-    "Stich Date", 
-    "Remarks", 
-    "BP/Grown/Kurti", 
-    "Lehenga/Sharara", 
-    "Dupatta 1", 
-    "Dupatta 2",
-    "Processor",
-    "Stitch Status",
-    "Clear Status",
-    "View",
+  "Clients",
+  "Design Number",
+  "Qty",
+  "Stich Date",
+  "Remarks",
+  "BP/Grown/Kurti",
+  "Lehenga/Sharara",
+  "Dupatta 1",
+  "Dupatta 2",
+  "Processor",
+  "Stitch Status",
+  "Clear Status",
+  "View",
 ];
 
 const StitchReport = () => {
 
 
-    const location = useLocation()
-    const title = location.state?.title || 'Dispatch Report';
+  const location = useLocation()
+  const title = location.state?.title || 'Dispatch Report';
   const { token } = useSelector(state => state.auth);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -38,65 +38,70 @@ const StitchReport = () => {
 
   const [stitchData, setStitchData] = useState([]);
 
-  
-      //  adding pagination logic
+
+  //  adding pagination logic
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [pageSize, setPageSize] = useState(5);
   const [paginationLoading, setPaginationLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   // Using useRef to get the table element reference
   const printableTableRef = useRef();
 
-  
-
-  
-
-/// we have to replace this api with the dispatch entry one
+  /// we have to replace this api with the dispatch entry one
   const fetchStitchData = async () => {
     try {
       setLoading(true);
       const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/stitching-entries?populate[sales_order_entry][populate]=customer&populate[stitcher]=*&populate[processor][fields][0]=name&populate[order_Items]=*&populate[bom][populate]=sfg&populate[internal_sales_order_entry][populate]=*&sort=id:desc`, {
-        headers: { 
+        headers: {
           Authorization: `Bearer ${token}`,
         },
-        params:{
-          "pagination[page]" : page,
-          "pagination[pageSize]" : pageSize,
+        params: {
+          "pagination[page]": page,
+          "pagination[pageSize]": pageSize,
           "sort[0]": "createdAt:desc",
+          ...(searchTerm && {
+            // "filters[$or][0][sales_order_entry][customer][company_name][$containsi]": searchTerm,
+            // "filters[$or][1][internal_sales_order_entry][so_id][$containsi]": searchTerm,
+            "filters[$or][0][design_number][$containsi]": searchTerm,
+            "filters[$or][1][date][$containsi]": searchTerm,
+            "filters[$or][2][remarks][$containsi]": searchTerm,
+            "filters[$or][3][processor][name][$containsi]": searchTerm,
+          }),
+
         }
       });
       const data = Array.isArray(response.data.data) ? response.data.data : [];
       setTotalPages(response.data.meta.pagination.pageCount);
       console.log("data: ", response.data);
-      
-   const mappedData = data?.map((entry) => {
-  const id = entry.id; // ✅ Capture ID
 
-  return {
-    client: entry?.sales_order_entry?.customer?.company_name || entry?.internal_sales_order_entry?.so_id || "N/A",
-    design_number: entry?.design_number || "N/A",
-    qty: entry?.sales_order_entry?.qty || entry?.internal_sales_order_entry?.qty || "N/A",
-    stitch_date: formatDate(entry?.date) || "N/A",
-    remarks: entry?.remarks || "N/A",
-    bp_grown_kurti: entry?.order_Items[0]?.Khaka || "-",
-    lehenga_sharara: entry?.order_Items[1]?.Khaka || "-",
-    dup1: entry?.order_Items[2]?.Khaka || "-",
-    dup2: entry?.order_Items[3]?.Khaka || "-",
-    processor: entry?.processor?.name || "N/A",
-    stitch_status: entry?.stitch_status || "N/A",
-    clear_status: formatDate(entry?.due_date) || "N/A",
+      const mappedData = data?.map((entry) => {
+        const id = entry.id;
 
-    // ✅ View column with access to ID only in the click handler
-    View: (
-      <div className="flex justify-center items-center space-x-2 border p-2 rounded-lg text-white bg-blue-500 hover:bg-blue-700">
-        <button type='button' onClick={() => handleView(id)}>
-          View
-        </button>
-      </div>
-    )
-  };
-});
+        return {
+          client: entry?.sales_order_entry?.customer?.company_name || entry?.internal_sales_order_entry?.so_id || "N/A",
+          design_number: entry?.design_number || "N/A",
+          qty: entry?.sales_order_entry?.qty || entry?.internal_sales_order_entry?.qty || "N/A",
+          stitch_date: formatDate(entry?.date) || "N/A",
+          remarks: entry?.remarks || "N/A",
+          bp_grown_kurti: entry?.order_Items[0]?.Khaka || "-",
+          lehenga_sharara: entry?.order_Items[1]?.Khaka || "-",
+          dup1: entry?.order_Items[2]?.Khaka || "-",
+          dup2: entry?.order_Items[3]?.Khaka || "-",
+          processor: entry?.processor?.name || "N/A",
+          stitch_status: entry?.stitch_status || "N/A",
+          clear_status: formatDate(entry?.due_date) || "N/A",
+
+          View: (
+            <div className="flex justify-center items-center space-x-2 border p-2 rounded-lg text-white bg-blue-500 hover:bg-blue-700">
+              <button type='button' onClick={() => handleView(id)}>
+                View
+              </button>
+            </div>
+          )
+        };
+      });
 
 
       setStitchData(mappedData);
@@ -111,27 +116,43 @@ const StitchReport = () => {
     }
   }
 
+  // useEffect(() => {
+  //   if (!token) {
+  //     navigate("/login");
+  //     return;
+  //   }
+  //   fetchStitchData();
+  // }, [token, page, pageSize]);
+
   useEffect(() => {
-    if (!token) {
-      navigate("/login");
-      return;
-    }
-    fetchStitchData();
-  }, [token, page, pageSize]);
+    const delayDebounce = setTimeout(() => {
+      if (!token) {
+        navigate("/login");
+        return;
+      }
+      fetchStitchData();
+    }, 1000);
+
+    return () => clearTimeout(delayDebounce);
+  }, [searchTerm, page, pageSize]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [searchTerm]);
 
   console.log("stitchData: ", stitchData)
 
   function formatDate(dateString) {
-  const date = new Date(dateString);
-  const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
-  const year = String(date.getFullYear()).slice(-2); // Get last 2 digits of year
-  return `${day}/${month}/${year}`;
-}
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const year = String(date.getFullYear()).slice(-2); // Get last 2 digits of year
+    return `${day}/${month}/${year}`;
+  }
 
 
 
- const handlePrint = () => {
+  const handlePrint = () => {
     const content = printableTableRef.current;  // Get the entire table content DOM
     const printWindow = window.open('', '', 'height=800,width=800');
     printWindow.document.write('<html><head><title>Print</title></head><body>');
@@ -188,7 +209,7 @@ const StitchReport = () => {
     navigate(`/stitching-entry/${rowData}`);
   }
 
- 
+
 
 
 
@@ -204,23 +225,30 @@ const StitchReport = () => {
           <div className="my-8" ref={printableTableRef}>
 
             {paginationLoading ? (
-          <div className="flex p-5 justify-center items-center space-x-2 mt-4 border border-gray-400 rounded-lg">
-            <BounceLoader size={20} color="#1e3a8a" />
-          </div>
-        ) : (
-          <>
-            {/* <SmartTable1 headers={headers} data={updateData} /> */}
-            <SmartTable1 headers={headersForTable} data={stitchData} />
+              <div className="flex p-5 justify-center items-center space-x-2 mt-4 border border-gray-400 rounded-lg">
+                <BounceLoader size={20} color="#1e3a8a" />
+              </div>
+            ) : (
+              <>
+                {/* <SmartTable1 headers={headers} data={updateData} /> */}
+                {/* <SmartTable1 headers={headersForTable} data={stitchData} /> */}
+                <SmartTable1
+                  headers={headersForTable}
+                  data={stitchData}
+                  searchTerm={searchTerm}
+                  setSearchTerm={setSearchTerm}
+                />
 
-            <Pagination
-              setPage={setPage}
-              totalPages={totalPages}
-              page={page}
-              setPageSize={setPageSize}
-              pageSize={pageSize}
-            />
-          </>
-        )}
+
+                <Pagination
+                  setPage={setPage}
+                  totalPages={totalPages}
+                  page={page}
+                  setPageSize={setPageSize}
+                  pageSize={pageSize}
+                />
+              </>
+            )}
           </div>
 
 

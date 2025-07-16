@@ -37,13 +37,14 @@ const StitchingEntryReports = () => {
   const { token, designation, id } = useSelector(state => state.auth);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const [stitchingEntry , setStitchingEntry] = useState([])
+  const [stitchingEntry, setStitchingEntry] = useState([])
 
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [pageSize, setPageSize] = useState(5);
   const [paginationLoading, setPaginationLoading] = useState(false);
   const printableTableRef = useRef();
+  const [searchTerm, setSearchTerm] = useState("");
 
 
   const handlePrint = () => {
@@ -101,52 +102,144 @@ const StitchingEntryReports = () => {
 
 
 
+  // const fetchBillOfPurchase = async () => {
+  //   try {
+  //     setLoading(true);
+
+  //     let params = {
+  //       // "filters[stitch_status][$eq]": "stitching_process",
+  //       "pagination[page]": page,
+  //       "pagination[pageSize]": pageSize,
+  //       "sort[0]": "createdAt:desc",
+  //       "populate": "*",
+
+  //     };
+
+  //     // Add conditional filters
+  //     if (designation === "Merchandiser" && id) {
+  //       params["filters[$or][0][sales_order_entry][merchandiser][id][$eq]"] = id;
+  //       params["filters[$or][1][internal_sales_order_entry][merchandiser][id][$eq]"] = id;
+  //     } else if (designation !== "Admin" && id) {
+  //       params["filters[processor][id][$eq]"] = id;
+  //     }
+
+  //     if (searchTerm) {
+  //       params = {
+  //         ...params,
+  //         "filters[$or][0][jobber_name][$containsi]": searchTerm,
+  //         "filters[$or][1][jobber_id][$containsi]": searchTerm,
+  //         "filters[$or][2][jobber_gstin][$containsi]": searchTerm,
+  //         "filters[$or][3][jobber_plan][$containsi]": searchTerm,
+  //         "filters[$or][4][jobber_code][$containsi]": searchTerm,
+  //         "filters[$or][5][jobber_address][$containsi]": searchTerm,
+  //         "filters[$or][6][state][$containsi]": searchTerm,
+  //         "filters[$or][7][work_type][$containsi]": searchTerm,
+  //       };
+  //     }
+
+  //     const response = await axios.get(
+  //       `${process.env.REACT_APP_BACKEND_URL}/api/stitching-entries`,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //         params: params,
+  //       }
+  //     );
+
+  //     console.log("Fetched stitching entries:", response.data.data);
+
+  //     const data = Array.isArray(response.data.data) ? response.data.data : [];
+  //     console.log("Data: ", data)
+  //     setTotalPages(response.data.meta.pagination.pageCount);
+  //     const mappedData = data.map((entry) => {
+  //       return {
+  //         stitchingEntryId: entry?.id,
+  //         so_id: entry?.so_id,
+  //         designGroup: entry?.design_group,
+  //         designNumber: entry?.design_number,
+  //         processor: entry?.processor?.name,
+  //         stitcher: entry?.stitcher?.stitcher_name,
+  //         date: entry?.date,
+  //         dueDate: entry?.due_date,
+  //         remarks: entry?.remarks,
+  //       };
+  //     });
+
+  //     setStitchingEntry(mappedData);
+
+  //   } catch (error) {
+  //     console.error("Error fetching jobber data:", error);
+  //     if (error.response?.status === 401) {
+  //       navigate("/login");
+  //     }
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // }
+
+
+  console.log("")
+
   const fetchBillOfPurchase = async () => {
     try {
       setLoading(true);
 
-     let params = {
-  // "filters[stitch_status][$eq]": "stitching_process",
-  "pagination[page]": page,
-  "pagination[pageSize]": pageSize,
-  "sort[0]": "createdAt:desc",
-  "populate": "*",
-};
+      let params = {
+        "pagination[page]": page,
+        "pagination[pageSize]": pageSize,
+        "sort[0]": "createdAt:desc",
+        "populate": "*",
+      };
 
-// Add conditional filters
-if (designation === "Merchandiser" && id) {
-  params["filters[$or][0][sales_order_entry][merchandiser][id][$eq]"] = id;
-  params["filters[$or][1][internal_sales_order_entry][merchandiser][id][$eq]"] = id;
-} else if (designation !== "Admin" && id) {
-  params["filters[processor][id][$eq]"] = id;
-}
+      if (designation === "Merchandiser" && id) {
+        params["filters[$or][0][sales_order_entry][merchandiser][id][$eq]"] = id;
+        params["filters[$or][1][internal_sales_order_entry][merchandiser][id][$eq]"] = id;
+      } else if (designation !== "Admin" && id) {
+        params["filters[processor][id][$eq]"] = id;
+      }
 
-const response = await axios.get(
-  `${process.env.REACT_APP_BACKEND_URL}/api/stitching-entries`,
-  {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    params: params,
-  }
-);
+      if (searchTerm) {
+        params = {
+          ...params,
+          "filters[$or][0][id][$containsi]": searchTerm,
+          "filters[$or][1][so_id][$containsi]": searchTerm,
+          "filters[$or][2][design_group][$containsi]": searchTerm,
+          "filters[$or][3][design_number][$containsi]": searchTerm,
+          "filters[$or][4][processor][name][$containsi]": searchTerm,
+          "filters[$or][5][stitcher][stitcher_name][$containsi]": searchTerm,
+          "filters[$or][6][date][$containsi]": searchTerm,
+          "filters[$or][7][due_date][$containsi]": searchTerm,
+          "filters[$or][8][remarks][$containsi]": searchTerm,
+        };
+      }
 
-console.log("Fetched stitching entries:", response.data.data);
+      const response = await axios.get(
+        `${process.env.REACT_APP_BACKEND_URL}/api/stitching-entries`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          params: params,
+        }
+      );
+
+      console.log("Fetched stitching entries:", response.data.data);
 
       const data = Array.isArray(response.data.data) ? response.data.data : [];
-      console.log("Data: ", data)
       setTotalPages(response.data.meta.pagination.pageCount);
+
       const mappedData = data.map((entry) => {
         return {
-         stitchingEntryId : entry?.id,
-         so_id : entry?.so_id,
-         designGroup : entry?.design_group,
-         designNumber : entry?.design_number,
-         processor : entry?.processor?.name,
-         stitcher : entry?.stitcher?.stitcher_name,
-         date : entry?.date,
-         dueDate : entry?.due_date,
-         remarks : entry?.remarks,
+          stitchingEntryId: entry?.id,
+          so_id: entry?.so_id,
+          designGroup: entry?.design_group,
+          designNumber: entry?.design_number,
+          processor: entry?.processor?.name,
+          stitcher: entry?.stitcher?.stitcher_name,
+          date: entry?.date,
+          dueDate: entry?.due_date,
+          remarks: entry?.remarks,
         };
       });
 
@@ -160,15 +253,24 @@ console.log("Fetched stitching entries:", response.data.data);
     } finally {
       setLoading(false);
     }
-  }
+  };
+
 
   useEffect(() => {
-    if (!token) {
-      navigate("/login");
-      return;
-    }
-    fetchBillOfPurchase();
-  }, [token, page, pageSize]);
+    const delayDebounce = setTimeout(() => {
+      if (!token) {
+        navigate("/login");
+        return;
+      }
+      fetchBillOfPurchase();
+    }, 1000);
+
+    return () => clearTimeout(delayDebounce);
+  }, [searchTerm, page, pageSize]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [searchTerm]);
 
   const enhancedData = stitchingEntry.map((item) => ({
     ...item,
@@ -194,7 +296,7 @@ console.log("Fetched stitching entries:", response.data.data);
         </div>
       ) : (
         <div>
-          <h1 className="text-3xl font-bold text-blue-900 mb-4">Stitcher Entry Reports</h1> 
+          <h1 className="text-3xl font-bold text-blue-900 mb-4">Stitcher Entry Reports</h1>
           <div className="my-8" ref={printableTableRef}>
 
             {paginationLoading ? (
@@ -204,7 +306,14 @@ console.log("Fetched stitching entries:", response.data.data);
             ) : (
               <>
                 {/* <SmartTable1 headers={headers} data={updateData} /> */}
-                <SmartTable1 headers={headers} data={enhancedData} />
+                {/* <SmartTable1 headers={headers} data={enhancedData} /> */}
+
+                <SmartTable1
+                  headers={headers}
+                  data={enhancedData}
+                  searchTerm={searchTerm}
+                  setSearchTerm={setSearchTerm}
+                />
 
                 <Pagination
                   setPage={setPage}

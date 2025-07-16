@@ -230,6 +230,10 @@ const SemiFinishedGoodsMaster = () => {
         return () => clearTimeout(delayDebounce);
     }, [searchTerm, page, pageSize, refresh]);
 
+    useEffect(() => {
+        setPage(1);
+    }, [searchTerm]);
+
 
     const enhancedData = semiFinishedGoodsData.map((item) => ({
         ...item,

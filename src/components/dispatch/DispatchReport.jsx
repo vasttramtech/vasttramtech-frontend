@@ -10,36 +10,37 @@ import Pagination from '../utility/Pagination';
 
 
 const headersForTable = [
-    "Invoice No",  
-    "SO ID", 
-    "Convert Id", 
-    // "Order No", 
-    "Invoice", 
-    "CN No", 
-    // "Status", 
-    "Invoice Date", 
-    "Customer Name", 
-    "Design Number", 
-    "Colour",
-    "Qty",
-    "Remarks",
-    "Processor",
-    "Detr",
-    "View"
+  "Invoice No",
+  "SO ID",
+  "Convert Id",
+  // "Order No", 
+  "Invoice",
+  "CN No",
+  // "Status", 
+  "Invoice Date",
+  "Customer Name",
+  "Design Number",
+  "Colour",
+  "Qty",
+  "Remarks",
+  "Processor",
+  "Detr",
+  "View"
 ];
 
 const DispatchReport = () => {
-    const location = useLocation()
-    const title = location.state?.title || 'Dispatch Report';
+  const location = useLocation()
+  const title = location.state?.title || 'Dispatch Report';
   const { token, designation, id } = useSelector(state => state.auth);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
 
 
   const [dispatchData, setDispatchData] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
-  
-      //  adding pagination logic
+
+  //  adding pagination logic
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [pageSize, setPageSize] = useState(5);
@@ -102,59 +103,78 @@ const DispatchReport = () => {
   }
 
   function formatDate(dateString) {
-  const date = new Date(dateString);
-  const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
-  const year = String(date.getFullYear()).slice(-2); // Get last 2 digits of year
-  return `${day}/${month}/${year}`;
-}
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const year = String(date.getFullYear()).slice(-2); // Get last 2 digits of year
+    return `${day}/${month}/${year}`;
+  }
 
 
-/// we have to replace this api with the dispatch entry one
+  /// we have to replace this api with the dispatch entry one
   const fetchDispatchData = async () => {
     try {
       setLoading(true);
-    let params = {
-  "pagination[page]": page,
-  "pagination[pageSize]": pageSize,
-  "sort[0]": "createdAt:desc",
+      let params = {
+        "pagination[page]": page,
+        "pagination[pageSize]": pageSize,
+        "sort[0]": "createdAt:desc",
 
-  // populate all required relations
-  "populate[design_master][populate]": "color",
-  "populate[customer_master][fields][0]": "company_name",
-  "populate[sales_oder_entry][populate]": "processor",
-  "populate[internal_sales_order_entry][populate]": "processor",
-};
+        // populate all required relations
+        "populate[design_master][populate]": "color",
+        "populate[customer_master][fields][0]": "company_name",
+        "populate[sales_oder_entry][populate]": "processor",
+        "populate[internal_sales_order_entry][populate]": "processor",
+      };
 
-// Add conditional access control filters
-if (designation === "Merchandiser" && id) {
-  params["filters[$or][0][sales_oder_entry][merchandiser][id][$eq]"] = id;
-  params["filters[$or][1][internal_sales_order_entry][merchandiser][id][$eq]"] = id;
-} else if (designation !== "Admin" && id) {
-  params["filters[$or][0][sales_oder_entry][processor][id][$eq]"] = id;
-  params["filters[$or][1][internal_sales_order_entry][processor][id][$eq]"] = id;
-}
+      // Add conditional access control filters
+      if (designation === "Merchandiser" && id) {
+        params["filters[$or][0][sales_oder_entry][merchandiser][id][$eq]"] = id;
+        params["filters[$or][1][internal_sales_order_entry][merchandiser][id][$eq]"] = id;
+      } else if (designation !== "Admin" && id) {
+        params["filters[$or][0][sales_oder_entry][processor][id][$eq]"] = id;
+        params["filters[$or][1][internal_sales_order_entry][processor][id][$eq]"] = id;
+      }
 
-// API call
-const response = await axios.get(
-  `${process.env.REACT_APP_BACKEND_URL}/api/dispatch-entries`,
-  {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    params: params,
-  }
-);
+      if (searchTerm) {
+        params = {
+          ...params,
+          "filters[$or][0][id][$containsi]": searchTerm,
+          "filters[$or][1][so_id][$containsi]": searchTerm,
+          "filters[$or][2][convert_id][$containsi]": searchTerm,
+          "filters[$or][3][invoice_no][$containsi]": searchTerm,
+          "filters[$or][4][cn_no][$containsi]": searchTerm,
+          "filters[$or][5][invoice_date][$containsi]": searchTerm,
+          "filters[$or][6][customer_master][company_name][$containsi]": searchTerm,
+          "filters[$or][7][design_master][design_number][$containsi]": searchTerm,
+          "filters[$or][8][design_master][color][color_name][$containsi]": searchTerm,
+          "filters[$or][9][qty][$containsi]": searchTerm,
+          "filters[$or][10][remarks][$containsi]": searchTerm,
+          "filters[$or][11][sales_oder_entry][processor][name][$containsi]": searchTerm,
+          "filters[$or][12][internal_sales_order_entry][processor][name][$containsi]": searchTerm,
+        };
+      }
+
+      // API call
+      const response = await axios.get(
+        `${process.env.REACT_APP_BACKEND_URL}/api/dispatch-entries`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          params: params,
+        }
+      );
 
       const data = Array.isArray(response.data.data) ? response.data.data : [];
       setTotalPages(response.data.meta.pagination.pageCount);
       console.log("data: ", response.data);
-      
+
       const mappedData = data?.map((dispatches) => {
 
         return {
           invoiceNo: dispatches?.id,
-          so_id:  dispatches?.so_id|| "N/A",
+          so_id: dispatches?.so_id || "N/A",
           convert_id: dispatches?.convert_id || "-",
           // order_no: dispatches?.order_no || "N/A",
           invoice: dispatches?.invoice_no || "N/A",
@@ -182,26 +202,42 @@ const response = await axios.get(
     }
   }
 
+  // useEffect(() => {
+  //   if (!token) {
+  //     navigate("/login");
+  //     return;
+  //   }
+  //   fetchDispatchData();
+  // }, [token, page, pageSize]);
+
   useEffect(() => {
-    if (!token) {
-      navigate("/login");
-      return;
-    }
-    fetchDispatchData();
-  }, [token, page, pageSize]);
+    const delayDebounce = setTimeout(() => {
+      if (!token) {
+        navigate("/login");
+        return;
+      }
+      fetchDispatchData();
+    }, 1000);
+
+    return () => clearTimeout(delayDebounce);
+  }, [searchTerm, page, pageSize]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [searchTerm]);
 
   console.log("dispatchData: ", dispatchData)
 
 
 
- 
+
 
 
   const enhancedData = dispatchData.map((item) => ({
     ...item,
-    
+
     Print: (
-       <div className="flex justify-center items-center space-x-2 border p-2 rounded-lg text-white bg-blue-500 hover:bg-blue-700">
+      <div className="flex justify-center items-center space-x-2 border p-2 rounded-lg text-white bg-blue-500 hover:bg-blue-700">
         <button type='button' onClick={() => console.log("Detr Clicked")}>
           Detr
         </button>
@@ -214,7 +250,7 @@ const response = await axios.get(
         </button>
       </div >
     )
- 
+
   }));
 
 
@@ -230,23 +266,30 @@ const response = await axios.get(
           <div className="my-8" ref={printableTableRef}>
 
             {paginationLoading ? (
-          <div className="flex p-5 justify-center items-center space-x-2 mt-4 border border-gray-400 rounded-lg">
-            <BounceLoader size={20} color="#1e3a8a" />
-          </div>
-        ) : (
-          <>
-            {/* <SmartTable1 headers={headers} data={updateData} /> */}
-            <SmartTable1 headers={headersForTable} data={enhancedData} />
+              <div className="flex p-5 justify-center items-center space-x-2 mt-4 border border-gray-400 rounded-lg">
+                <BounceLoader size={20} color="#1e3a8a" />
+              </div>
+            ) : (
+              <>
+                {/* <SmartTable1 headers={headers} data={updateData} /> */}
+                {/* <SmartTable1 headers={headersForTable} data={enhancedData} /> */}
 
-            <Pagination
-              setPage={setPage}
-              totalPages={totalPages}
-              page={page}
-              setPageSize={setPageSize}
-              pageSize={pageSize}
-            />
-          </>
-        )}
+                <SmartTable1
+                  headers={headersForTable}
+                  data={enhancedData}
+                  searchTerm={searchTerm}
+                  setSearchTerm={setSearchTerm}
+                />
+
+                <Pagination
+                  setPage={setPage}
+                  totalPages={totalPages}
+                  page={page}
+                  setPageSize={setPageSize}
+                  pageSize={pageSize}
+                />
+              </>
+            )}
           </div>
 
 

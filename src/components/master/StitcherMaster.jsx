@@ -144,6 +144,10 @@ const StitcherMaster = () => {
         return () => clearTimeout(delayDebounce);
     }, [searchTerm, page, pageSize]);
 
+    useEffect(() => {
+        setPage(1);
+      }, [searchTerm]);
+
 
 
     const handleInputChange = (e) => {

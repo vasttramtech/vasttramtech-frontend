@@ -175,6 +175,10 @@ const SalesReturnReports = () => {
         return () => clearTimeout(delayDebounce);
     }, [searchTerm, page, pageSize]);
 
+    useEffect(() => {
+        setPage(1);
+    }, [searchTerm]);
+
     console.log("salesOrderReturn: ", salesOrderReturn)
 
 

@@ -46,6 +46,7 @@ const StitchingReceiveEntryReports = () => {
   const [pageSize, setPageSize] = useState(5);
   const [paginationLoading, setPaginationLoading] = useState(false);
   const printableTableRef = useRef();
+  const [searchTerm, setSearchTerm] = useState("");
 
 
   const handlePrint = () => {
@@ -122,6 +123,23 @@ const StitchingReceiveEntryReports = () => {
         params["filters[processor][id][$eq]"] = id;
       }
 
+      if (searchTerm) {
+        params = {
+          ...params,
+          "filters[$or][0][id][$containsi]": searchTerm,
+          "filters[$or][1][stitchingEntry][id][$containsi]": searchTerm,
+          "filters[$or][2][so_id][$containsi]": searchTerm,
+          "filters[$or][3][design_group][$containsi]": searchTerm,
+          "filters[$or][4][design_number][$containsi]": searchTerm,
+          "filters[$or][5][processor][name][$containsi]": searchTerm,
+          "filters[$or][6][stitcher][stitcher_name][$containsi]": searchTerm,
+          "filters[$or][7][entry_process_date][$containsi]": searchTerm,
+          "filters[$or][8][due_date][$containsi]": searchTerm,
+          "filters[$or][9][reveive_date][$containsi]": searchTerm,
+          "filters[$or][10][remarks][$containsi]": searchTerm,
+        };
+      }
+
       // Now make the request using the params object only
       const response = await axios.get(url, {
         headers: {
@@ -161,13 +179,30 @@ const StitchingReceiveEntryReports = () => {
     }
   }
 
+  // useEffect(() => {
+  //   if (!token) {
+  //     navigate("/login");
+  //     return;
+  //   }
+  //   fetchBillOfPurchase();
+  // }, [token, page, pageSize]);
+
   useEffect(() => {
-    if (!token) {
-      navigate("/login");
-      return;
-    }
-    fetchBillOfPurchase();
-  }, [token, page, pageSize]);
+    const delayDebounce = setTimeout(() => {
+      if (!token) {
+        navigate("/login");
+        return;
+      }
+      fetchBillOfPurchase();
+    }, 1000);
+
+    return () => clearTimeout(delayDebounce);
+  }, [searchTerm, page, pageSize]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [searchTerm]);
+
 
   const formateDate = (date) => {
     const options = { year: "numeric", month: "long", day: "numeric" };
@@ -209,7 +244,15 @@ const StitchingReceiveEntryReports = () => {
             ) : (
               <>
                 {/* <SmartTable1 headers={headers} data={updateData} /> */}
-                <SmartTable1 headers={headers} data={enhancedData} />
+                {/* <SmartTable1 headers={headers} data={enhancedData} /> */}
+
+                <SmartTable1
+                  headers={headers}
+                  data={enhancedData}
+                  searchTerm={searchTerm}
+                  setSearchTerm={setSearchTerm}
+                />
+
 
                 <Pagination
                   setPage={setPage}
