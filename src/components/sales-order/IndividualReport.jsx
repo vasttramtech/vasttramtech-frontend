@@ -44,6 +44,7 @@ const IndividualReport = () => {
   };
   const fetchData = async () => {
     setLoading(true);
+    console.log("type1111: ", type)
     try {
       const response =
         type === "internal"

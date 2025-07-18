@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import SmartTable2 from '../../smartTable/SmartTable2';
 import { BounceLoader } from 'react-spinners';
+import FormLabel from '../purchase/FormLabel';
 const headersForTable = ["Id", "SO ID", "Convert ID", "Customer Name", "Design Group", "Design Name", "Qty", "Urgent", "Order Status"];
 
 
@@ -29,8 +30,11 @@ const SelectSOTable = ({
     allreadyProcessedQtyOfBOM,
     setAllreadyProcessedQtyOfBOM,
     allreadyProcessedOrderItems,
-    setAllreadyProcessedOrderItems
-
+    setAllreadyProcessedOrderItems,
+    setReturnItemsModal,
+    setReturnItems,
+    setDispatchType,
+    setIdOfSO
 }) => {
     const { token } = useSelector((state) => state.auth);
     const [updatedData, setUpdatedData] = useState([]);
@@ -41,6 +45,8 @@ const SelectSOTable = ({
     const handleClick = async (id, convertId, status, so_id) => {
 
         console.log(convertId, status, so_id)
+        setIdOfSO(id)
+        setDispatchType(status)
 
         setSelectedSOId(id);
         let so_type;
@@ -49,57 +55,83 @@ const SelectSOTable = ({
         try {
             setLoading(true);
 
-            const { data } = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/${so_type}/find-by-id/${id}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
+            // const { data } = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/${so_type}/find-by-id/${id}`, {
+            //     headers: {
+            //         Authorization: `Bearer ${token}`,
+            //     },
+            // });
 
             // let data;
 
-            // if (status === "Alter") {
-            //     const returnId = convertId !== "" ? convertId : so_id;
-            //     const response = await axios.get(
-            //         `${process.env.REACT_APP_BACKEND_URL}/api/sales-order-returns/${returnId}/details`,
-            //         {
-            //             headers: {
-            //                 Authorization: `Bearer ${token}`,
-            //             },
-            //         }
-            //     );
-            //     data = response.data;
-            // } else {
-            //     const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/${so_type}/find-by-id/${id}`, {
-            //         headers: {
-            //             Authorization: `Bearer ${token}`,
-            //         },
-            //     });
-            //     data = response.data;
-            // }
-            console.log("Fetch data", data);
+            if (status === "Alter") {
+                const returnId = convertId !== "" ? convertId : so_id;
+                const response = await axios.get(
+                    `${process.env.REACT_APP_BACKEND_URL}/api/custom-sales-order-returns/${returnId}/details`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
+                data = response.data;
+                if (data) {
+                    console.log("This is response:", data);
 
-            if (data) {
-                console.log("This is response:", data);
+                    setOrderItem(data?.order_items);
+                    setSelectedSO(data);
 
-                setOrderItem(data?.order_items);
-                setSelectedSO(data);
+                    let so_id = data?.so_id;
+                    if (so_type === "internal-sales-order-entry") {
+                        so_id = data?.orders[0]?.external_orders;
+                    }
 
-                let so_id = data?.so_id;
-                if (so_type === "internal-sales-order-entry") {
-                    so_id = data?.orders[0]?.external_orders;
+                    let sales_order = data?.internal_sales_order_entry || data?.sales_oder_entry;
+                    setFormData(pre => ({
+                        ...pre,
+                        so_id: so_id,
+                        customer: data?.customer_master?.company_name,
+                        design_name: sales_order?.design_number?.design_number,
+                        so_qty: sales_order?.qty,
+                        date: new Date().toISOString().split("T")[0],
+                        processor: data?.processor?.id
+                    }));
+                    setReturnItems(data.return_items);
+                    setSalesOrder(sales_order);
+                    setReturnItemsModal(true)
+                    console.log("Data", data);
                 }
-                setFormData(pre => ({
-                    ...pre,
-                    so_id: so_id,
-                    customer: data?.customer?.company_name,
-                    design_name: data?.design_number?.design_number,
-                    so_qty: data?.qty,
-                    date: new Date().toISOString().split("T")[0],
-                    processor: data?.processor?.id
-                }));
-                setSalesOrder(data);
-                console.log("Data", data);
+            } else {
+                const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/${so_type}/find-by-id/${id}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                data = response.data;
+
+                if (data) {
+                    console.log("This is response:", data);
+
+                    setOrderItem(data?.order_items);
+                    setSelectedSO(data);
+
+                    let so_id = data?.so_id;
+                    if (so_type === "internal-sales-order-entry") {
+                        so_id = data?.orders[0]?.external_orders;
+                    }
+                    setFormData(pre => ({
+                        ...pre,
+                        so_id: so_id,
+                        customer: (status !== "Return") ? data?.customer?.company_name : "",
+                        design_name: data?.design_number?.design_number,
+                        so_qty: data?.qty,
+                        date: new Date().toISOString().split("T")[0],
+                        processor: data?.processor?.id
+                    }));
+                    setSalesOrder(data);
+                    console.log("Data", data);
+                }
             }
+            console.log("Fetch data", data);
 
         } catch (error) {
             console.error("Error fetching jobber data:", error);
@@ -190,6 +222,14 @@ const DispatchEntry = () => {
     // bom ids
     const [allBomIds, setAllBomIds] = useState([]);
 
+    const [returnItemsModal, setReturnItemsModal] = useState(false);
+    const [returnItems, setReturnItems] = useState([]);
+    const [dispatchType, setDispatchType] = useState("");
+
+    const { availableCustomers } = useSelector((state) => state.fetchData);
+    const [idOfSo, setIdOfSO] = useState(null);
+
+
 
 
     const chooseSalesOrderHandler = (e) => {
@@ -240,7 +280,11 @@ const DispatchEntry = () => {
             stitch_date: "",
             qty: ""
         })
+        setReturnItemsModal(false)
+        setReturnItems([])
     }
+
+    console.log("returnItems: ", returnItems);
 
     const handleSalesOrderType = async (type) => {
 
@@ -322,6 +366,8 @@ const DispatchEntry = () => {
         }
     };
 
+    console.log("salesOrder11111111", salesOrder)
+
 
     //  save handler for form submission
     const saveHandler = async (e) => {
@@ -329,16 +375,29 @@ const DispatchEntry = () => {
 
         let data = salesOrder;
 
+        if (formData.so_id === "") {
+            toast.error("Please select the Order id")
+            return
+        }
+        if (dispatchType === "Return") {
+            if (formData.customer === "") {
+                toast.error("Please select the customer")
+                return
+            }
+        }
+
 
         let postData = {
             so_id: formData.so_id,
-            customer_master: salesOrder?.customer?.id,
+            customer_master: dispatchType === "Return" ? Number(formData.customer) : salesOrder?.customer?.id,
             design_master: salesOrder?.design_number?.id,
             qty: formData.so_qty,
             cn_no: formData.cn_no,
             invoice_date: formData.invoice_date,
             remarks: formData.remarks,
             invoice_no: formData.invoice_no,
+            dispatchType: dispatchType === "Alter" ? "Alter Item" : dispatchType === "Return" ? "Return SO" : "Fresh Sale",
+            alter_items: dispatchType !== "Alter" ? null : returnItems,
         }
         console.log(type);
 
@@ -363,6 +422,13 @@ const DispatchEntry = () => {
         try {
             setLoading(true);
             const url = `${process.env.REACT_APP_BACKEND_URL}/api/dispatch-entries`;
+            if (dispatchType === "Return") {
+                const res = await axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/${type}/${idOfSo}/update-customer/${Number(formData.customer)}`, { data: postData }, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                })
+            }
             const response = await axios.post(url, { data: postData }, {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -394,7 +460,7 @@ const DispatchEntry = () => {
 
             }
 
-            navigate("/dispatch-report");
+            navigate(`/dispatch-entry-report/${response.data?.data?.id}`);
         } catch (error) {
             toast.error("Error while saving dispatch entry");
             console.log(error);
@@ -404,6 +470,8 @@ const DispatchEntry = () => {
         }
 
     }
+
+    console.log(formData)
 
     return (
         <div>
@@ -507,6 +575,10 @@ const DispatchEntry = () => {
                                                         setAllreadyProcessedQtyOfBOM={setAllreadyProcessedQtyOfBOM}
                                                         allreadyProcessedOrderItems={allreadyProcessedOrderItems}
                                                         setAllreadyProcessedOrderItems={setAllreadyProcessedOrderItems}
+                                                        setReturnItemsModal={setReturnItemsModal}
+                                                        setReturnItems={setReturnItems}
+                                                        setDispatchType={setDispatchType}
+                                                        setIdOfSO={setIdOfSO}
                                                     />
                                                 </div>
                                             </div>
@@ -515,6 +587,45 @@ const DispatchEntry = () => {
                                 </div>
 
                             </div>
+
+                            {returnItemsModal && (
+                                <div className="modal-content p-4 bg-white shadow rounded">
+                                    <h2 className="text-lg font-bold mb-4">Return Items</h2>
+                                    {Array.isArray(returnItems) && returnItems.length > 0 ? (
+                                        <table className="table-auto w-full border">
+                                            <thead>
+                                                <tr className="bg-gray-100">
+                                                    <th className="border px-4 py-2">Key</th>
+                                                    <th className="border px-4 py-2">Colour</th>
+                                                    <th className="border px-4 py-2">Khaka</th>
+                                                    <th className="border px-4 py-2">Measurement</th>
+                                                    <th className="border px-4 py-2">Others</th>
+                                                    <th className="border px-4 py-2">Work</th>
+                                                    <th className="border px-4 py-2">Sale Qty</th>
+                                                    <th className="border px-4 py-2">Alter Qty</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {returnItems.map((item, index) => (
+                                                    <tr key={index}>
+                                                        <td className="border px-4 py-2 text-center">{item.key}</td>
+                                                        <td className="border px-4 py-2 text-center">{item.value?.colour}</td>
+                                                        <td className="border px-4 py-2 text-center">{item.value?.khaka}</td>
+                                                        <td className="border px-4 py-2 text-center">{item.value?.measurement}</td>
+                                                        <td className="border px-4 py-2 text-center">{item.value?.others}</td>
+                                                        <td className="border px-4 py-2 text-center">{item.value?.work}</td>
+                                                        <td className="border px-4 py-2 text-center">{item.saleQty}</td>
+                                                        <td className="border px-4 py-2 text-center">{item.alterQty}</td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    ) : (
+                                        <p>No return items available.</p>
+                                    )}
+                                </div>
+                            )}
+
                             <div className=' grid grid-cols-2 gap-6 mt-5'>
                                 <div>
                                     <label htmlFor="so_id">So Id:</label>
@@ -531,7 +642,7 @@ const DispatchEntry = () => {
                                     />
                                 </div>
                                 {/* Customer */}
-                                <div>
+                                {/* <div>
                                     <label htmlFor="customer">Customer:</label>
                                     <input
                                         type="text"
@@ -545,6 +656,68 @@ const DispatchEntry = () => {
                                         disabled
                                     />
                                 </div>
+
+                                <div className="flex flex-col">
+                                    <FormLabel title={"Customer"} />
+                                    <select
+                                        value={formData.customer}
+                                        name="customer"
+                                        onChange={handleChange}
+                                        className="border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    >
+                                        <option value="" disabled selected>
+                                            Select Customer
+                                        </option>
+                                        {availableCustomers &&
+                                            Array.isArray(availableCustomers) &&
+                                            availableCustomers?.length > 0 &&
+                                            availableCustomers.map((item, index) => (
+                                                <option key={item?.id} value={item?.id}>
+                                                    {item?.company_name}
+                                                </option>
+                                            ))}
+                                    </select>
+                                </div> */}
+
+                                {dispatchType !== "Return" ? (
+                                    <div>
+                                        <label htmlFor="customer">Customer:</label>
+                                        <input
+                                            type="text"
+                                            id="customer"
+                                            placeholder="Enter Customer Name"
+                                            value={formData.customer}
+                                            className="p-2 border border-gray-400 bg-gray-100 rounded-md w-full"
+                                            name="customer"
+                                            onChange={formDataHandler}
+                                            required
+                                            disabled
+                                        />
+                                    </div>
+                                ) : (
+                                    <div className="flex flex-col">
+                                        <FormLabel title={"Customer"} />
+                                        <select
+                                            value={formData.customer}
+                                            name="customer"
+                                            onChange={formDataHandler}
+                                            className="border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        >
+                                            <option value="" disabled>
+                                                Select Customer
+                                            </option>
+                                            {availableCustomers &&
+                                                Array.isArray(availableCustomers) &&
+                                                availableCustomers.length > 0 &&
+                                                availableCustomers.map((item, index) => (
+                                                    <option key={item?.id} value={item?.id}>
+                                                        {item?.company_name}
+                                                    </option>
+                                                ))}
+                                        </select>
+                                    </div>
+                                )}
+
 
                                 {/* Design Name */}
                                 <div>

@@ -23,6 +23,7 @@ const Dashboard = ({ company, setSelectedSOId, setSalesOrder, setBom, setFormDat
     "Delivery Date",
     "Qty",
     "Status",
+    "Order Stock",
     "View",
     "Bill Of Sale",
     "Bill Of Purchase"
@@ -62,7 +63,7 @@ const Dashboard = ({ company, setSelectedSOId, setSalesOrder, setBom, setFormDat
                   return;
                 }
                 const type =
-                  item?.customer_name === "Vasttram Admin"
+                  item?.customerType === "Vasttram Admin"
                     ? "internal"
                     : "external";
                 navigate(`/sales-order-report/report/${type}/${item?.id}`);
@@ -83,7 +84,7 @@ const Dashboard = ({ company, setSelectedSOId, setSalesOrder, setBom, setFormDat
             </Link> */}
 
             <Link
-              to={`/bill-of-sales?type1=${item.customer_name === "Vasttram Admin"
+              to={`/bill-of-sales?type1=${item.customerType === "Vasttram Admin"
                 ? "internal-sales-order-entries"
                 : "sales-oder-entries"
                 }&dashId=${item.id}`}
@@ -343,6 +344,7 @@ const Dashboard = ({ company, setSelectedSOId, setSalesOrder, setBom, setFormDat
       );
       const salesData = combinedData.map((item) => {
         const isInternal = !!item.orders; // only internal-sales-order-entries have `orders`
+        const customerType = isInternal ? "Vasttram Admin" : "External";
 
         const customer =
           item.customer?.data?.attributes?.company_name || item.customer?.company_name;
@@ -367,6 +369,7 @@ const Dashboard = ({ company, setSelectedSOId, setSalesOrder, setBom, setFormDat
           delivery_date: item.delivery_date,
           qty: item.qty,
           status: item.order_status,
+          customerType
         };
       });
 
