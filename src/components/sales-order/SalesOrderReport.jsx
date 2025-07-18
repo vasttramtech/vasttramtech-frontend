@@ -23,6 +23,7 @@ const SalesOrderReport = () => {
     "Delivery Date",
     "Qty",
     "Status",
+    "Order Stock",
     "Edit",
     "View",
     // "Add SFG/Raw Material",
@@ -60,7 +61,7 @@ const SalesOrderReport = () => {
                   return;
                 }
                 const type =
-                  item?.customer_name === "Vasttram Admin"
+                  item?.customerType === "Vasttram Admin"
                     ? "internal"
                     : "external";
                 navigate(`/sales-order-report/edit/${type}/${item?.id}`);
@@ -82,7 +83,7 @@ const SalesOrderReport = () => {
                 }
 
                 const type =
-                  item?.customer_name === "Vasttram Admin"
+                  item?.customerType === "Vasttram Admin"
                     ? "internal"
                     : "external";
                 navigate(`/sales-order-report/report/${type}/${item?.id}`);
@@ -328,6 +329,7 @@ const SalesOrderReport = () => {
       );
       const salesData = combinedData.map((item) => {
         const isInternal = !!item.orders; // only internal-sales-order-entries have `orders`
+        const customerType = isInternal ? "Vasttram Admin" : "External";
 
         const customer =
           item.customer?.data?.attributes?.company_name || item.customer?.company_name;
@@ -352,6 +354,7 @@ const SalesOrderReport = () => {
           delivery_date: item.delivery_date,
           qty: item.qty,
           status: item.order_status,
+          customerType
         };
       });
 

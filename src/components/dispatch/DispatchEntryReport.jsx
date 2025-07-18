@@ -36,7 +36,7 @@
 //     console.log(id);
 //   return (
 //     <div>
-      
+
 //     </div>
 //   )
 // }
@@ -75,6 +75,8 @@ const DispatchEntryReport = () => {
     }
   };
 
+  console.log("dispatchData: ", dispatchData)
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -99,6 +101,8 @@ const DispatchEntryReport = () => {
     design_master,
     internal_sales_order_entry,
     sales_oder_entry,
+    dispatchType,
+    alter_items
   } = dispatchData;
 
   const orderInfo = internal_sales_order_entry || sales_oder_entry;
@@ -120,7 +124,10 @@ const DispatchEntryReport = () => {
           <p><strong>Invoice No:</strong> {invoice_no}</p>
           <p><strong>Invoice Date:</strong> {invoice_date}</p>
           <p><strong>Qty:</strong> {qty}</p>
+          {dispatchData?.dispatchType === "Alter Item" && <p className="md:col-span-2"><strong>Dispatch Type:</strong> {dispatchType}</p>}
           <p className="md:col-span-2"><strong>Remarks:</strong> {remarks}</p>
+
+
         </div>
       </section>
 
@@ -156,6 +163,42 @@ const DispatchEntryReport = () => {
         </section>
       )}
 
+      {/* {dispatchType === "Alter Item" ?  <div className="modal-content p-4 bg-white shadow rounded">
+          <h2 className="text-lg font-bold mb-4">Return Items</h2>
+          {Array.isArray(alter_items) && alter_items.length > 0 ? (
+            <table className="table-auto w-full border">
+              <thead>
+                <tr className="bg-gray-100">
+                  <th className="border px-4 py-2">Key</th>
+                  <th className="border px-4 py-2">Colour</th>
+                  <th className="border px-4 py-2">Khaka</th>
+                  <th className="border px-4 py-2">Measurement</th>
+                  <th className="border px-4 py-2">Others</th>
+                  <th className="border px-4 py-2">Work</th>
+                  <th className="border px-4 py-2">Sale Qty</th>
+                  <th className="border px-4 py-2">Alter Qty</th>
+                </tr>
+              </thead>
+              <tbody>
+                {alter_items.map((item, index) => (
+                  <tr key={index}>
+                    <td className="border px-4 py-2 text-center">{item.key}</td>
+                    <td className="border px-4 py-2 text-center">{item.value?.colour}</td>
+                    <td className="border px-4 py-2 text-center">{item.value?.khaka}</td>
+                    <td className="border px-4 py-2 text-center">{item.value?.measurement}</td>
+                    <td className="border px-4 py-2 text-center">{item.value?.others}</td>
+                    <td className="border px-4 py-2 text-center">{item.value?.work}</td>
+                    <td className="border px-4 py-2 text-center">{item.saleQty}</td>
+                    <td className="border px-4 py-2 text-center">{item.alterQty}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <p>No return items available.</p>
+          )}
+        </div> :
+
       {orderItems && Object.keys(orderItems).length > 0 && (
         <section className="mb-6">
           <h2 className="text-xl font-semibold text-gray-700 mb-3">Order Items</h2>
@@ -188,7 +231,80 @@ const DispatchEntryReport = () => {
             </table>
           </div>
         </section>
+      )}} */}
+
+      {dispatchType === "Alter Item" ? (
+        <div className="modal-content p-4 bg-white shadow rounded">
+          <h2 className="text-lg font-bold mb-4">Return Items</h2>
+          {Array.isArray(alter_items) && alter_items.length > 0 ? (
+            <table className="table-auto w-full border">
+              <thead>
+                <tr className="bg-gray-100">
+                  <th className="border px-4 py-2">Key</th>
+                  <th className="border px-4 py-2">Colour</th>
+                  <th className="border px-4 py-2">Khaka</th>
+                  <th className="border px-4 py-2">Measurement</th>
+                  <th className="border px-4 py-2">Others</th>
+                  <th className="border px-4 py-2">Work</th>
+                  <th className="border px-4 py-2">Sale Qty</th>
+                  <th className="border px-4 py-2">Alter Qty</th>
+                </tr>
+              </thead>
+              <tbody>
+                {alter_items.map((item, index) => (
+                  <tr key={index}>
+                    <td className="border px-4 py-2 text-center">{item.key}</td>
+                    <td className="border px-4 py-2 text-center">{item.value?.colour}</td>
+                    <td className="border px-4 py-2 text-center">{item.value?.khaka}</td>
+                    <td className="border px-4 py-2 text-center">{item.value?.measurement}</td>
+                    <td className="border px-4 py-2 text-center">{item.value?.others}</td>
+                    <td className="border px-4 py-2 text-center">{item.value?.work}</td>
+                    <td className="border px-4 py-2 text-center">{item.saleQty}</td>
+                    <td className="border px-4 py-2 text-center">{item.alterQty}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <p>No return items available.</p>
+          )}
+        </div>
+      ) : (
+        orderItems && Object.keys(orderItems).length > 0 && (
+          <section className="mb-6">
+            <h2 className="text-xl font-semibold text-gray-700 mb-3">Order Items</h2>
+            <div className="overflow-auto rounded-lg shadow border">
+              <table className="min-w-full divide-y divide-gray-200 text-sm">
+                <thead className="bg-blue-100">
+                  <tr>
+                    <th className="px-4 py-2 text-left font-medium text-gray-600">Item</th>
+                    <th className="px-4 py-2 text-left font-medium text-gray-600">Colour</th>
+                    <th className="px-4 py-2 text-left font-medium text-gray-600">Khaka</th>
+                    <th className="px-4 py-2 text-left font-medium text-gray-600">Measurement</th>
+                    <th className="px-4 py-2 text-left font-medium text-gray-600">Others</th>
+                    <th className="px-4 py-2 text-left font-medium text-gray-600">Work</th>
+                    <th className="px-4 py-2 text-left font-medium text-gray-600">Status</th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-100">
+                  {Object.entries(orderItems).map(([itemName, details], index) => (
+                    <tr key={index} className="hover:bg-gray-50">
+                      <td className="px-4 py-2 font-semibold text-gray-800">{itemName}</td>
+                      <td className="px-4 py-2">{details.colour || '-'}</td>
+                      <td className="px-4 py-2">{details.khaka || '-'}</td>
+                      <td className="px-4 py-2">{details.measurement || '-'}</td>
+                      <td className="px-4 py-2">{details.others || '-'}</td>
+                      <td className="px-4 py-2">{details.work || '-'}</td>
+                      <td className="px-4 py-2">{details.status ? 'Yes' : 'No'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        )
       )}
+
     </div>
   );
 };

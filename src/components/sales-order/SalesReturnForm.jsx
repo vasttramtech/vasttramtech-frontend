@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { BounceLoader, PuffLoader } from 'react-spinners'
 import { toast } from "react-toastify";
 
@@ -36,6 +37,7 @@ const SalesReturnForm = () => {
     const [soChecked, setSOChecked] = useState(false);
     const [selectedItems, setSelectedItems] = useState([]);
     const [customerNameDisplay, setCustomerNameDisplay] = useState("");
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -150,10 +152,12 @@ const SalesReturnForm = () => {
                 },
             });
 
+            console.log("Res: ",res)
+
             if (res.status === 200 || res.status === 201) {
                 toast.success("Sales Order Return posted successfully!");
                 setSubmitting(false)
-                // Optional: reset form or navigate
+                navigate(`/sales-return-view/${res?.data?.data?.id}`);
             } else {
                 toast.error("Failed to post Sales Order Return.");
                 setSubmitting(false)
