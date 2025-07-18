@@ -13,16 +13,16 @@ const StockIn = () => {
 
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  
+
   const [selectedRow, setSelectedRow] = useState([]);
   const [setOfSelectedIndex, setSetOfSelectedIndex] = useState(new Set());
-  
+
   const [purchaseOrders, setPurchaseOrders] = useState([]);
   const [selectedPO, setSelectedPO] = useState(null);
-  
+
   const [rowMaterials, setRawMaterials] = useState([]);
   // const [selectedRows, setSelectedRows] = useState([]);
-  
+
   const [freight, setFreight] = useState(0);
   const [otherCharges, setOtherCharges] = useState(0);
   const [totalBillAmount, setTotalBillAmount] = useState(0);
@@ -162,28 +162,28 @@ const StockIn = () => {
   const handleInputChange = (index, field, value) => {
     setRawMaterials(prev => {
       const newMaterials = [...prev];
-      newMaterials[index] = { 
+      newMaterials[index] = {
         ...newMaterials[index],
         [field]: value,
         isModified: true // Mark as modified
       };
-      
+
       // Recalculate amounts if needed
       if (['receiveQty', 'extraQty', 'cgst', 'sgst', 'igst'].includes(field)) {
         const baseAmount = (Number(newMaterials[index].receiveQty) + Number(newMaterials[index].extraQty)) * newMaterials[index].rate;
         const taxAmount = ((Number(newMaterials[index].cgst) + Number(newMaterials[index].sgst) + Number(newMaterials[index].igst)) / 100 * baseAmount);
-        
+
         newMaterials[index].amount = baseAmount.toFixed(2);
         newMaterials[index].total = (baseAmount + taxAmount).toFixed(2);
       }
-      
+
       return newMaterials;
     });
   };
 
   const getModifiedRows = () => {
-    return rowMaterials.filter(row => 
-      row.isModified && 
+    return rowMaterials.filter(row =>
+      row.isModified &&
       (row.receiveQty > 0 || row.extraQty > 0) // Only include rows with actual quantities
     );
   };
@@ -276,67 +276,67 @@ const StockIn = () => {
       const alreadyReceived = Number(material.alreadyReceived);
       const receiveQty = Number(material.receiveQty);
       const extraQty = Number(material.extraQty);
-    
+
       // Condition: Extra quantity is added before receiving the full required quantity
       const isInvalidExtraQty = extraQty > 0 && (alreadyReceived + receiveQty !== requiredQty);
-    
+
       console.log(`Checking Material:`, material);
       console.log(
         `Condition: ${requiredQty} === ${alreadyReceived} + ${receiveQty} && extraQty: ${extraQty}`
       );
-    
+
       return isInvalidExtraQty; // Return true if validation fails
     });
-    
+
     console.log("checkExtraQty: ", checkExtraQty);
-    
+
     if (checkExtraQty) {
       alert("You can only add Extra Qty after receiving all required quantity.");
       setSubmitting(false);
       return;
     }
-    
+
 
     let uploadedImageIds = {}; // Object to store uploaded image IDs
 
     try {
       // Upload each image separately
 
-      try{
-      for (const key of Object.keys(selectedImages)) {
-        if (selectedImages[key]) {
-          const formDataUpload = new FormData();
-          formDataUpload.append("files", selectedImages[key]);
+      try {
+        for (const key of Object.keys(selectedImages)) {
+          if (selectedImages[key]) {
+            const formDataUpload = new FormData();
+            formDataUpload.append("files", selectedImages[key]);
 
-          console.log(formDataUpload);
+            console.log(formDataUpload);
 
-          const uploadResponse = await axios.post(
-            `${process.env.REACT_APP_BACKEND_URL}/api/upload`,
-            formDataUpload,
-            {
-              headers: {
-                "Content-Type": "multipart/form-data",
-                Authorization: `Bearer ${token}`,
-              },
+            const uploadResponse = await axios.post(
+              `${process.env.REACT_APP_BACKEND_URL}/api/upload`,
+              formDataUpload,
+              {
+                headers: {
+                  "Content-Type": "multipart/form-data",
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+            );
+            console.log(uploadResponse.data);
+
+            if (
+              uploadResponse.data &&
+              Array.isArray(uploadResponse.data) &&
+              uploadResponse.data.length > 0
+            ) {
+              uploadedImageIds[key] = uploadResponse.data[0].id; // Save image URL
             }
-          );
-          console.log(uploadResponse.data);
-
-          if (
-            uploadResponse.data &&
-            Array.isArray(uploadResponse.data) &&
-            uploadResponse.data.length > 0
-          ) {
-            uploadedImageIds[key] = uploadResponse.data[0].id; // Save image URL
           }
         }
+      } catch (error) {
+        toast.error("Image upload failed");
+        console.log(error);
+        setSubmitting(false);
+        return;
       }
-    } catch(error){
-      toast.error("Image upload failed");
-      console.log(error);
-      setSubmitting(false);
-      return;
-    }
 
       // Now send the main form data with image URLs
       const postData = {
@@ -412,7 +412,7 @@ const StockIn = () => {
 
       // const isValid = rowMaterials.every((material) => {
       //   const selectedRow = selectedRows.find(row => row.raw_material_master === material.raw_material_master);
-        
+
       //   if (selectedRow) {
       //     // If present in selectedRows, check if alreadyReceived + receiveQty == requiredQty
       //     return (selectedRow.alreadyReceived + selectedRow.receiveQty === selectedRow.requiredQty && material.alreadyReceived === material.requiredQty);
@@ -424,7 +424,7 @@ const StockIn = () => {
 
       const isValid = rowMaterials.every((material) => {
         const selectedRow = modifiedRows.find(row => row.raw_material_master === material.raw_material_master);
-      
+
         if (selectedRow) {
           // If the raw material is in selectedRows, check alreadyReceived + receiveQty === requiredQty
           return selectedRow.alreadyReceived + selectedRow.receiveQty === selectedRow.requiredQty;
@@ -434,7 +434,7 @@ const StockIn = () => {
         }
       });
 
-      if (isValid){
+      if (isValid) {
         await axios.put(
           `${process.env.REACT_APP_BACKEND_URL}/api/order-status-update/${selectedPO}/complete`,
           postData,
@@ -445,7 +445,7 @@ const StockIn = () => {
           }
         );
         toast.success("PO Fully received.")
-      }else{
+      } else {
         await axios.put(
           `${process.env.REACT_APP_BACKEND_URL}/api/order-status-partial/${selectedPO}/partial`,
           postData,
@@ -482,7 +482,7 @@ const StockIn = () => {
     } catch (error) {
 
       console.error("Error In adding raw material:", error);
-      
+
       // Delete uploaded images in case of failure
       if (uploadedImageIds && Object.keys(uploadedImageIds).length > 0) {
         for (const key in uploadedImageIds) {
@@ -503,7 +503,7 @@ const StockIn = () => {
         }
       }
 
-      
+
       toast.error(error?.response?.data?.error?.message);
     } finally {
       setSubmitting(false); // Stop the spinner
@@ -512,9 +512,9 @@ const StockIn = () => {
 
   useEffect(() => {
     const modifiedRows = rowMaterials.filter(row => row.isModified);
-    const newTotalAmount = modifiedRows.reduce((sum, row) => sum + Number(row.total || 0), 0) + 
-                          Number(freight || 0) + 
-                          Number(otherCharges || 0);
+    const newTotalAmount = modifiedRows.reduce((sum, row) => sum + Number(row.total || 0), 0) +
+      Number(freight || 0) +
+      Number(otherCharges || 0);
     setTotalBillAmount(newTotalAmount.toFixed(2));
   }, [rowMaterials, freight, otherCharges]);
 
@@ -543,256 +543,260 @@ const StockIn = () => {
     setTotalBillAmount(0);
   }
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <BounceLoader color="#1e3a8a" />
+      </div>
+    )
+  }
+
 
 
   return (
-    <div className="py-2 bg-white rounded-lg relative">
-      {loading ? (
-        <div className="absolute inset-0 flex justify-center items-center mt-64 bg-opacity-50 bg-gray-200 z-10">
-          <BounceLoader size={100} color={"#1e3a8a"} loading={loading} />
-        </div>
-      ) : (
-        <div>
-          <h1 className="text-3xl font-bold text-blue-900 mb-4">{title}</h1>
+    <div className="p-6 bg-white rounded-lg relative">
+
+      <div>
+        <h1 className="text-2xl font-bold text-blue-900 mb-4 pb-2 border-b">{title}</h1>
 
 
-          <form className="grid grid-cols-2 gap-6 p-5 rounded-lg border border-gray-200 shadow-md mb-16" onSubmit={handleSubmit}>
-            <div className="flex flex-col">
-              <FormLabel title={"Select Purchase Order"} />
-              <select
-                className="border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                onChange={(e) => setSelectedPO(e.target.value)}
-              >
-                <option value="" disabled selected>
-                  PO ID - Company Name
+        <form className="grid grid-cols-2 gap-6 p-5 rounded-lg border border-gray-200 shadow-md " onSubmit={handleSubmit}>
+          <div className="flex flex-col">
+            <FormLabel title={"Select Purchase Order"} />
+            <select
+              className="border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              onChange={(e) => setSelectedPO(e.target.value)}
+            >
+              <option value="" disabled selected>
+                PO ID - Company Name
+              </option>
+              {purchaseOrders.map((order, index) => (
+                <option key={index} value={order?.id}>
+                  {`${order?.id} - ${order?.supplier?.company_name}`}
                 </option>
-                {purchaseOrders.map((order, index) => (
-                  <option key={index} value={order?.id}>
-                    {`${order?.id} - ${order?.supplier?.company_name}`}
-                  </option>
-                ))}
-              </select>
-            </div>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex flex-col">
+            <FormLabel title={"Date"} />
+            <input
+              type="date"
+              className="bg-gray-100 border broder-gray-300 broder-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              readOnly
+              name="date"
+              value={formData.date}
+              onChange={handleInputChangeCompay}
+            />
+          </div>
+
+          <div className="flex flex-col">
+            <label className="text-gray-700 font-semibold">Challan No</label>
+            <input
+              type="text"
+              className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Challan No"
+              name="challan_no"
+              value={formData.challan_no}
+              onChange={handleInputChangeCompay}
+            />
+          </div>
+
+          <div className="flex flex-col">
+            <FormLabel title={"Challan Date"} />
+            <input
+              type="date"
+              className="bg-gray-100 border broder-gray-300 broder-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              name="challan_date"
+              value={formData.challan_date}
+              onChange={handleInputChangeCompay}
+            />
+          </div>
+
+          <div className="flex flex-col">
+            <label className="text-gray-700 font-semibold">Invoice No</label>
+            <input
+              type="text"
+              className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Invoice No"
+              name="invoice_no"
+              value={formData.invoice_no}
+              onChange={handleInputChangeCompay}
+            />
+          </div>
+
+          <div className="flex flex-col">
+            <FormLabel title={"Invoice Date"} />
+            <input
+              type="date"
+              className="bg-gray-100 border broder-gray-300 broder-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              name="invoice_date"
+              value={formData.invoice_date}
+              onChange={handleInputChangeCompay}
+            />
+          </div>
+
+          <div className="flex flex-row gap-8">
+            {/* Upload Challan */}
 
             <div className="flex flex-col">
-              <FormLabel title={"Date"} />
-              <input
-                type="date"
-                className="bg-gray-100 border broder-gray-300 broder-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                readOnly
-                name="date"
-                value={formData.date}
-                onChange={handleInputChangeCompay}
-              />
-            </div>
-
-            <div className="flex flex-col">
-              <label className="text-gray-700 font-semibold">Challan No</label>
-              <input
-                type="text"
-                className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Challan No"
-                name="challan_no"
-                value={formData.challan_no}
-                onChange={handleInputChangeCompay}
-              />
-            </div>
-
-            <div className="flex flex-col">
-              <FormLabel title={"Challan Date"} />
-              <input
-                type="date"
-                className="bg-gray-100 border broder-gray-300 broder-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                name="challan_date"
-                value={formData.challan_date}
-                onChange={handleInputChangeCompay}
-              />
-            </div>
-
-            <div className="flex flex-col">
-              <label className="text-gray-700 font-semibold">Invoice No</label>
-              <input
-                type="text"
-                className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Invoice No"
-                name="invoice_no"
-                value={formData.invoice_no}
-                onChange={handleInputChangeCompay}
-              />
-            </div>
-
-            <div className="flex flex-col">
-              <FormLabel title={"Invoice Date"} />
-              <input
-                type="date"
-                className="bg-gray-100 border broder-gray-300 broder-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                name="invoice_date"
-                value={formData.invoice_date}
-                onChange={handleInputChangeCompay}
-              />
-            </div>
-
-            <div className="flex flex-row gap-8">
-              {/* Upload Challan */}
-
-              <div className="flex flex-col">
-                <label className="text-gray-700 font-semibold mb-2">Upload Challan</label>
-                <div className="relative">
-                  <input
-                    type="file"
-                    id="upload_challan"
-                    className="hidden"
-                    name="final_img_upload"
-                    onChange={handleFileChange}
-                  />
-                  <label htmlFor="upload_challan" className="bg-blue-500 text-white px-4 py-1 rounded-xl cursor-pointer">
-                    Choose File
-                  </label>
-                  <span className="text-gray-500 ml-2">
-                    {selectedImages.final_img_upload ? selectedImages.final_img_upload.name : "No file chosen"}
-                  </span>
-                </div>
-                {previewImages.final_img_upload && (
-                  <img src={previewImages.final_img_upload} alt="Preview" className="mt-2 w-32 h-auto" />
-                )}
+              <label className="text-gray-700 font-semibold mb-2">Upload Challan</label>
+              <div className="relative">
+                <input
+                  type="file"
+                  id="upload_challan"
+                  className="hidden"
+                  name="final_img_upload"
+                  onChange={handleFileChange}
+                />
+                <label htmlFor="upload_challan" className="bg-blue-900 hover:bg-blue-700 text-white px-4 py-1 rounded-xl duration-200 ease-in-out transition-all cursor-pointer">
+                  Choose File
+                </label>
+                <span className="text-gray-500 ml-2">
+                  {selectedImages.final_img_upload ? selectedImages.final_img_upload.name : "No file chosen"}
+                </span>
               </div>
-
-              {/* Upload Invoice */}
-              <div className="flex flex-col">
-                <label className="text-gray-700 font-semibold mb-2">Upload Invoice</label>
-                <div className="relative">
-                  <input
-                    type="file"
-                    id="upload_invoice"
-                    className="hidden"
-                    name="img_upload"
-                    onChange={handleFileChange}
-                  />
-                  <label htmlFor="upload_invoice" className="bg-blue-500 text-white px-4 py-1 rounded-xl cursor-pointer">
-                    Choose File
-                  </label>
-                  <span className="text-gray-500 ml-2">
-                    {selectedImages.img_upload ? selectedImages.img_upload.name : "No file chosen"}
-                  </span>
-                </div>
-                {previewImages.img_upload && (
-                  <img src={previewImages.img_upload} alt="Preview" className="mt-2 w-32 h-auto" />
-                )}
-              </div>
+              {previewImages.final_img_upload && (
+                <img src={previewImages.final_img_upload} alt="Preview" className="mt-2 w-32 h-auto" />
+              )}
             </div>
 
-
+            {/* Upload Invoice */}
             <div className="flex flex-col">
-              <FormLabel title={"Remarks"} />
-              <textarea
-                className="border border-gray-300 bg-gray-100 rounded-md p-2 h-40 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
-                placeholder="Remarks"
-                name="remark"
-                value={formData.remark}
-                onChange={handleInputChangeCompay}
-              ></textarea>
+              <label className="text-gray-700 font-semibold mb-2">Upload Invoice</label>
+              <div className="relative">
+                <input
+                  type="file"
+                  id="upload_invoice"
+                  className="hidden"
+                  name="img_upload"
+                  onChange={handleFileChange}
+                />
+                <label htmlFor="upload_invoice" className="bg-blue-900 hover:bg-blue-700 text-white px-4 py-1 rounded-xl  duration-200 ease-in-out transition-all cursor-pointer">
+                  Choose File
+                </label>
+                <span className="text-gray-500 ml-2">
+                  {selectedImages.img_upload ? selectedImages.img_upload.name : "No file chosen"}
+                </span>
+              </div>
+              {previewImages.img_upload && (
+                <img src={previewImages.img_upload} alt="Preview" className="mt-2 w-32 h-auto" />
+              )}
             </div>
+          </div>
 
-            {/* Dynamic Table */}
-            {rowMaterials.length > 0 && (
-              <div className="col-span-2">
-                <h2 className="text-lg font-semibold text-gray-800 mb-3">Raw Material Details</h2>
-                <div className="overflow-x-auto bg-white shadow-lg rounded-lg">
-                  <table className="w-full border-collapse border border-gray-300 rounded-lg">
-                    <thead className="bg-gray-200 text-gray-700 text-sm uppercase">
-                      <tr>
-                        {["RM Id", "RM Name", "Description", "HSN Code", "Color", "Rate", "Required Qty", "Already Received Qty", "Receive Qty", "Extra Qty", "Amount", "CGST %", "SGST %", "IGST %", "Total"].map((header) => (
-                          <th key={header} className="border border-gray-300 p-3 text-left">{header}</th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {rowMaterials.map((row, index) => {
-                        const baseAmount = (row.receiveQty + row.extraQty) * row.rate;
-                        const taxAmount = ((row.cgst + row.sgst + row.igst) / 100) * baseAmount;
-                        const totalAmount = baseAmount + taxAmount;
 
-                        return (
-                          <tr key={index} className="even:bg-gray-100 hover:bg-gray-50 transition">
-                            <td className="border border-gray-300 p-3 text-center">{row.raw_material_master}</td>
-                            <td className="border border-gray-300 p-3 text-center">{row.rm_name}</td>
-                            <td className="border border-gray-300 p-3 text-center">{row.description}</td>
-                            <td className="border border-gray-300 p-3 text-center">{row.hsnCode}</td>
-                            <td className="border border-gray-300 p-3 text-center">{row.color}</td>
-                            <td className="border border-gray-300 p-3 text-center">{row.rate}</td>
-                            <td className="border border-gray-300 p-3 text-center">{row.requiredQty}</td>
-                            <td className="border border-gray-300 p-3 text-center">{row.alreadyReceived}</td>
+          <div className="flex flex-col">
+            <FormLabel title={"Remarks"} />
+            <textarea
+              className="border border-gray-300 bg-gray-100 rounded-md p-2 h-40 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
+              placeholder="Remarks"
+              name="remark"
+              value={formData.remark}
+              onChange={handleInputChangeCompay}
+            ></textarea>
+          </div>
 
-                            <td className="border border-gray-300 px-2 py-3 text-center">
-                              <input
-                                type="number"
-                                className="w-16 px-2 py-1 border rounded-md text-center focus:ring-2 focus:ring-blue-400 focus:outline-none"
-                                value={row.receiveQty}
-                                max={row.requiredQty - row.alreadyReceived}
-                                min={0}
-                                step="any"
-                                onChange={(e) => {
-                                  const value = Number(e.target.value);
-                                  const min = 0;
-                                  const max = row.requiredQty - row.alreadyReceived;
+          {/* Dynamic Table */}
+          {rowMaterials.length > 0 && (
+            <div className="col-span-2">
+              <h2 className="text-lg font-semibold text-gray-800 mb-3">Raw Material Details</h2>
+              <div className="overflow-x-auto bg-white shadow-lg rounded-lg">
+                <table className="w-full border-collapse border border-gray-300 rounded-lg">
+                  <thead className="bg-gray-200 text-gray-700 text-sm uppercase">
+                    <tr>
+                      {["RM Id", "RM Name", "Description", "HSN Code", "Color", "Rate", "Required Qty", "Already Received Qty", "Receive Qty", "Extra Qty", "Amount", "CGST %", "SGST %", "IGST %", "Total"].map((header) => (
+                        <th key={header} className="border border-gray-300 p-3 text-left">{header}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {rowMaterials.map((row, index) => {
+                      const baseAmount = (row.receiveQty + row.extraQty) * row.rate;
+                      const taxAmount = ((row.cgst + row.sgst + row.igst) / 100) * baseAmount;
+                      const totalAmount = baseAmount + taxAmount;
 
-                                  const clampedValue = Math.max(min, Math.min(max, value));
+                      return (
+                        <tr key={index} className="even:bg-gray-100 hover:bg-gray-50 transition">
+                          <td className="border border-gray-300 p-3 text-center">{row.raw_material_master}</td>
+                          <td className="border border-gray-300 p-3 text-center">{row.rm_name}</td>
+                          <td className="border border-gray-300 p-3 text-center">{row.description}</td>
+                          <td className="border border-gray-300 p-3 text-center">{row.hsnCode}</td>
+                          <td className="border border-gray-300 p-3 text-center">{row.color}</td>
+                          <td className="border border-gray-300 p-3 text-center">{row.rate}</td>
+                          <td className="border border-gray-300 p-3 text-center">{row.requiredQty}</td>
+                          <td className="border border-gray-300 p-3 text-center">{row.alreadyReceived}</td>
 
-                                  handleInputChange(index, "receiveQty", clampedValue);
-                                }}
+                          <td className="border border-gray-300 px-2 py-3 text-center">
+                            <input
+                              type="number"
+                              className="w-16 px-2 py-1 border rounded-md text-center focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                              value={row.receiveQty}
+                              max={row.requiredQty - row.alreadyReceived}
+                              min={0}
+                              step="any"
+                              onChange={(e) => {
+                                const value = Number(e.target.value);
+                                const min = 0;
+                                const max = row.requiredQty - row.alreadyReceived;
 
-                              />
-                            </td>
+                                const clampedValue = Math.max(min, Math.min(max, value));
 
-                            <td className="border border-gray-300 px-2 py-3 text-center">
-                              <input
-                                type="number"
-                                min={0}
-                                step="any"
-                                className="w-16 px-2 py-1 border rounded-md text-center focus:ring-2 focus:ring-blue-400 focus:outline-none"
-                                value={row.extraQty}
-                                onChange={(e) => handleInputChange(index, "extraQty", Number(e.target.value))}
-                                disabled={row.receiveQty !== row.requiredQty - row.alreadyReceived}
-                              />
-                            </td>
+                                handleInputChange(index, "receiveQty", clampedValue);
+                              }}
 
-                            <td className="border border-gray-300 px-2 py-3 text-center">{baseAmount.toFixed(2)}</td>
+                            />
+                          </td>
 
-                            <td className="border border-gray-300 px-2 py-3 text-center">
-                              <input
-                                type="number"
-                                min={0}
-                                step="any"
-                                className="w-16 px-2 py-1 border rounded-md text-center focus:ring-2 focus:ring-blue-400 focus:outline-none"
-                                value={row.cgst}
-                                onChange={(e) => handleInputChange(index, "cgst", Number(e.target.value))}
-                              />
-                            </td>
+                          <td className="border border-gray-300 px-2 py-3 text-center">
+                            <input
+                              type="number"
+                              min={0}
+                              step="any"
+                              className="w-16 px-2 py-1 border rounded-md text-center focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                              value={row.extraQty}
+                              onChange={(e) => handleInputChange(index, "extraQty", Number(e.target.value))}
+                              disabled={row.receiveQty !== row.requiredQty - row.alreadyReceived}
+                            />
+                          </td>
 
-                            <td className="border border-gray-300 px-2 py-3 text-center">
-                              <input
-                                type="number"
-                                min={0}
-                                step="any"
-                                className="w-16 px-2 py-1 border rounded-md text-center focus:ring-2 focus:ring-blue-400 focus:outline-none"
-                                value={row.sgst}
-                                onChange={(e) => handleInputChange(index, "sgst", Number(e.target.value))}
-                              />
-                            </td>
+                          <td className="border border-gray-300 px-2 py-3 text-center">{baseAmount.toFixed(2)}</td>
 
-                            <td className="border border-gray-300 px-2 py-3 text-center">
-                              <input
-                                type="number"
-                                min={0}
-                                step="any"
-                                className="w-16 px-2 py-1 border rounded-md text-center focus:ring-2 focus:ring-blue-400 focus:outline-none"
-                                value={row.igst}
-                                onChange={(e) => handleInputChange(index, "igst", Number(e.target.value))}
-                              />
-                            </td>
+                          <td className="border border-gray-300 px-2 py-3 text-center">
+                            <input
+                              type="number"
+                              min={0}
+                              step="any"
+                              className="w-16 px-2 py-1 border rounded-md text-center focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                              value={row.cgst}
+                              onChange={(e) => handleInputChange(index, "cgst", Number(e.target.value))}
+                            />
+                          </td>
 
-                            <td className="border border-gray-300 p-3 text-center">{totalAmount.toFixed(2)}</td>
-{/* 
+                          <td className="border border-gray-300 px-2 py-3 text-center">
+                            <input
+                              type="number"
+                              min={0}
+                              step="any"
+                              className="w-16 px-2 py-1 border rounded-md text-center focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                              value={row.sgst}
+                              onChange={(e) => handleInputChange(index, "sgst", Number(e.target.value))}
+                            />
+                          </td>
+
+                          <td className="border border-gray-300 px-2 py-3 text-center">
+                            <input
+                              type="number"
+                              min={0}
+                              step="any"
+                              className="w-16 px-2 py-1 border rounded-md text-center focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                              value={row.igst}
+                              onChange={(e) => handleInputChange(index, "igst", Number(e.target.value))}
+                            />
+                          </td>
+
+                          <td className="border border-gray-300 p-3 text-center">{totalAmount.toFixed(2)}</td>
+                          {/* 
                             <td className="border border-gray-300 p-3 text-center">
                               <input
                                 type="checkbox"
@@ -800,80 +804,80 @@ const StockIn = () => {
                                 checked={selectedRows.some((r) => r.raw_material_master === row.raw_material_master)}
                               />
                             </td> */}
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* Charges */}
+          <div className="col-span-2 flex justify-between">
+            <div className="flex flex-col">
+              <FormLabel title={"Freight"} />
+              <input
+                type="number"
+                placeholder="0.00"
+                step="any"
+                className="bg-gray-100 border broder-gray-300 broder-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                value={freight}
+                onChange={(e) => setFreight(Number(e.target.value))}
+              />
+            </div>
+            <div className="flex flex-col">
+              <FormLabel title={"Other charges"} />
+              <input
+                type="number"
+                placeholder="0.00"
+                step="any"
+                className="bg-gray-100 border broder-gray-300 broder-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                value={otherCharges}
+                onChange={(e) => setOtherCharges(Number(e.target.value))}
+              />
+            </div>
+            <div className="flex flex-col">
+              <FormLabel title={"Total Bill Amount"} />
+              <input
+                type="number"
+                placeholder="0.00"
+                className="bg-gray-100 border broder-gray-300 broder-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                value={totalBillAmount}
+                readOnly
+              />
+            </div>
+          </div>
+
+          {/* Buttons */}
+          <div className="col-span-2 flex justify-end mt-4">
+            <button
+              type="button"
+              onClick={clearHandler}
+              className="bg-gray-200 px-4 py-1 rounded hover:bg-gray-600 hover:text-white transition"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className={`bg-blue-900 ml-2 px-6 py-2 rounded text-white font-semibold transition-all ease-in-out duration-300 transform ${submitting
+                ? "opacity-50 cursor-not-allowed"
+                : "hover:bg-blue-700"
+                }`}
+              disabled={submitting}
+            >
+              {submitting ? (
+                <div className="flex justify-center items-center space-x-2">
+                  <PuffLoader size={20} color="#fff" />
+                  <span>Saving...</span>
                 </div>
-              </div>
-            )}
-
-            {/* Charges */}
-            <div className="col-span-2 flex justify-between">
-              <div className="flex flex-col">
-                <FormLabel title={"Freight"} />
-                <input
-                  type="number"
-                  placeholder="0.00"
-                  step="any"
-                  className="bg-gray-100 border broder-gray-300 broder-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  value={freight}
-                  onChange={(e) => setFreight(Number(e.target.value))}
-                />
-              </div>
-              <div className="flex flex-col">
-                <FormLabel title={"Other charges"} />
-                <input
-                  type="number"
-                  placeholder="0.00"
-                  step="any"
-                  className="bg-gray-100 border broder-gray-300 broder-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  value={otherCharges}
-                  onChange={(e) => setOtherCharges(Number(e.target.value))}
-                />
-              </div>
-              <div className="flex flex-col">
-                <FormLabel title={"Total Bill Amount"} />
-                <input
-                  type="number"
-                  placeholder="0.00"
-                  className="bg-gray-100 border broder-gray-300 broder-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  value={totalBillAmount}
-                  readOnly
-                />
-              </div>
-            </div>
-
-            {/* Buttons */}
-            <div className="col-span-2 flex justify-end mt-4">
-              <button
-                type="button"
-                onClick={clearHandler}
-                className="bg-gray-200 px-4 py-1 rounded hover:bg-gray-600 hover:text-white transition"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className={`bg-blue-900 ml-2 px-6 py-2 rounded text-white font-semibold transition-all ease-in-out duration-300 transform ${submitting
-                  ? "opacity-50 cursor-not-allowed"
-                  : "hover:bg-blue-700"
-                  }`}
-                disabled={submitting}
-              >
-                {submitting ? (
-                  <div className="flex justify-center items-center space-x-2">
-                    <PuffLoader size={20} color="#fff" />
-                    <span>Saving...</span>
-                  </div>
-                ) : (
-                  "Save"
-                )}
-              </button>
-            </div>
-          </form>
-        </div>)}
+              ) : (
+                "Save"
+              )}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

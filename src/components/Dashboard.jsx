@@ -8,6 +8,8 @@ import { Link, useNavigate } from "react-router-dom";
 import Pagination from "./utility/Pagination";
 import { useSelector } from "react-redux";
 import CountsDashboard from "./CountsDashboard";
+import ExportToExcel from "./utility/ExportToExcel";
+
 
 const Dashboard = ({ company, setSelectedSOId, setSalesOrder, setBom, setFormData, setFromDashboard, setSelectedItem }) => {
   const [salesDatas, setSalesData] = useState([]);
@@ -109,142 +111,6 @@ const Dashboard = ({ company, setSelectedSOId, setSalesOrder, setBom, setFormDat
     );
   }, [salesDatas]);
 
-  // const fetchSalesData = async () => {
-  //   if (!designation || !id) return; 
-  //   try {
-  //     setPaginationLoading(true);
-  //     const response = await axios.get(
-  //       `${process.env.REACT_APP_BACKEND_URL}/api/sales-oder-entries/get-all-orders?designation=${designation}&userId=${id}&page=${page}&pageSize=${pageSize}`,
-  //       {}
-  //     );
-
-  //     if (!response?.data?.data) {
-  //       toast.error("Error fetching sales data");
-  //       return;
-  //     }
-
-  //     const salesData = response.data.data.map((item) => ({
-  //       id: item?.id,
-  //       so_id: item?.so_id,
-  //       convert_id: item?.orders?.[0]?.external_orders || "",
-  //       order_no: item?.order_no,
-  //       customer_name: item?.customer?.company_name || "Vasttram Admin",
-  //       group_name: item?.group?.group_name || "",
-  //       design_name: item?.design_number?.design_number || "",
-  //       order_date: item?.order_date,
-  //       delivery_date: item?.delivery_date,
-  //       qty: item?.qty,
-  //       status: item?.order_status
-  //     }));
-
-  //     // Assuming backend gives pagination meta like totalPages
-  //     setTotalPages(response.data.totalPages || 1);
-  //     setSalesData(salesData);
-  //   } catch (error) {
-  //     console.error("Error fetching sales orders:", error);
-  //     toast.error(
-  //       error?.response?.data?.message || "Failed to load sales orders"
-  //     );
-  //   } finally {
-  //     setPaginationLoading(false);
-  //     setLoading(false);
-  //   }
-  // };
-
-
-  // const fetchSalesData = async () => {
-  //   if (!designation || !id) return;
-
-  //   try {
-  //     setPaginationLoading(true);
-
-  //     const commonFilters = {
-  //       ...(designation === "Merchandiser"
-  //         ? { "filters[merchandiser][id][$eq]": id }
-  //         : designation === "Admin"
-  //           ? {}
-  //           : { "filters[processor][id][$eq]": id }),
-  //     };
-
-  //     const populateParams = {
-  //       "populate[customer]": true,
-  //       "populate[group]": true,
-  //       "populate[design_number]": true,
-  //       // "populate[orders]": true, // only for internal-sales-order-entry
-  //     };
-
-  //     const baseParams = {
-  //       "pagination[page]": 1, // fetch all for now (pagination on frontend)
-  //       "pagination[pageSize]": 1000, // large enough number
-  //       "sort[0]": "order_date:desc",
-  //       ...commonFilters,
-  //       ...populateParams,
-  //     };
-
-  //     // Fetch external orders
-  //     const extRes = await axios.get(
-  //       `${process.env.REACT_APP_BACKEND_URL}/api/sales-oder-entries`,
-  //       {
-  //         headers: { Authorization: `Bearer ${token}` },
-  //         params: baseParams,
-  //       }
-  //     );
-
-  //     // Fetch internal orders
-  //     const intRes = await axios.get(
-  //       `${process.env.REACT_APP_BACKEND_URL}/api/internal-sales-order-entries`,
-  //       {
-  //         headers: { Authorization: `Bearer ${token}` },
-  //         params: baseParams,
-  //       }
-  //     );
-
-  //     const extData = extRes.data.data || [];
-  //     const intData = intRes.data.data || [];
-
-  //     // Merge and sort by order_date descending
-  //     const combinedData = [...extData, ...intData].sort(
-  //       (a, b) => new Date(b.attributes.order_date) - new Date(a.attributes.order_date)
-  //     );
-
-  //     // Apply pagination on frontend
-  //     const startIndex = (page - 1) * pageSize;
-  //     const endIndex = page * pageSize;
-  //     const paginated = combinedData.slice(startIndex, endIndex);
-
-  //     const salesData = paginated.map((item) => {
-  //       const attr = item.attributes;
-  //       const customer = attr.customer?.data?.attributes?.company_name;
-  //       const group = attr.group?.data?.attributes?.group_name;
-  //       const design = attr.design_number?.data?.attributes?.design_number;
-
-  //       return {
-  //         id: item.id,
-  //         so_id: attr?.so_id,
-  //         convert_id: attr?.orders?.data?.[0]?.attributes?.external_orders || "",
-  //         order_no: attr?.order_no,
-  //         customer_name: customer || "Vasttram Admin",
-  //         group_name: group || "",
-  //         design_name: design || "",
-  //         order_date: attr?.order_date,
-  //         delivery_date: attr?.delivery_date,
-  //         qty: attr?.qty,
-  //         status: attr?.order_status,
-  //       };
-  //     });
-
-  //     setTotalPages(Math.ceil(combinedData.length / pageSize));
-  //     setSalesData(salesData);
-  //   } catch (error) {
-  //     console.error("Error fetching sales orders:", error);
-  //     toast.error(
-  //       error?.response?.data?.message || "Failed to load sales orders"
-  //     );
-  //   } finally {
-  //     setPaginationLoading(false);
-  //     setLoading(false);
-  //   }
-  // };
 
   const fetchSalesData = async () => {
     if (!designation || !id) return;
@@ -409,75 +275,82 @@ const Dashboard = ({ company, setSelectedSOId, setSalesOrder, setBom, setFormDat
     }, 1000);
 
     return () => clearTimeout(delayDebounce);
-  }, [searchTerm, page, pageSize]);
+  }, [searchTerm]);
 
-  if (loading)
+
+
+  if (loading) {
     return (
-      <div className="absolute inset-0 flex justify-center items-center mt-64 bg-opacity-50 bg-gray-200 z-10">
-        <BounceLoader size={100} color={"#1e3a8a"} loading={loading} />
+      <div className="flex justify-center items-center h-screen">
+        <BounceLoader color="#1e3a8a" />
       </div>
-    );
+    )
+  }
+
 
   return (
-    <div className="py-2 bg-white rounded-lg relative">
+    <div className="p-2 bg-white rounded-lg relative min-h-screen">
 
-      <h1 className="text-3xl font-bold text-blue-900 mb-4">DashBoard</h1>
+      <h1 className="text-2xl font-bold text-blue-900">DashBoard</h1>
 
 
-      <div className="flex w-full justify-end gap-5">
-        {activeTab === 'dashboard' &&
-          <div className="border  rounded-lg px-4 py-2 bg-green-500 cursor-pointer hover:bg-green-600 transition-all ease-out duration-200">
-            <h1 className="text-xl text-white font-bold">Export to XLS</h1>
+      <div className="flex w-full justify-end gap-4 items-center flex-wrap">
+        {activeTab === 'dashboard' && (
+          <div className="bg-green-500 hover:bg-green-600 text-white font-medium rounded-md shadow-sm cursor-pointer transition-all duration-200">
+            <ExportToExcel data={salesDatas} reportName="Sales Orders" />
           </div>
-        }
-        <div className="flex">
+
+        )}
+
+        <div className="flex items-center border border-gray-200 bg-white shadow-sm rounded-md overflow-hidden">
+          {/* Dashboard Tab */}
           <div
             onClick={() => setActiveTab("dashboard")}
-            className={`border rounded-l-lg px-4 py-2 cursor-pointer transition-all duration-200 ${activeTab === "dashboard" ? "bg-blue-900 hover:bg-blue-700" : "bg-gray-300 hover:bg-gray-400"
+            className={`px-5 py-2 text-sm font-semibold cursor-pointer transition duration-200 ${activeTab === "dashboard"
+              ? "bg-blue-900 text-white"
+              : "text-blue-900 hover:bg-blue-50"
               }`}
           >
-            <h1 className="text-xl text-white font-bold">Dashboard</h1>
+            Dashboard
           </div>
 
           {/* Counts Dashboard Tab */}
           <div
             onClick={() => setActiveTab("counts")}
-            className={`border rounded-r-lg px-4 py-2 cursor-pointer transition-all duration-200 ${activeTab === "counts" ? "bg-blue-900 hover:bg-blue-700" : "bg-gray-300 hover:bg-gray-400"
+            className={`px-5 py-2 text-sm font-semibold cursor-pointer transition duration-200 ${activeTab === "counts"
+              ? "bg-blue-900 text-white"
+              : "text-blue-900 hover:bg-blue-50"
               }`}
           >
-            <h1 className="text-xl text-white font-bold">Counts Dashboard</h1>
+            Counts Dashboard
           </div>
         </div>
-
       </div>
 
-      {activeTab === "dashboard" &&
-        <>
-          {paginationLoading ? (
-            <div className="flex p-5 justify-center items-center space-x-2 mt-4 border border-gray-400 rounded-lg">
-              <BounceLoader size={20} color="#1e3a8a" />
-            </div>
-          ) : updateData && (
-            <>
-              {/* <SmartTable headers={headers} data={updateData} /> */}
-              <SmartTable
-                headers={headers}
-                data={updateData}
-                searchTerm={searchTerm}
-                setSearchTerm={setSearchTerm}
-              />
 
-              <Pagination
-                setPage={setPage}
-                totalPages={totalPages}
-                page={page}
-                setPageSize={setPageSize}
-                pageSize={pageSize}
-              />
-            </>
-          )
-          }
-        </>
+
+      {activeTab === "dashboard" &&
+        updateData && (
+          <>
+            {/* <SmartTable headers={headers} data={updateData} /> */}
+            <SmartTable
+              headers={headers}
+              data={updateData}
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+              setLoading={setPaginationLoading}
+              loading={paginationLoading}
+            />
+
+            <Pagination
+              setPage={setPage}
+              totalPages={totalPages}
+              page={page}
+              setPageSize={setPageSize}
+              pageSize={pageSize}
+            />
+          </>
+        )
       }
 
       {activeTab === "counts" && (

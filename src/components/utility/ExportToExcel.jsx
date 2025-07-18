@@ -10,18 +10,18 @@ const ExportToExcel = ({ data, reportName }) => {
         XLSX.utils.book_append_sheet(workbook, worksheet, reportName);
 
         const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
-        
+
         const blob = new Blob([excelBuffer], {
             type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8"
         });
-        
+
         saveAs(blob, `${reportName}.xlsx`);
     };
 
     return (
         <div>
             <button
-                className='bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded'
+                className='bg-green-500 hover:bg-green-700 text-white font-bold px-4 py-2 rounded duration-200 ease-in-out'
                 onClick={handleExportExcel}
             >
                 Export to Excel

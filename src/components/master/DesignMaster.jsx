@@ -15,7 +15,7 @@ import FormLabel from "../purchase/FormLabel";
 import DeleteTable from "../../smartTable/DeleteTable";
 import Pagination from "../utility/Pagination";
 import { checkFileSize } from "../utility/ImgCheck";
-import { Loader2 } from "lucide-react";
+import { Loader2, Plus } from "lucide-react";
 import SFGBomComponent from "./SFGBomComponent";
 import SFGBomSection from "./SFGBomSection";
 import SFGDataTable from "./component/SFGDataTable";
@@ -48,7 +48,7 @@ const DesignMaster = () => {
   const { token } = useSelector((state) => state.auth);
   const [designMaster, setDesignMaster] = useState([]);
   const [submitting, setSubmitting] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [designGroupModel, setDesignGroupModel] = useState(false);
   const [unitModel, setUnitModel] = useState(false);
   const [designGroup, setDesignGroup] = useState([]);
@@ -56,6 +56,7 @@ const DesignMaster = () => {
   const [colors, setColors] = useState([]);
   const [refresh, setRefresh] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
+
   const [openEditModal, setOpenEditModel] = useState(false);
   const [SavedSfgData, setSavedSfgData] = useState([]);
   const [refreshTable, setRefreshTable] = useState(0);
@@ -100,16 +101,6 @@ const DesignMaster = () => {
   });
 
   const [reduxLoading, setReduxLoading] = useState(false);
-  // state for BOM's Semi finished goods master
-  // const [SfgData, setSfgData] = useState({
-  //   sfg_group: "",
-  //   sfg_material: "",
-  //   sfg_color: "",
-  //   sfg_jobber: "",
-  //   sfg_qty: 0,
-  //   sfg_total_cost: "",
-  //   sfg_description: "",
-  // });
 
   const {
     load,
@@ -121,11 +112,6 @@ const DesignMaster = () => {
   } = useSelector((state) => state.fetchData);
 
   const location = useLocation();
-  // const sfgDataHandler = (event) => {
-  //   event.preventDefault();
-  //   setSfgData({ ...SfgData, [event.target.name]: event.target.value });
-  //   // console.log(SfgData);
-  // };
 
   useEffect(() => {
     setReduxLoading(load);
@@ -669,312 +655,308 @@ const DesignMaster = () => {
 
 
 
-  if (reduxLoading)
+  if (loading || reduxLoading) {
     return (
-      <div className="absolute inset-0 flex justify-center items-center mt-64 bg-opacity-50 bg-gray-200 z-10">
-        <BounceLoader size={100} color={"#1e3a8a"} loading={loading} />
+      <div className="flex justify-center items-center h-screen">
+        <BounceLoader color="#1e3a8a" />
       </div>
-    );
+    )
+  }
+
 
   return (
-    <div className="py-2 bg-white rounded-lg relative">
-      {loading ? (
-        <div className="absolute inset-0 flex justify-center items-center mt-64 bg-opacity-50 bg-gray-200 z-10">
-          <BounceLoader size={100} color={"#1e3a8a"} loading={loading} />
-        </div>
-      ) : (
-        <div>
-          <h1 className="text-3xl font-bold text-blue-900 mb-4">
-            Design Master
-          </h1>
+    <div className="p-6 bg-white rounded-lg relative">
 
-          {openEditModal && (
-            <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50 overflow-y-auto">
-              <div className="bg-white p-6 rounded-lg shadow-lg max-h-[90vh] overflow-y-auto w-[90%] max-w-4xl">
-                <EditDesignMaster
-                  setOpenEditModel={setOpenEditModel}
-                  selectedRow={selectedRow}
-                  designGroup={designGroup}
-                  setDesignGroupModel={setDesignGroupModel}
-                  colors={colors}
-                  unit={unit}
-                  fetchDesignMasterData={fetchDesignMasterData}
-                  sfgmGroup={sfgmGroup}
-                  BOMsfgHeader={BOMsfgHeader}
-                  designGroupModel={designGroupModel}
-                />
-              </div>
-            </div>
-          )}
+      <div>
+        <h1 className="text-2xl border-b pb-2 font-bold text-blue-900 mb-4">
+          Design Master
+        </h1>
 
-          {designGroupModel && (
-            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-              <DesgnGroup
+        {openEditModal && (
+
+          <div className="fixed inset-0 bg-gray-900 backdrop-blur-md bg-opacity-50 flex justify-center items-center z-50">
+            <div className="bg-white rounded-lg shadow-lg max-h-[90vh] overflow-y-auto w-[90%] max-w-4xl">
+              <EditDesignMaster
+                setOpenEditModel={setOpenEditModel}
+                selectedRow={selectedRow}
+                designGroup={designGroup}
                 setDesignGroupModel={setDesignGroupModel}
-                setRefresh={setRefresh}
-                refresh={refresh}
+                colors={colors}
+                unit={unit}
+                fetchDesignMasterData={fetchDesignMasterData}
+                sfgmGroup={sfgmGroup}
+                BOMsfgHeader={BOMsfgHeader}
+                designGroupModel={designGroupModel}
               />
             </div>
-          )}
+          </div>
+        )}
 
-          {unitModel && (
-            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-              <UnitGroup
-                setUnitModel={setUnitModel}
-                setRefresh={setRefresh}
-                refresh={refresh}
-              />
-            </div>
-          )}
+        {designGroupModel && (
 
-          <form className="rounded-lg mb-4 border border-gray-400 shadow-md p-5" onSubmit={handleSubmit}>
-            <div className=" grid grid-cols-2 gap-6 p-2 mb-16">
-              {/* Design Group */}
+          <div className="fixed inset-0 bg-gray-900 backdrop-blur-md bg-opacity-50 flex justify-center items-center z-50">
+            <DesgnGroup
+              setDesignGroupModel={setDesignGroupModel}
+              setRefresh={setRefresh}
+              refresh={refresh}
+            />
+          </div>
+        )}
 
-              <div className="flex flex-col">
-                <label className="text-gray-700 font-semibold">
-                  Design Group
-                </label>
-                <div className="flex items-center gap-2">
-                  <select
-                    name="design_group"
-                    className="flex-grow border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    onChange={handleInputChange}
-                    onBlur={handleFieldBlur}
-                    defaultValue=""
-                    value={formData.design_group}
-                  >
-                    <option value="" disabled>
-                      Select Design Group
-                    </option>
-                    {designGroup.map((group, index) => (
-                      <option key={group?.id} value={group?.id}>
-                        {group?.group_name}
-                      </option>
-                    ))}
-                  </select>
+        {unitModel && (
+          <div className="fixed inset-0 bg-gray-900 backdrop-blur-md bg-opacity-50 flex justify-center items-center z-50">
+            <UnitGroup
+              setUnitModel={setUnitModel}
+              setRefresh={setRefresh}
+              refresh={refresh}
+            />
+          </div>
+        )}
 
-                  <button
-                    type="button"
-                    className="flex items-center justify-center w-8 h-8 bg-blue-900 text-white rounded-full text-xl hover:bg-blue-700 transition"
-                    onClick={() => setDesignGroupModel(true)}
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
+        <form className="rounded-lg mb-4 border  shadow-md p-5" onSubmit={handleSubmit}>
+          <div className=" grid grid-cols-2 gap-6 p-2 mb-16">
+            {/* Design Group */}
 
-              {/* Design Number */}
-              <div className="flex flex-col">
-                <label className="text-gray-700 font-semibold">
-                  Design Number
-                </label>
-                <input
-                  type="text"
-                  name="design_number"
-                  className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Design Number"
-                  value={formData.design_number}
-                  onChange={handleInputChange}
-                  onBlur={handleFieldBlur}
-                />
-              </div>
-
-              <div className="flex flex-col">
-                <label className="text-gray-700 font-semibold">Color</label>
+            <div className="flex flex-col">
+              <label className="text-gray-700 font-semibold">
+                Design Group
+              </label>
+              <div className="flex items-center gap-2">
                 <select
-                  name="color"
-                  className="border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  name="design_group"
+                  className="flex-grow border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   onChange={handleInputChange}
                   onBlur={handleFieldBlur}
                   defaultValue=""
-                  value={formData.color}
+                  value={formData.design_group}
                 >
                   <option value="" disabled>
-                    Select Color
+                    Select Design Group
                   </option>
-                  {colors.map((color) => (
-                    <option key={color.id} value={color.id}>
-                      {`${color.color_id} - ${color.color_name}`}
+                  {designGroup.map((group, index) => (
+                    <option key={group?.id} value={group?.id}>
+                      {group?.group_name}
                     </option>
                   ))}
                 </select>
-              </div>
 
-              {/* Unit (Jobber Code) */}
-              <div className="flex flex-col">
-                <label className="text-gray-700 font-semibold">
-                  Unit
-                </label>
-                <div className="flex items-center gap-2">
-                  <select
-                    name="unit"
-                    className="flex-grow border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    value={formData.unit}
-                    onChange={handleInputChange}
-                  >
-                    <option value="" disabled>
-                      Select Unit
-                    </option>
-                    {unit.map((unit) => (
-                      <option key={unit.id} value={unit.id}>
-                        {unit.unit_name}
-                      </option>
-                    ))}
-                  </select>
-                  <button
-                    type="button"
-                    className="flex items-center justify-center w-8 h-8 bg-blue-900 text-white rounded-full text-xl hover:bg-blue-700 transition"
-                    onClick={() => setUnitModel(true)}
-                  >
-                    +
-                  </button>
-                </div>
+                <button
+                  type="button"
+                  className=" bg-blue-900 text-white rounded-full p-2 hover:bg-blue-700 transition-all duration-200 ease-in-out"
+                  onClick={() => setDesignGroupModel(true)}
+                >
+                  <Plus className="w-4 h-4 font-bold" />
+                </button>
               </div>
-
-              {/* Description */}
-              <div className="flex flex-col">
-                <label className="text-gray-700 font-semibold">
-                  Description
-                </label>
-                <textarea
-                  name="description"
-                  className="border border-gray-300 bg-gray-100 rounded-md p-2 h-24 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Description"
-                  value={formData.description}
-                  onChange={handleInputChange}
-                ></textarea>
-              </div>
-
-              {/* Photo Upload */}
-              {!designGroupModel && (
-                <div className="flex flex-col">
-                  <label className="text-gray-700 font-semibold mb-2">
-                    Photo Upload
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="file"
-                      id="file-upload"
-                      className="hidden"
-                      onChange={handleFileChange}
-                    />
-                    <label
-                      htmlFor="file-upload"
-                      className="bg-blue-900 text-white px-4 py-2 rounded-xl cursor-pointer"
-                    >
-                      Choose File
-                    </label>
-                    <span className="text-gray-500 ml-2">
-                      {selectedImage ? selectedImage.name : "No file chosen"}
-                    </span>
-                  </div>
-                  {previewImage && (
-                    <img
-                      src={previewImage}
-                      alt="Preview"
-                      className="mt-2 w-32 h-auto"
-                    />
-                  )}
-                </div>
-              )}
             </div>
 
-            {/* Changing UI of BOM */}
-            <h1 className="text-3xl font-bold text-black mb-4">Add BOM</h1>
-            {!designGroupModel && (
-              <SFGBomSection
-                token={token}
-                sfgmGroup={sfgmGroup}
-                SavedSfgData={SavedSfgData}
-                setSavedSfgData={setSavedSfgData}
-                FinalSFGData={FinalSFGData}
-                setFinalSFGData={setFinalSFGData}
-                allJobber={jobberList}
-                allRawMaterial={rawMateralList}
-              />
-            )}
-
-            {SavedSfgData &&
-              Array.isArray(SavedSfgData) &&
-              SavedSfgData.length > 0 && (
-                <SFGDataTable
-                  onDeleteSfg={handleDeleteSfg}
-                  savedSfgData={SavedSfgData}
-                />
-              )}
-
-            <div className="mt-4 bg-blue-900 inline-block py-2 px-4 rounded-md text-white ">
-              <label className="text-white font-semibold pr-5">Total Design Cost</label>
+            {/* Design Number */}
+            <div className="flex flex-col">
+              <label className="text-gray-700 font-semibold">
+                Design Number
+              </label>
               <input
-                className="p-2 border bg-gray-100 border-gray-300 rounded-md text-black"
                 type="text"
-                placeholder="0.0"
-                name="total_design_cost"
-                value={formData?.total_design_cost}
-                disabled
+                name="design_number"
+                className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Design Number"
+                value={formData.design_number}
+                onChange={handleInputChange}
+                onBlur={handleFieldBlur}
               />
             </div>
 
-            <div className="flex justify-end space-x-2 mt-4">
-              <button
-                type="button"
-                onClick={clearHandler}
-                className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-500 transition"
-                disabled={submitting}
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className={`bg-blue-900 ml-2 px-6 py-2 rounded text-white font-semibold transition-all ease-in-out duration-300 transform ${submitting
-                  ? "opacity-50 cursor-not-allowed"
-                  : "hover:bg-blue-700"
-                  }`}
-                disabled={submitting}
-              >
-                {submitting ? (
-                  <div className="flex justify-center items-center space-x-2">
-                    <PuffLoader size={20} color="#fff" />
-                    <span>Saving...</span>
-                  </div>
-                ) : (
-                  "Save Design"
-                )}
-              </button>
-            </div>
-          </form>
+            <div className="flex flex-col">
+              <label className="text-gray-700 font-semibold">Color</label>
+              <select
+                name="color"
+                className="border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 max-h-60 overflow-y-auto overflow-x-hidden"
 
-          <div className="mt-10">
-
-            <div className="">
-              <h3 className="text-2xl font-bold mb-2">List Of Designs</h3>
+                onChange={handleInputChange}
+                onBlur={handleFieldBlur}
+                defaultValue=""
+                value={formData.color}
+              >
+                <option value="" disabled>
+                  Select Color
+                </option>
+                {colors.map((color) => (
+                  <option key={color.id} value={color.id}>
+                    {`${color.color_id.slice(0, 10)} - ${color.color_name?.slice(0, 15)}`}
+                  </option>
+                ))}
+              </select>
             </div>
 
-            {paginationLoading ? (
-              <div className="flex p-5 justify-center items-center space-x-2 mt-4 border border-gray-400 rounded-lg">
-                <BounceLoader size={20} color="#1e3a8a" />
+            {/* Unit (Jobber Code) */}
+            <div className="flex flex-col">
+              <label className="text-gray-700 font-semibold">
+                Unit
+              </label>
+              <div className="flex items-center gap-2">
+                <select
+                  name="unit"
+                  className="flex-grow border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  value={formData.unit}
+                  onChange={handleInputChange}
+                >
+                  <option value="" disabled>
+                    Select Unit
+                  </option>
+                  {unit.map((unit) => (
+                    <option key={unit.id} value={unit.id}>
+                      {unit.unit_name}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  type="button"
+                  className="flex items-center justify-center w-8 h-8 bg-blue-900 text-white rounded-full text-xl hover:bg-blue-700 transition"
+                  onClick={() => setUnitModel(true)}
+                >
+                  <Plus className="w-4 h-4 font-bold" />
+                </button>
               </div>
-            ) : (
-              // <SmartTable headers={headers} data={enhancedData} />
-              <SmartTable
-                headers={headers}
-                data={enhancedData}
-                searchTerm={searchTerm}
-                setSearchTerm={setSearchTerm}
+            </div>
+
+            {/* Description */}
+            <div className="flex flex-col">
+              <label className="text-gray-700 font-semibold">
+                Description
+              </label>
+              <textarea
+                name="description"
+                className="border border-gray-300 bg-gray-100 rounded-md p-2 h-24 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Description"
+                value={formData.description}
+                onChange={handleInputChange}
+              ></textarea>
+            </div>
+
+            {/* Photo Upload */}
+            {!designGroupModel && (
+              <div className="flex flex-col">
+                <label className="text-gray-700 font-semibold mb-2">
+                  Photo Upload
+                </label>
+                <div className="relative">
+                  <input
+                    type="file"
+                    id="file-upload"
+                    className="hidden"
+                    onChange={handleFileChange}
+                  />
+                  <label
+                    htmlFor="file-upload"
+                    className="bg-blue-900 text-white px-4 py-2 rounded-xl cursor-pointer"
+                  >
+                    Choose File
+                  </label>
+                  <span className="text-gray-500 ml-2">
+                    {selectedImage ? selectedImage.name : "No file chosen"}
+                  </span>
+                </div>
+                {previewImage && (
+                  <img
+                    src={previewImage}
+                    alt="Preview"
+                    className="mt-2 w-32 h-auto"
+                  />
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Changing UI of BOM */}
+          <h1 className="text-2xl font-bold text-black ">Add BOM</h1>
+          {!designGroupModel && (
+            <SFGBomSection
+              token={token}
+              sfgmGroup={sfgmGroup}
+              SavedSfgData={SavedSfgData}
+              setSavedSfgData={setSavedSfgData}
+              FinalSFGData={FinalSFGData}
+              setFinalSFGData={setFinalSFGData}
+              allJobber={jobberList}
+              allRawMaterial={rawMateralList}
+            />
+          )}
+
+          {SavedSfgData &&
+            Array.isArray(SavedSfgData) &&
+            SavedSfgData.length > 0 && (
+              <SFGDataTable
+                onDeleteSfg={handleDeleteSfg}
+                savedSfgData={SavedSfgData}
               />
             )}
 
-            <Pagination
-              setPage={setPage}
-              totalPages={totalPages}
-              page={page}
-              setPageSize={setPageSize}
-              pageSize={pageSize}
+          <div className="mt-4 bg-blue-900 inline-block py-2 px-4 rounded-md text-white ">
+            <label className="text-white font-semibold pr-5">Total Design Cost</label>
+            <input
+              className="p-2 border bg-gray-100 border-gray-300 rounded-md text-black"
+              type="text"
+              placeholder="0.0"
+              name="total_design_cost"
+              value={formData?.total_design_cost}
+              disabled
             />
           </div>
+
+          <div className="flex justify-end space-x-2 mt-4">
+            <button
+              type="button"
+              onClick={clearHandler}
+              className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-500 transition"
+              disabled={submitting}
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className={`bg-blue-900 ml-2 px-6 py-2 rounded text-white font-semibold transition-all ease-in-out duration-300 transform ${submitting
+                ? "opacity-50 cursor-not-allowed"
+                : "hover:bg-blue-700"
+                }`}
+              disabled={submitting}
+            >
+              {submitting ? (
+                <div className="flex justify-center items-center space-x-2">
+                  <PuffLoader size={20} color="#fff" />
+                  <span>Saving...</span>
+                </div>
+              ) : (
+                "Save Design"
+              )}
+            </button>
+          </div>
+        </form>
+
+        <div className="mt-10">
+
+          <div className="">
+            <h3 className="text-2xl font-bold text-blue-900 pb-2 border-b">List Of Designs</h3>
+          </div>
+
+          <SmartTable
+            headers={headers}
+            data={enhancedData}
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            loading={paginationLoading}
+            setLoading={setPaginationLoading}
+          />
+
+          <Pagination
+            setPage={setPage}
+            totalPages={totalPages}
+            page={page}
+            setPageSize={setPageSize}
+            pageSize={pageSize}
+          />
         </div>
-      )}
+      </div>
+
     </div>
   );
 };

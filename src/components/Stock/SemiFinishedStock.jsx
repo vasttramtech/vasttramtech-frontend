@@ -7,6 +7,7 @@ import { useSelector } from "react-redux";
 import SingleAddTable from "../../smartTable/SingleAddTable";
 import { useNavigate } from "react-router-dom";
 import FormInput from "../utility/FormInput";
+import { MdCancel } from "react-icons/md";
 
 const SemiFinishedGoodStock = () => {
   const [formData, setFormData] = useState({
@@ -199,28 +200,29 @@ const SemiFinishedGoodStock = () => {
     });
   };
 
-  if (loading || load)
+  if (loading || load) {
     return (
-      <div className="absolute inset-0 flex justify-center items-center bg-opacity-50 bg-gray-200 z-10">
-        <BounceLoader size={100} color={"#1e3a8a"} loading={loading} />
+      <div className="flex justify-center items-center h-screen">
+        <BounceLoader color="#1e3a8a" />
       </div>
-    );
+    )
+  }
 
   return (
     <div className="mx-auto">
       {/* Modal for SFG Table */}
       {showSFGTable && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-          <div className="bg-white rounded-xl shadow-lg w-4/5 max-h-[80vh] overflow-hidden">
-            <div className="bg-blue-900 text-white px-6 py-3 flex justify-between items-center">
-              <h3 className="text-xl font-semibold">
+        <div className="fixed inset-0 flex items-center backdrop-blur-md  justify-center z-50 bg-black bg-opacity-50">
+          <div className="bg-white rounded-xl p-6 shadow-lg w-4/5 max-h-[80vh] overflow-hidden">
+            <div className=" text-blue-900 font-bold  flex justify-between items-center">
+              <h3 className="text-xl font-bold">
                 Select Semi Finished Good
               </h3>
               <button
-                className="text-xl px-2 hover:bg-blue-800 rounded-full h-8 w-8 flex items-center justify-center"
+                className="text-red-500 hover:text-red-700 hover:scale-105 duration-200 ease-in-out rounded-full flex items-center justify-center"
                 onClick={() => setShowSFGTable(false)}
               >
-                ×
+                <MdCancel className="w-8 h-8" />
               </button>
             </div>
             <div className="p-4 overflow-auto max-h-[calc(80vh-60px)]">
@@ -237,7 +239,7 @@ const SemiFinishedGoodStock = () => {
       )}
 
       <div className="bg-white rounded-lg p-6">
-        <h1 className="text-3xl font-bold text-blue-900 mb-6 border-b pb-3">
+        <h1 className="text-2xl font-bold text-blue-900 mb-4 border-b pb-2">
           Semi Finished Goods Stock Entry
         </h1>
 
@@ -274,7 +276,7 @@ const SemiFinishedGoodStock = () => {
             </div>
 
             {/* Group and SFG */}
-            <div className="flex gap-2 items-start">
+            <div className="flex gap-2 items-center justify-start">
               <div className="flex flex-col justify-center w-1/2">
                 <FormLabel title={"Group"} />
                 <select
@@ -296,7 +298,7 @@ const SemiFinishedGoodStock = () => {
                 </select>
               </div>
               <button
-                className="bg-blue-900 rounded-lg px-3 hover:bg-blue-800 text-white h-10 mt-5"
+                className="bg-blue-900 rounded-lg px-3 hover:bg-blue-800 text-white h-10 mt-6"
                 onClick={(e) => {
                   e.preventDefault();
                   if (!formData.sfg_group) {
@@ -370,9 +372,8 @@ const SemiFinishedGoodStock = () => {
                   )}
                 </div>
                 <svg
-                  className={`w-4 h-4 transition-transform ${
-                    isProcessesDropdownOpen ? "transform rotate-180" : ""
-                  }`}
+                  className={`w-4 h-4 transition-transform ${isProcessesDropdownOpen ? "transform rotate-180" : ""
+                    }`}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -400,7 +401,7 @@ const SemiFinishedGoodStock = () => {
                         type="checkbox"
                         id={`process-${index}`}
                         checked={formData.processes.includes(process)}
-                        onChange={() => {}}
+                        onChange={() => { }}
                         className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                       />
                       <label

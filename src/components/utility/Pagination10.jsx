@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Pagination = ({ page, setPage, pageSize, setPageSize, totalPages }) => {
+const Pagination10 = ({ page, setPage, pageSize, setPageSize, totalPages }) => {
     return (
         <div className="flex items-center justify-center space-x-4">
             {/* Dropdown for selecting page size */}
@@ -13,7 +13,6 @@ const Pagination = ({ page, setPage, pageSize, setPageSize, totalPages }) => {
                 className="px-3 py-2 border border-blue-400 rounded-md bg-white text-blue-600 shadow-md cursor-pointer focus:outline-none"
             >
 
-                <option value="5">5 results per page</option>
                 <option value="10">10 results per page</option>
                 <option value="20">20 results per page</option>
                 <option value="30">30 results per page</option>
@@ -89,4 +88,4 @@ const Pagination = ({ page, setPage, pageSize, setPageSize, totalPages }) => {
     )
 }
 
-export default Pagination
+export default Pagination10

@@ -51,6 +51,9 @@ const SaleBillReport = () => {
     const [fromDate, setFromDate] = useState(null);
     const [toDate, setToDate] = useState(null);
 
+    //search filter states
+    const [searchTerm, setSearchTerm] = useState('');
+
 
     function formatDate(dateString) {
         const date = new Date(dateString);
@@ -73,6 +76,15 @@ const SaleBillReport = () => {
             if (fromDate) params["filters[createdAt][$gte]"] = fromDate;
             if (toDate) params["filters[createdAt][$lte]"] = toDate;
 
+
+            params["filters[$or][0][bom_billOfSale][jobber][jobber_name][$containsi]"] = searchTerm.trim();
+            params["filters[$or][1][design][design_number][$containsi]"] = searchTerm.trim();
+            params["filters[$or][2][bom_billOfSale][bom_detail][semi_finished_goods][semi_finished_goods_name][$containsi]"] = searchTerm.trim();
+            params["filters[$or][3][bom_billOfSale][bom_detail][color][color_name][$containsi]"] = searchTerm.trim();
+            params["filters[$or][4][processor][name][$containsi]"] = searchTerm.trim();
+            params["filters[$or][5][sales_order_entry][so_id][$containsi]"] = searchTerm.trim();
+            params["filters[$or][6][internal_sales_order_entry][so_id][$containsi]"] = searchTerm.trim();
+
             const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/bill-of-sales`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -88,23 +100,22 @@ const SaleBillReport = () => {
 
                 return {
                     so: salesOrder?.so_id || "N/A",
-                    bill_No: "N/A",
-                    jobber: bills?.bom_billOfSale?.jobber?.jobber_name || "N/A", 
+                    bill_No: "-",
+                    jobber: bills?.bom_billOfSale?.jobber?.jobber_name || "N/A",
                     design: bills?.design?.design_number || "N/A",
                     colour: bills?.bom_billOfSale?.bom_detail[0]?.color?.color_name || "N/A",
-                    item:  bills?.bom_billOfSale?.bom_detail?.semi_finished_goods?.semi_finished_goods_name || "N/A",
+                    item: bills?.bom_billOfSale?.bom_detail?.semi_finished_goods?.semi_finished_goods_name || "-",
                     note: bills?.job_note || "N/A",
-                    sale_date: formatDate(bills?.date) || "N/A",
-                    clear_date: formatDate(bills?.sales_order_entry?.order_date) || "N/A",
+                    sale_date: formatDate(bills?.date) || "",
+                    clear_date: formatDate(bills?.sales_order_entry?.order_date) || "-",
                     ex_date: formatDate(bills?.ex_date) || "N/A",
-                    pur_date: formatDate(bills?.sales_order_entry?.delivery_date) || "N/A",
+                    pur_date: formatDate(bills?.sales_order_entry?.delivery_date) || "-",
                     sale_qty: bills?.sales_order_entry?.qty || "N/A",
                     pur_qty: "N/A",
                     balance_qty: "N/A",
                     processor: bills?.processor?.name || "N/A",
                 };
             });
-
             setBillData(mappedData);
 
         } catch (error) {
@@ -117,17 +128,21 @@ const SaleBillReport = () => {
             setPaginationLoading(false);
         }
     }
+    useEffect(() => {
+        const delayDebounce = setTimeout(() => {
+            if (!token) {
+                navigate("/login");
+                return;
+            }
+            fetchBillOfSales();
+        }, 1000);
+
+        return () => clearTimeout(delayDebounce);
+    }, [searchTerm, page, pageSize]);
 
     useEffect(() => {
-        if (!token) {
-            navigate("/login");
-            return;
-        }
-        fetchBillOfSales();
-    }, [token, page, pageSize]);
-
-    console.log("billData: ", billData)
-
+        setPage(1);
+    }, [searchTerm]);
 
 
 
@@ -141,6 +156,9 @@ const SaleBillReport = () => {
         // console.log("item: ", rowData);
     };
 
+    const dateWiseDataFetch = () => {
+        fetchBillOfSales();
+    }
 
     return (
         <div className="py-2 bg-white rounded-lg relative">
@@ -152,7 +170,7 @@ const SaleBillReport = () => {
                 <div>
                     <h1 className="text-3xl font-bold text-blue-900 mb-4">{title}</h1>
                     <div className="my-8" >
-                     
+
 
                         {paginationLoading ? (
                             <div className="flex p-5 justify-center items-center space-x-2 mt-4 border border-gray-400 rounded-lg">
@@ -160,18 +178,29 @@ const SaleBillReport = () => {
                             </div>
                         ) : (
                             <>
-                                <ReportTable headers={headersForTable} data={enhancedData} fromDate={fromDate} setFromDate={setFromDate} toDate={toDate} setToDate={setToDate} api={fetchBillOfSales}/>
+                                {/* <ReportTable headers={headersForTable} data={enhancedData} fromDate={fromDate} setFromDate={setFromDate} toDate={toDate} setToDate={setToDate} api={fetchBillOfSales}/> */}
+                                <SmartTable1 headers={headersForTable} data={enhancedData} api={fetchBillOfSales} searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
                                 <div className='px-5 flex justify-between items-center'>
-                                <ExportToExcel data={billData} reportName={"Sale Bill Report"} />
+                                    <ExportToExcel data={billData} reportName={"Sale Bill Report"} />
 
-                                <Pagination
-                                    setPage={setPage}
-                                    totalPages={totalPages}
-                                    page={page}
-                                    setPageSize={setPageSize}
-                                    pageSize={pageSize}
-                                />
+                                    <div className='flex gap-3 items-center'>
+                                        <input type="date" className='border border-gray-400 py-1 px-2 rounded-sm' value={fromDate} onChange={(e) => setFromDate(e.target.value)} />
+                                        <input type="date" className="border border-gray-400 py-1 px-2 rounded-sm" value={toDate} onChange={(e) => setToDate(e.target.value)} />
+                                        <button
+                                            type='button'
+                                            onClick={dateWiseDataFetch}
+                                            className='px-4 py-2 bg-blue-600 text-white rounded-md shadow-md hover:bg-blue-700 transition'
+                                        >Filter</button>
+                                    </div>
+
+                                    <Pagination
+                                        setPage={setPage}
+                                        totalPages={totalPages}
+                                        page={page}
+                                        setPageSize={setPageSize}
+                                        pageSize={pageSize}
+                                    />
                                 </div>
                             </>
                         )}

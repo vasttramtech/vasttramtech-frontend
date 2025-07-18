@@ -8,7 +8,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import Pagination from '../utility/Pagination';
 import ReportTable from '../../smartTable/ReportTable';
 import ExportToExcel from '../utility/ExportToExcel';
-
+import TableWithoutSearch from '../../smartTable/TableWithoutSearch';
+import Search from "../../assets/Others/Search.png";
 
 
 
@@ -25,7 +26,7 @@ const headersForTable = [
     "Ex Date",
     "Pur Date",
     "Sale Qty",
-    "Pur Qty",
+    "Already Pur Qty",
     "Balance Qty",
     "Processor",
 ]
@@ -43,13 +44,16 @@ const PurchaseBillDetailsReport = () => {
     //  adding pagination logic
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
-    const [pageSize, setPageSize] = useState(5);
+    const [pageSize, setPageSize] = useState(10);
     const [paginationLoading, setPaginationLoading] = useState(false);
 
     // date filter states
-    const [fromDate, setFromDate] = useState(null);
-    const [toDate, setToDate] = useState(null);
+    const [fromDate, setFromDate] = useState("");
+    const [toDate, setToDate] = useState("");
 
+    // search state
+    const [searchTerm, setSearchTerm] = useState('');
+    const [clearTrigger, setClearTrigger] = useState(false);
 
     function formatDate(dateString) {
         const date = new Date(dateString);
@@ -63,44 +67,53 @@ const PurchaseBillDetailsReport = () => {
         try {
             setPaginationLoading(true);
             const params = {
-                "pagination[page]": page,
-                "pagination[pageSize]": pageSize,
-                "sort[0]": "createdAt:desc",
+                page, pageSize
             };
 
-            // Add filters if dates are selected
-            if (fromDate) params["filters[createdAt][$gte]"] = fromDate;
-            if (toDate) params["filters[createdAt][$lte]"] = toDate;
 
-            const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/bill-of-purchases?populate[bom_billOfPurchase][populate]=*&populate[billOfSale][populate]=sales_order_entry&populate[billOfSale][populate]=internal_sales_order_entry&populate[processor][fields][0]=name`, {
+            // Add filters if dates are selected
+            if (fromDate) params.fromDate = fromDate;
+            if (toDate) params.toDate = toDate;
+
+            if (searchTerm?.trim()) {
+                //     setFromDate(null);
+                //     setToDate(null);
+                params.searchTerm = searchTerm.trim();
+            }
+            // else if(!searchTerm?.trim() && (fromDate || toDate)){
+            //     params.fromDate = fromDate;
+            //     params.toDate = toDate;
+            // }
+
+            const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/bill-of-purchase/get-purchase-bill-report`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
                 params,
-            });
+            })
+            console.log("data: ", response);
+
             const data = Array.isArray(response.data.data) ? response.data.data : [];
-            setTotalPages(response.data.meta.pagination.pageCount);
-            console.log("data: ", response.data);
+            setTotalPages(response?.data?.meta?.pageCount);
 
             const mappedData = data.map((bills) => {
-                const salesOrder = bills.sales_order_entry || bills.internal_sales_order_entry || null;
 
                 return {
                     so: bills?.so_id || "N/A",
-                    bill_No: bills?.reference_bill || "N/A",
-                    jobber: bills?.bom_billOfPurchase?.jobber?.jobber_name || "N/A",
+                    bill_No: bills?.reference_bill || "-",
+                    jobber: bills?.jobber?.jobber_name || "N/A",
                     design: bills?.design || "N/A",
-                    colour: bills?.bom_billOfPurchase?.bom_detail[0]?.color?.color_name || "N/A",
-                    item:  bills?.bom_billOfSale?.semi_finished_goods?.semi_finished_goods_name || "N/A",
+                    colour: bills?.color?.color_name || "N/A",
+                    item: bills?.item.semi_finished_goods_name || "N/A",
                     note: bills?.jobNote || "N/A",
-                    sale_date: formatDate(bills?.date) || "N/A",
-                    clear_date: formatDate(bills?.clearDate) || "N/A",
-                    ex_date: formatDate(bills?.ex_date) || "N/A",
-                    pur_date: formatDate(bills?.sales_order_entry?.delivery_date) || "N/A",
-                    sale_qty: bills?.sales_order_entry?.qty || "N/A",
-                    pur_qty: "N/A",
-                    balance_qty: "N/A",
-                    processor: bills?.processor?.name || "N/A",
+                    sale_date: formatDate(bills?.billDate) || "-",
+                    clear_date: formatDate(bills?.clearDate) || "-",
+                    ex_date: formatDate(bills?.ex_date) || "-",
+                    pur_date: formatDate(bills?.purDate) || "-",
+                    sale_qty: bills?.qty || "0",
+                    already_received_qty: bills?.alreadyReceived || "0",
+                    balance_qty: (bills?.qty - bills?.alreadyReceived) || "0",
+                    processor: bills?.processor || "N/A",
                 };
             });
 
@@ -117,29 +130,46 @@ const PurchaseBillDetailsReport = () => {
         }
     }
 
-    useEffect(() => {
-        if (!token) {
-            navigate("/login");
-            return;
-        }
-        fetchBillOfSales();
-    }, [token, page, pageSize]);
-
-    console.log("purchaseData: ", purchaseData)
-
-
-
 
     const enhancedData = purchaseData.map((item) => ({
         ...item,
 
     }));
 
-    const handleView = (rowData) => {
-        navigate(`/bill-of-sale/${rowData.id}`);
-        // console.log("item: ", rowData);
-    };
 
+    useEffect(() => {
+        const delayDebounce = setTimeout(() => {
+            if (!token) {
+                navigate("/login");
+                return;
+            }
+
+            fetchBillOfSales();
+
+        }, 1000);
+
+        return () => clearTimeout(delayDebounce);
+    }, [searchTerm, page, pageSize]);
+
+    useEffect(() => {
+        if (clearTrigger) {
+            fetchBillOfSales();
+            setPage(1);
+            setClearTrigger(false);
+        }
+    }, [clearTrigger]);
+
+
+    useEffect(() => {
+        setPage(1);
+    }, [searchTerm, clearTrigger]);
+
+
+    const clearHandler = () => {
+        setFromDate('');
+        setToDate('');
+        setClearTrigger(true);
+    }
 
     return (
         <div className="py-2 bg-white rounded-lg relative">
@@ -151,7 +181,7 @@ const PurchaseBillDetailsReport = () => {
                 <div>
                     <h1 className="text-3xl font-bold text-blue-900 mb-4">{title}</h1>
                     <div className="my-8" >
-                     
+
 
                         {paginationLoading ? (
                             <div className="flex p-5 justify-center items-center space-x-2 mt-4 border border-gray-400 rounded-lg">
@@ -159,18 +189,70 @@ const PurchaseBillDetailsReport = () => {
                             </div>
                         ) : (
                             <>
-                                <ReportTable headers={headersForTable} data={enhancedData} fromDate={fromDate} setFromDate={setFromDate} toDate={toDate} setToDate={setToDate} api={fetchBillOfSales}/>
+                                <div className='flex justify-between items-center w-[90%]'>
+
+                                    <div className="flex items-center">
+                                        <input
+                                            type="text"
+                                            placeholder="Auto Search..."
+                                            value={searchTerm}
+                                            onChange={(e) => setSearchTerm(e.target.value)}
+                                            className="px-3 py-2 border rounded-lg border-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                        />
+                                    </div>
+
+                                    <div className="flex gap-4 mb-4">
+                                        <div>
+                                            <label className="block text-sm text-gray-700">From Date:</label>
+                                            <input
+                                                type="date"
+                                                value={fromDate || ""}
+                                                onChange={(e) => setFromDate(e.target.value)}
+                                                className="border border-gray-300 rounded px-2 py-1"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm text-gray-700">To Date:</label>
+                                            <input
+                                                type="date"
+                                                value={toDate || ""}
+                                                onChange={(e) => setToDate(e.target.value)}
+                                                className="border border-gray-300 rounded px-2 py-1"
+                                            />
+                                        </div>
+                                        <button
+                                            type='button'
+                                            onClick={() => {
+                                                fetchBillOfSales();
+                                                setPage(1);
+                                            }}
+                                            className="self-end bg-blue-600 text-white text-lg px-4 py-1 rounded hover:bg-blue-700"
+                                        >
+                                            Filter
+                                        </button>
+                                        <button
+                                            type='button'
+                                            onClick={clearHandler}
+                                            className="self-end bg-red-600 text-white text-lg px-4 py-1 rounded hover:bg-red-700"
+                                        >
+                                            Clear
+                                        </button>
+                                    </div>
+
+                                </div>
+
+                                <TableWithoutSearch headers={headersForTable} data={enhancedData} />
 
                                 <div className='px-5 flex justify-between items-center'>
-                                <ExportToExcel data={purchaseData} reportName={"Sale Bill Report"} />
+                                    <ExportToExcel data={purchaseData} reportName={"Sale Bill Report"} />
 
-                                <Pagination
-                                    setPage={setPage}
-                                    totalPages={totalPages}
-                                    page={page}
-                                    setPageSize={setPageSize}
-                                    pageSize={pageSize}
-                                />
+                                    <Pagination
+                                        setPage={setPage}
+                                        totalPages={totalPages}
+                                        page={page}
+                                        setPageSize={setPageSize}
+                                        pageSize={pageSize}
+                                    />
                                 </div>
                             </>
                         )}
@@ -178,8 +260,9 @@ const PurchaseBillDetailsReport = () => {
 
 
 
-                </div>)}
-        </div>
+                </div>)
+            }
+        </div >
     )
 }
 

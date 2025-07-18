@@ -11,6 +11,7 @@ import ViewIcon from "../../assets/Others/ViewIcon.png";
 import EditIcon from "../../assets/Others/EditIcon.png";
 import EditSupplierMaster from "./EditModel/EditSupplierMaster";
 import Pagination from "../utility/Pagination";
+import { Plus } from "lucide-react";
 
 const statesOfIndia = [
   "Andhra Pradesh",
@@ -74,7 +75,7 @@ const SupplierMaster = () => {
   const title = location.state?.title;
   const [submitting, setSubmitting] = useState(false);
   const { token } = useSelector(state => state.auth);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const [supplierData, setSupplierData] = useState([]);
   const [openEditModal, setOpenEditModal] = useState(false);
@@ -235,7 +236,7 @@ const SupplierMaster = () => {
 
   const fetchSupplierMasterData = async () => {
     try {
-      setLoading(true);
+      setPaginationLoading(true);
       const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/supplier-masters?populate=*`, {
         params: {
           "pagination[page]": page,
@@ -272,6 +273,7 @@ const SupplierMaster = () => {
       }
     } finally {
       setLoading(false);
+      setPaginationLoading(false);
     }
   };
 
@@ -346,35 +348,41 @@ const SupplierMaster = () => {
 
   // console.log("FormData: ", formData);
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <BounceLoader color="#1e3a8a" />
+      </div>
+    )
+  }
+
+
   return (
-    <div className="py-2 bg-white rounded-lg relative">
-      {loading ? (
-        <div className="absolute inset-0 flex justify-center items-center mt-64 bg-opacity-50 bg-gray-200 z-10">
-          <BounceLoader size={100} color={"#1e3a8a"} loading={loading} />
-        </div>
-      ) : (
+    <div className="p-6 bg-white rounded-lg relative">
+
+      <div>
+        {/* <h1 className="text-3xl font-bold text-blue-900 mb-4">{title}</h1> */}
+        <h1 className="text-2xl font-bold text-blue-900 mb-4 border-b pb-2">Supplier Master</h1>
         <div>
-          {/* <h1 className="text-3xl font-bold text-blue-900 mb-4">{title}</h1> */}
-          <h1 className="text-3xl font-bold text-blue-900 mb-4">Supplier Master</h1>
-          <div>
 
-            {openEditModal && (
-              <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50 overflow-y-auto">
-                <div className="bg-white p-6 rounded-lg shadow-lg max-h-[90vh] overflow-y-auto w-[100%] max-w-4xl">
-                  <EditSupplierMaster
-                    selectedRow={selectedRow}
-                    setOpenEditModal={setOpenEditModal}
-                    fetchSupplierMasterData={fetchSupplierMasterData}
-                    statesOfIndia={statesOfIndia}
-                    concerned_person_headers={concerned_person_headers}
-                    EditableDelte={EditableDelte}
-                  />
-                </div>
+          {openEditModal && (
+            <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-40 backdrop-blur-md overflow-y-auto">
+              <div className="bg-white p-6 rounded-lg shadow-lg max-h-[90vh] overflow-y-auto w-[100%] max-w-4xl">
+                <EditSupplierMaster
+                  selectedRow={selectedRow}
+                  setOpenEditModal={setOpenEditModal}
+                  fetchSupplierMasterData={fetchSupplierMasterData}
+                  statesOfIndia={statesOfIndia}
+                  concerned_person_headers={concerned_person_headers}
+                  EditableDelte={EditableDelte}
+                />
               </div>
-            )}
+            </div>
+          )}
 
 
-            <form className="grid grid-cols-2 gap-6 p-5  mb-16 rounded-lg  border border-gray-200 shadow-md" onSubmit={handleSubmit}>
+          <form className=" rounded-lg  border p-5 border-gray-200 shadow-md" onSubmit={handleSubmit}>
+            <div className="grid grid-cols-2 gap-6" >
               {/* Group name */}
               <div className="flex flex-col">
                 <FormLabel title={"Group Name"} />
@@ -693,13 +701,17 @@ const SupplierMaster = () => {
                 <div className="  ">
                   <button
                     type="button"
-                    className="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-700 transition"
+                    className="bg-blue-900 flex items-center gap-3 text-white px-4 py-1 rounded hover:bg-blue-700 transition-all duration-200"
                     onClick={AddConcernedPerson}
                   >
-                    Add Concerned Person
+                    <p>  Add Concerned Person </p>
+                    <Plus className="w-4 h-4" />
                   </button>
                 </div>
               </div>
+            </div>
+
+            <div>
 
               {AddedConcernedPerson && AddedConcernedPerson.length > 0 && (
                 <EditableDelte
@@ -710,13 +722,17 @@ const SupplierMaster = () => {
                 />
               )}
 
-              <div className="col-span-2 mt-4">
-                <h1 className="text-xl font-bold text-blue-700">
-                  Company Legal Compliances
-                </h1>
-              </div>
+            </div>
+            <div className="col-span-2 mt-6">
+              <h1 className="text-xl font-bold text-blue-700">
+                Company Legal Compliances
+              </h1>
+            </div>
 
-              {/* Pan No */}
+            {/* Pan No */}
+
+            <div className="grid grid-cols-2 gap-4">
+
               <div className="flex flex-col">
                 <label className="text-gray-700 font-semibold">Pan No</label>
                 <input
@@ -741,46 +757,53 @@ const SupplierMaster = () => {
                   onChange={handleInputChangeCompay}
                 />
               </div>
-
-              {/* Buttons */}
-              <div className="col-span-2 flex justify-end mt-4">
-                <button
-                  onClick={clearHandler}
-                  type="button"
-                  className="bg-gray-200 px-4 py-1 rounded hover:bg-gray-600 hover:text-white transition"
-                >
-                  Clear
-                </button>
-                <button
-                  type="submit"
-                  className={`bg-blue-900 ml-2 px-6 py-2 rounded text-white font-semibold transition-all ease-in-out duration-300 transform ${submitting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700'
-                    }`}
-                  disabled={submitting}
-                >
-                  {submitting ? (
-                    <div className="flex justify-center items-center space-x-2">
-                      <PuffLoader size={20} color="#fff" />
-                      <span>Saving...</span>
-                    </div>
-                  ) : (
-                    'Save'
-                  )}
-                </button>
-              </div>
-            </form>
-            <div className="mb-16">
-              <SmartTable
-                headers={headers}
-                data={enhancedData}
-                searchTerm={searchTerm}
-                setSearchTerm={setSearchTerm}
-              />
-
-              <Pagination setPage={setPage} totalPages={totalPages}
-                page={page} setPageSize={setPageSize} pageSize={pageSize} />
             </div>
+
+            {/* Buttons */}
+            <div className="col-span-2 flex justify-end mt-4">
+              <button
+                onClick={clearHandler}
+                type="button"
+                className="bg-gray-200 px-4 py-1 rounded hover:bg-gray-600 hover:text-white transition"
+              >
+                Clear
+              </button>
+              <button
+                type="submit"
+                className={`bg-blue-900 ml-2 px-6 py-2 rounded text-white font-semibold transition-all ease-in-out duration-300 transform ${submitting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700'
+                  }`}
+                disabled={submitting}
+              >
+                {submitting ? (
+                  <div className="flex justify-center items-center space-x-2">
+                    <PuffLoader size={20} color="#fff" />
+                    <span>Saving...</span>
+                  </div>
+                ) : (
+                  'Save'
+                )}
+              </button>
+            </div>
+          </form>
+          <div className="mt-10">
+
+            <div className="">
+              <h3 className="text-2xl font-bold text-blue-900 pb-2 border-b">List Of Suppliers</h3>
+            </div>
+            <SmartTable
+              headers={headers}
+              data={enhancedData}
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+              loading={paginationLoading}
+              setLoading={setPaginationLoading}
+            />
+
+            <Pagination setPage={setPage} totalPages={totalPages}
+              page={page} setPageSize={setPageSize} pageSize={pageSize} />
           </div>
-        </div>)}
+        </div>
+      </div>
     </div>
   );
 };

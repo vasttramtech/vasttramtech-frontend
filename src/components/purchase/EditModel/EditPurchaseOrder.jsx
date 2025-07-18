@@ -6,6 +6,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import FormLabel from "../FormLabel";
 import { toast } from "react-toastify";
 import SelectionTable from "../../../smartTable/SelectionTable";
+import { MdCancel } from "react-icons/md";
 
 
 const EditPurchaseOrder = ({ setOpenEditModal, selectedRowData, fetchPurchaseOrderList }) => {
@@ -39,7 +40,7 @@ const EditPurchaseOrder = ({ setOpenEditModal, selectedRowData, fetchPurchaseOrd
         remark: "",
         total: "",
         raw_materials: [],
-        purchase_order_status:"",
+        purchase_order_status: "",
     });
     console.log("selectedRow: ", selectedRow)
 
@@ -180,7 +181,7 @@ const EditPurchaseOrder = ({ setOpenEditModal, selectedRowData, fetchPurchaseOrd
                 remark: data?.remark || "",
                 total: data?.total_amount || "",
                 raw_materials: [],
-                purchase_order_status:data.purchase_order_status
+                purchase_order_status: data.purchase_order_status
             });
 
             setFinalSelectedRows(
@@ -282,7 +283,7 @@ const EditPurchaseOrder = ({ setOpenEditModal, selectedRowData, fetchPurchaseOrd
                     total_price: row.Total,
                 }))
             },
-            purchase_order_status:formData.purchase_order_status
+            purchase_order_status: formData.purchase_order_status
         };
         console.log("postData: ", postData);
 
@@ -320,11 +321,11 @@ const EditPurchaseOrder = ({ setOpenEditModal, selectedRowData, fetchPurchaseOrd
     // );
 
     return (
-        <div className="bg-white p-6 rounded-lg shadow-lg w-full">
-            <div className="flex justify-between">
-                <h1>Edit Purchase Order</h1>
-                <button onClick={() => setOpenEditModal(false)} className="text-gray-500 hover:text-red-700">
-                    ✖
+        <div className=" w-full">
+            <div className="flex justify-between items-center mb-4 pb-2 border-b">
+                <h1 className="text-xl font-bold ">Edit Purchase Order</h1>
+                <button onClick={() => setOpenEditModal(false)} className="text-red-500 hover:text-red-700 hover:scale-105 duration-200 transition-all ease-in-out ">
+                    <MdCancel className="w-8 h-8" />
                 </button>
             </div>
 
@@ -332,12 +333,21 @@ const EditPurchaseOrder = ({ setOpenEditModal, selectedRowData, fetchPurchaseOrd
                 <div className="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50">
                     <div className="relative w-[90vw] bg-gray-200 border shadow-2xl p-4 rounded-lg">
                         {/* Close Button */}
-                        <button
-                            className="absolute top-2 right-2 text-gray-700 hover:text-red-500 text-2xl font-bold"
-                            onClick={() => setDisplayModal(false)}
-                        >
-                            ✖
-                        </button>
+
+                        <div>
+
+
+                            <button
+                                className="absolute top-2 right-2 text-red-700 hover:text-red-500 hover:scale-105 duration-200 transition-all ease-in-out text-2xl font-bold"
+                                onClick={() => setDisplayModal(false)}
+                            >
+                                <MdCancel className="w-8 h-8" />
+                            </button>
+                        </div>
+
+                        <h2 className="text-2xl font-bold mb-4 text-center">
+                            Select Raw Material
+                        </h2>
 
                         <SelectionTable
                             NoOfColumns={selctionHeader.length}
@@ -352,7 +362,7 @@ const EditPurchaseOrder = ({ setOpenEditModal, selectedRowData, fetchPurchaseOrd
                         <div className="flex justify-center items-center mt-4">
                             <button
                                 type="button"
-                                className="bg-gray-400 px-4 py-1 rounded hover:bg-gray-300"
+                                className="bg-blue-900 px-4 py-1 rounded text-white hover:bg-blue-700"
                                 onClick={handleSaveSelection}
                             >
                                 Add
@@ -362,7 +372,7 @@ const EditPurchaseOrder = ({ setOpenEditModal, selectedRowData, fetchPurchaseOrd
                 </div>
             )}
 
-            <form className="grid grid-cols-2 gap-6 p-2 mb-16" onSubmit={handleUpdate}>
+            <form className="grid grid-cols-2 gap-6 p-2 " onSubmit={handleUpdate}>
                 <div className="flex flex-col">
                     <FormLabel title={"Supplier"} />
                     <select
@@ -404,7 +414,7 @@ const EditPurchaseOrder = ({ setOpenEditModal, selectedRowData, fetchPurchaseOrd
                 <div className="col-span-2 flex border border-blue-500 justify-center mt-4 rounded p-2">
                     <button
                         type="button"
-                        className="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-700 transition"
+                        className="bg-blue-900 text-white px-4 py-1 rounded hover:bg-blue-700 transition-all duration-200"
                         onClick={handleSelectRawmaterial}
                     >
                         Choose Raw Material
@@ -487,7 +497,7 @@ const EditPurchaseOrder = ({ setOpenEditModal, selectedRowData, fetchPurchaseOrd
                     </button>
                     <button
                         type="submit"
-                        className={`bg-gray-500 ml-2 px-6 py-2 rounded text-white font-semibold transition-all ease-in-out duration-300 transform ${submitting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-700'
+                        className={`bg-blue-900 ml-2 px-6 py-2 rounded text-white font-semibold transition-all ease-in-out duration-300 transform ${submitting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700'
                             }`}
                         disabled={submitting}
                     >

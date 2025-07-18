@@ -9,6 +9,7 @@ import HandeBOMrawMaterial from "./HandleBOMrawMaterial";
 import FormLabel from "../../purchase/FormLabel";
 import SFGBomSection from "../SFGBomSection";
 import SFGDataTable from "../component/SFGDataTable";
+import { MdCancel } from "react-icons/md";
 
 const EditDesignMaster = ({
   setOpenEditModel,
@@ -65,7 +66,7 @@ const EditDesignMaster = ({
             },
           }
         );
-        console.log("Design Data",response);
+        console.log("Design Data", response);
         if (response.data) {
           const data = response.data;
           setExistingSfgItems(data?.semi_finished_goods_entries || []);
@@ -114,7 +115,7 @@ const EditDesignMaster = ({
   }, [token, selectedRow]);
 
 
-  
+
   const fetchPageData = async () => {
     try {
       const [availableRawMaterial, availableJobbers] = await Promise.all([
@@ -165,26 +166,26 @@ const EditDesignMaster = ({
     }
   };
 
-    useEffect(() => {
-        fetchPageData();
-      }, [selectedRow, token]);
-   
- 
+  useEffect(() => {
+    fetchPageData();
+  }, [selectedRow, token]);
+
+
   const handleUpdate = async (e) => {
     e.preventDefault();
     setSubmitting(true);
-  
+
     let uploadedImageIds = [];
-  
+
     // Track old image IDs for deletion
     const oldImageIds = formData.image.map((img) => img.id);
-  
+
     // Upload new image if selected
     if (selectedImage && selectedImage instanceof File) {
       // Check if `selectedImage` is a new file
       const formDataUpload = new FormData();
       formDataUpload.append("files", selectedImage);
-  
+
       try {
         const uploadResponse = await axios.post(
           `${process.env.REACT_APP_BACKEND_URL}/api/upload`,
@@ -215,7 +216,7 @@ const EditDesignMaster = ({
     const imagesToDelete = oldImageIds.filter(
       (oldId) => !uploadedImageIds.includes(oldId)
     );
-  
+
     // Delete old images from DigitalOcean
     try {
       for (let imageId of imagesToDelete) {
@@ -229,7 +230,7 @@ const EditDesignMaster = ({
     } catch (deleteError) {
       console.error("Error deleting old image(s):", deleteError);
     }
-  
+
     // Map dropdown text values to their corresponding IDs
     const documentId = selectedRow?.id;
     const id = selectedRow?.item_id;
@@ -250,9 +251,9 @@ const EditDesignMaster = ({
         total_design_cost: Number(formData.total_design_cost),
       },
     };
-    
+
     // console.log("Updated Data ",updatedData);
-  
+
     try {
       await axios.put(
         `${process.env.REACT_APP_BACKEND_URL}/api/design-masters/${id}`,
@@ -275,7 +276,7 @@ const EditDesignMaster = ({
       setSubmitting(false);
     }
   };
-  
+
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -283,7 +284,7 @@ const EditDesignMaster = ({
       setPreviewImage(URL.createObjectURL(file)); // Preview the image
     }
   };
-  
+
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -295,7 +296,7 @@ const EditDesignMaster = ({
 
   useEffect(() => {
     const items = [...ExistingSfgItems, ...FinalSFGData];
-    if (items.length === 0 ) {
+    if (items.length === 0) {
       setFormData({
         ...formData,
         total_design_cost: 0,
@@ -309,7 +310,7 @@ const EditDesignMaster = ({
     );
     setFormData({
       ...formData,
-      total_design_cost: sfgPrice ,
+      total_design_cost: sfgPrice,
     });
     // console.log(sfgPrice + rawmaterialPrice);
   }, [FinalSFGData, ExistingSfgItems]);
@@ -317,12 +318,12 @@ const EditDesignMaster = ({
   useEffect(() => {
     const visible = [...ExistingSfgItems, ...SavedSfgData];
     setVisibleSfgItems(visible);
-  },[ExistingSfgItems, SavedSfgData])
+  }, [ExistingSfgItems, SavedSfgData])
 
-  
+
   const handleDeleteSfg = async (index) => {
     const existingLength = ExistingSfgItems.length;
-  
+
     if (index < existingLength) {
       // This item is from ExistingSfgItems
       const updatedExisting = [...ExistingSfgItems];
@@ -331,39 +332,40 @@ const EditDesignMaster = ({
     } else {
       // This item is from SavedSfgData
       const savedIndex = index - existingLength;
-  
+
       const updatedSaved = [...SavedSfgData];
       updatedSaved.splice(savedIndex, 1);
       setSavedSfgData(updatedSaved);
-  
+
       // Also update FinalSFGData accordingly (if needed)
       const updatedFinal = [...FinalSFGData];
       updatedFinal.splice(savedIndex, 1); // Assuming index matches
       setFinalSFGData(updatedFinal);
     }
   };
-  
 
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <BounceLoader color="#1e3a8a" />
+      </div>
+    )
+  }
 
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-lg w-full">
-      <div className="flex justify-between">
-        <h1 className="font-bold">Edit design master</h1>
+      <div className="flex justify-between items-center border-b pb-2">
+        <h1 className="font-bold text-blue-900 text-xl">Edit design master</h1>
         <button
           onClick={() => setOpenEditModel(false)}
-          className="text-gray-500 hover:text-red-700"
+          className="text-red-500 hover:text-red-700 hover:scale-105 transition-all duration-200 ease-in-out"
         >
-          ✖
+          <MdCancel className="w-8 h-8" />
         </button>
       </div>
 
-      {
-        loading ? <div className="absolute inset-0 flex justify-center items-center bg-opacity-50 bg-gray-200 z-10">
-        <BounceLoader size={100} color={"#1e3a8a"} loading={loading} />
-      </div> : null
-      }
-   
 
       <form
         className="grid grid-cols-2 gap-6 p-2 mb-16"
@@ -416,7 +418,7 @@ const EditDesignMaster = ({
             </option>
             {colors.map((color) => (
               <option key={color.id} value={color.id}>
-                {`${color.color_id} - ${color.color_name}`}
+                {`${color.color_id.slice(0, 10) + ".."} - ${color.color_name.slice(0, 15) + ".."}`}
               </option>
             ))}
           </select>
@@ -469,7 +471,7 @@ const EditDesignMaster = ({
             />
             <label
               htmlFor="file-upload"
-              className="bg-blue-500 text-white px-4 py-1 rounded-xl cursor-pointer"
+              className="bg-blue-900 text-white px-4 py-1 rounded-xl cursor-pointer"
             >
               Choose File
             </label>
@@ -485,7 +487,7 @@ const EditDesignMaster = ({
             />
           )}
         </div>
-        
+
 
         {/* Add BOM Button */}
         {!designGroupModel && (
@@ -493,17 +495,17 @@ const EditDesignMaster = ({
             <div className="">
               <h1 className="text-xl font-semibold text-black mb-4">Add BOM</h1>
               {!designGroupModel && (
-              <SFGBomSection
-                token={token}
-                sfgmGroup={sfgmGroup}
-                SavedSfgData={SavedSfgData}
-                setSavedSfgData={setSavedSfgData}
-                FinalSFGData={FinalSFGData}
-                setFinalSFGData={setFinalSFGData}
-                allJobber={jobberList}
-                allRawMaterial={rawMaterialList}
-              />
-            )}
+                <SFGBomSection
+                  token={token}
+                  sfgmGroup={sfgmGroup}
+                  SavedSfgData={SavedSfgData}
+                  setSavedSfgData={setSavedSfgData}
+                  FinalSFGData={FinalSFGData}
+                  setFinalSFGData={setFinalSFGData}
+                  allJobber={jobberList}
+                  allRawMaterial={rawMaterialList}
+                />
+              )}
 
               {(visibleSfgItems.length > 0) && (
                 <SFGDataTable
@@ -513,7 +515,7 @@ const EditDesignMaster = ({
               )}
 
 
-           
+
             </div>
           </div>
         )}
@@ -541,9 +543,8 @@ const EditDesignMaster = ({
           <button
             type="submit"
             onClick={handleUpdate}
-            className={`bg-gray-500 ml-2 px-6 py-2 rounded text-white font-semibold transition-all ease-in-out duration-300 transform ${
-              submitting ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-700"
-            }`}
+            className={`bg-blue-900 ml-2 px-6 py-2 rounded text-white font-semibold transition-all ease-in-out duration-300 transform ${submitting ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-700"
+              }`}
             disabled={submitting}
           >
             {submitting ? (

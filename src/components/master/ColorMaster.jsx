@@ -173,7 +173,7 @@ const ColorMaster = () => {
 
     useEffect(() => {
         setPage(1);
-      }, [searchTerm]);
+    }, [searchTerm]);
 
 
     const clearHandler = (e) => {
@@ -184,102 +184,106 @@ const ColorMaster = () => {
         });
     }
 
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <BounceLoader color="#1e3a8a" />
+            </div>
+        )
+    }
+
+
     return (
-        <div className="py-2 bg-white rounded-lg relative">
-            {loading ? (
-                <div className="absolute inset-0 flex justify-center items-center mt-64 bg-opacity-50 bg-gray-200 z-10">
-                    <BounceLoader size={100} color={"#1e3a8a"} loading={loading} />
-                </div>
-            ) : (
-                <div>
-                    <h1 className="text-3xl font-bold text-blue-900 mb-4">{title}</h1>
+        <div className="p-6 bg-white rounded-lg relative">
 
-                    {openEditModal && (
-                        <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50 overflow-y-auto">
-                            <div className="bg-white p-6 rounded-lg shadow-lg max-h-[90vh] overflow-y-auto w-[90%] max-w-4xl">
-                                <EditColorMaster
-                                    selectedRow={selectedRow}
-                                    setOpenEditModal={setOpenEditModal}
-                                    fetchColorMasterData={fetchColorMasterData}
-                                />
-                            </div>
-                        </div>
-                    )}
+            <div>
+                <h1 className="text-2xl font-bold border-b pb-2 text-blue-900 mb-4">{title}</h1>
 
-                    <form className="grid grid-cols-2 gap-6 p-5 rounded-lg border border-gray-200 shadow-md mb-16" onSubmit={handleSubmit}>
-
-
-                        {/* Color ID */}
-                        <div className="flex flex-col">
-                            <label className="text-gray-700 font-semibold">Color Id</label>
-                            <input type="text" className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Color Id"
-                                name="colorId"
-                                value={formData.colorId}
-                                onChange={handleInputChange}
+                {openEditModal && (
+                    <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50 overflow-y-auto">
+                        <div className="bg-white p-6 rounded-lg shadow-lg max-h-[90vh] overflow-y-auto w-[90%] max-w-4xl">
+                            <EditColorMaster
+                                selectedRow={selectedRow}
+                                setOpenEditModal={setOpenEditModal}
+                                fetchColorMasterData={fetchColorMasterData}
                             />
                         </div>
+                    </div>
+                )}
 
-                        {/* Color Name */}
-                        <div className="flex flex-col">
-                            <label className="text-gray-700 font-semibold">Color Name</label>
-                            <input type="text" className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Color Name"
-                                name="colorName"
-                                value={formData.colorName}
-                                onChange={handleInputChange}
-                            />
-                        </div>
+                <form className="grid grid-cols-2 gap-6 p-5 rounded-lg border border-gray-200 shadow-md mb-16" onSubmit={handleSubmit}>
 
-                        {/* Buttons */}
-                        <div className="col-span-2 flex justify-end mt-4">
-                            <button
-                                onClick={clearHandler}
-                                type="button" className="bg-gray-200 px-4 py-1 rounded hover:bg-gray-600 hover:text-white transition">
-                                Cancel
-                            </button>
-                            <button
-                                type="submit"
-                                className={`bg-blue-900 ml-2 px-6 py-2 rounded text-white font-semibold transition-all ease-in-out duration-300 transform ${submitting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700'
-                                    }`}
-                                disabled={submitting}
-                            >
-                                {submitting ? (
-                                    <div className="flex justify-center items-center space-x-2">
-                                        <PuffLoader size={20} color="#fff" />
-                                        <span>Saving...</span>
-                                    </div>
-                                ) : (
-                                    'Save'
-                                )}
-                            </button>
-                        </div>
-                    </form>
 
-                    <div className="mb-16">
-                        {paginationLoading ? (
-                            <div className="flex p-5 justify-center items-center space-x-2 mt-4 border border-gray-400 rounded-lg">
-                                <BounceLoader size={20} color="#1e3a8a" />
-                            </div>
-                        ) : (
-                            // <SmartTable headers={headers} data={enhancedData} />
-                            <SmartTable
-                                headers={headers}
-                                data={enhancedData}
-                                searchTerm={searchTerm}
-                                setSearchTerm={setSearchTerm}
-                            />
-                        )}
-
-                        <Pagination
-                            setPage={setPage}
-                            totalPages={totalPages}
-                            page={page}
-                            setPageSize={setPageSize}
-                            pageSize={pageSize}
+                    {/* Color ID */}
+                    <div className="flex flex-col">
+                        <label className="text-gray-700 font-semibold">Color Id</label>
+                        <input type="text" className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Color Id"
+                            name="colorId"
+                            value={formData.colorId}
+                            onChange={handleInputChange}
                         />
                     </div>
 
+                    {/* Color Name */}
+                    <div className="flex flex-col">
+                        <label className="text-gray-700 font-semibold">Color Name</label>
+                        <input type="text" className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Color Name"
+                            name="colorName"
+                            value={formData.colorName}
+                            onChange={handleInputChange}
+                        />
+                    </div>
+
+                    {/* Buttons */}
+                    <div className="col-span-2 flex justify-end mt-4">
+                        <button
+                            onClick={clearHandler}
+                            type="button" className="bg-gray-200 px-4 py-1 rounded hover:bg-gray-600 hover:text-white transition">
+                            Cancel
+                        </button>
+                        <button
+                            type="submit"
+                            className={`bg-blue-900 ml-2 px-6 py-2 rounded text-white font-semibold transition-all ease-in-out duration-300 transform ${submitting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700'
+                                }`}
+                            disabled={submitting}
+                        >
+                            {submitting ? (
+                                <div className="flex justify-center items-center space-x-2">
+                                    <PuffLoader size={20} color="#fff" />
+                                    <span>Saving...</span>
+                                </div>
+                            ) : (
+                                'Save'
+                            )}
+                        </button>
+                    </div>
+                </form>
+
+                <div className="">
+
+                    <div className="">
+                        <h3 className="text-2xl font-bold text-blue-900 pb-2 border-b">List Of Colors</h3>
+                    </div>
+                    <SmartTable
+                        headers={headers}
+                        data={enhancedData}
+                        searchTerm={searchTerm}
+                        setSearchTerm={setSearchTerm}
+                        loading={paginationLoading}
+                        setLoading={setPaginationLoading}
+                    />
+
+                    <Pagination
+                        setPage={setPage}
+                        totalPages={totalPages}
+                        page={page}
+                        setPageSize={setPageSize}
+                        pageSize={pageSize}
+                    />
                 </div>
-            )}
+
+            </div>
+
         </div>
     );
 };

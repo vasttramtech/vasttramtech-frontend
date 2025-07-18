@@ -171,8 +171,8 @@ const CreateTaskModal = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg w-full max-w-lg">
+    <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-md rounded-lg flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg overflow-hidden w-full max-w-lg">
         <div className="p-4 bg-gray-100 flex justify-between items-center border-b">
           <h2 className="text-xl font-bold">Create New Task</h2>
           <button
@@ -251,7 +251,7 @@ const CreateTaskModal = ({
               </button>
               <button
                 type="submit"
-                className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 flex items-center"
+                className="bg-blue-900 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center"
                 disabled={loading}
               >
                 {loading ? "Creating..." : "Create Task"}
@@ -380,11 +380,11 @@ const Task = () => {
   };
 
   return (
-    <>
-      <h1 className="text-3xl pt-8">Task Management</h1>
+    <div className="p-6 rounded-lg bg-white">
+      <h1 className="text-2xl text-blue-900 font-bold mb-4 pb-2 border-b">Task Management</h1>
 
       {/* Search and Action Bar */}
-      <div className="flex justify-between items-center pt-6">
+      <div className="flex justify-between items-center">
         <div className="flex gap-3 items-center">
           <SearchBar value={searchTerm} onSearch={handleSearch} />
 
@@ -406,7 +406,7 @@ const Task = () => {
       </div>
 
       {/* Loading, Error, and Board States */}
-      {loading && <div className="text-center p-10">Loading tasks...</div>}
+      {loading && <div className="text-center p-10 flex items-center justify-center h-[1/2]"> <BounceLoader color={"#1e3a8a"} /></div>}
 
       {error && !loading && (
         <div className="text-center p-10 text-red-500">{error}</div>
@@ -444,7 +444,7 @@ const Task = () => {
           users={users}
         />
       )}
-    </>
+    </div>
   );
 };
 

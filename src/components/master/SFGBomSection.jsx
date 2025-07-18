@@ -8,6 +8,7 @@ import SelectedRawMaterialsTable from "./component/SelectedRawMaterialsTable";
 import SelectedJobbersTable from "./component/SelectedJobbersTable";
 import { Plus } from "lucide-react";
 import Select from "react-select"
+import { MdCancel } from "react-icons/md";
 
 const rawmaterialHeader = [
   "Item Name",
@@ -54,7 +55,7 @@ const SFGBomSection = ({
   const [selectedJobberRow, setSelectedJobberRow] = useState([]);
   const [finalSelectedJobbers, setFinalSelectedJobbers] = useState([]);
   const [displayJobberModal, setDisplayJobberModal] = useState(false);
-  
+
   // Cost Tracking
   const [rawMaterialTotalCost, setRawMaterialTotalCost] = useState(0);
   const [jobberTotalCost, setJobberTotalCost] = useState(0);
@@ -70,18 +71,18 @@ const SFGBomSection = ({
         `${process.env.REACT_APP_BACKEND_URL}/api/colors?populate=*`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      
-      
+
+
       setSfgCustomColor(response.data.data);
       // console.log("Color Names:", sfgCustomColor);
     } catch (error) {
       console.error("Error fetching colors:", error);
     }
   };
-  
+
   useEffect(() => {
     fetchColors();
-  },[]);
+  }, []);
 
   const BOMsfgHeader = [
     "SFG group",
@@ -126,7 +127,7 @@ const SFGBomSection = ({
         // sfg_total_cost: "",
       });
     }
-     else {
+    else {
       setSfgData({ ...SfgData, [name]: value });
     }
   };
@@ -167,10 +168,10 @@ const SFGBomSection = ({
       finalSelectedRawMaterials.map((row) =>
         row.id === id
           ? {
-              ...row,
-              Qty: newQty,
-              Total: newQty * (row.price_per_unit || 0),
-            }
+            ...row,
+            Qty: newQty,
+            Total: newQty * (row.price_per_unit || 0),
+          }
           : row
       )
     );
@@ -226,9 +227,9 @@ const SFGBomSection = ({
       finalSelectedJobbers.map((row) =>
         row.id === id
           ? {
-              ...row,
-              Rate: newRate,
-            }
+            ...row,
+            Rate: newRate,
+          }
           : row
       )
     );
@@ -239,9 +240,9 @@ const SFGBomSection = ({
       finalSelectedJobbers.map((row) =>
         row.id === id
           ? {
-              ...row,
-              jobber_description: value,
-            }
+            ...row,
+            jobber_description: value,
+          }
           : row
       )
     );
@@ -301,7 +302,7 @@ const SFGBomSection = ({
       !SfgData.sfg_color1 ||
       !SfgData.sfg_material ||
       !SfgData.sfg_qty ||
-      !SfgData.sfg_total_cost 
+      !SfgData.sfg_total_cost
     ) {
       toast.error("Please fill all the fields.");
       return;
@@ -322,7 +323,7 @@ const SFGBomSection = ({
         jobber_master: item?.id,
         jobber_rate: item.Rate || 0,
         jobber_work_type: item.work_type,
-        jobber_description: item.jobber_description||"",
+        jobber_description: item.jobber_description || "",
       })),
       color: Number(SfgData.sfg_color1),
     };
@@ -347,7 +348,7 @@ const SFGBomSection = ({
           jobber_master: item.jobber_name,
           jobber_rate: item.Rate || 0,
           jobber_work_type: item.work_type,
-          jobber_description: item.jobber_description||"",
+          jobber_description: item.jobber_description || "",
         })),
         color: Number(SfgData.sfg_color1),
       },
@@ -386,7 +387,7 @@ const SFGBomSection = ({
   useEffect(() => {
     console.log("Updated Final SFG Data", FinalSFGData);
   }, [FinalSFGData]);
-  
+
 
   // Effect to fetch data when SFG group changes
   useEffect(() => {
@@ -453,7 +454,7 @@ const SFGBomSection = ({
       (sum, item) => sum + (item.Qty || 0),
       0
     );
-    const totalCost = (jobberTotalCost* SfgData.sfg_qty) + rawMaterialTotalCost
+    const totalCost = (jobberTotalCost * SfgData.sfg_qty) + rawMaterialTotalCost
     setSfgData({
       ...SfgData,
       sfg_total_cost: totalCost,
@@ -461,93 +462,93 @@ const SFGBomSection = ({
   }, [rawMaterialTotalCost, jobberTotalCost]);
 
   return (
-<div>
-  
-        <div className=" mb-4">
+    <div>
+
+      <div className=" mb-4">
         <p className="text-xl font-semibold">Semi Finished Goods Master </p>
-   
+
       </div>
-    
-  <div className="border border-gray-300  shadow-xl rounded-xl p-5">
-      {/* Raw Material Selection Modal */}
-      {displayRawMaterialModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50">
-          <div className="relative w-[90vw] bg-gray-200 border shadow-2xl p-4 rounded-lg">
-            <button
-              className="absolute top-2 right-2 text-gray-700 hover:text-red-500 text-2xl font-bold"
-              onClick={() => setDisplayRawMaterialModal(false)}
-            >
-              ✖
-            </button>
 
-            <div className="mt-8">
-              <h2 className="text-xl font-bold mb-4 text-center">
-                Select Raw Materials
-              </h2>
-              <SelectionTable
-                NoOfColumns={rawmaterialHeader.length}
-                data={allRawMaterial}
-                headers={rawmaterialHeader}
-                setSelectedRow={setSelectedRawMaterialRow}
-                setOfSelectedIndex={rawMaterialSetOfSelectedIndex}
-                setSetOfSelectedIndex={setRawMaterialSetOfSelectedIndex}
-              />
-            </div>
-
-            <div className="flex justify-center items-center mt-4">
+      <div className="border border-gray-300  shadow-xl rounded-xl p-5">
+        {/* Raw Material Selection Modal */}
+        {displayRawMaterialModal && (
+          <div className="fixed inset-0 bg-gray-900 backdrop-blur-md bg-opacity-50 flex justify-center items-center z-50">
+            <div className="relative w-[90vw] bg-gray-200 border shadow-2xl p-4 rounded-lg">
               <button
-                type="button"
-                className="bg-gray-400 px-4 py-1 rounded hover:bg-gray-300"
-                onClick={handleSaveRawMaterialSelection}
+                className="absolute top-2 right-2  text-red-500 hover:text-red-700 hover:scale-105 transition-all duration-200 ease-in-out rounded-full text-2xl p-1 font-bold"
+                onClick={() => setDisplayRawMaterialModal(false)}
               >
-                Add
+                <MdCancel />
               </button>
+
+              <div className="">
+                <h2 className="text-2xl font-bold text-center">
+                  Select Raw Materials
+                </h2>
+                <SelectionTable
+                  NoOfColumns={rawmaterialHeader.length}
+                  data={allRawMaterial}
+                  headers={rawmaterialHeader}
+                  setSelectedRow={setSelectedRawMaterialRow}
+                  setOfSelectedIndex={rawMaterialSetOfSelectedIndex}
+                  setSetOfSelectedIndex={setRawMaterialSetOfSelectedIndex}
+                />
+              </div>
+
+              <div className="flex justify-center items-center mt-4">
+                <button
+                  type="button"
+                  className="bg-blue-900 px-4 py-1 rounded hover:bg-blue-700 duration-200 text-white"
+                  onClick={handleSaveRawMaterialSelection}
+                >
+                  Add
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Jobber Selection Modal */}
-      {displayJobberModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50">
-          <div className="relative w-[90vw] bg-gray-200 border shadow-2xl p-4 rounded-lg">
-            <button
-              className="absolute top-2 right-2 text-gray-700 hover:text-red-500 text-2xl font-bold"
-              onClick={() => setDisplayJobberModal(false)}
-            >
-              ✖
-            </button>
-
-            <div className="mt-8">
-              <h2 className="text-xl font-bold mb-4 text-center">
-                Select Jobbers
-              </h2>
-              <SelectionTable
-                NoOfColumns={jobberHeader.length}
-                data={allJobber}
-                headers={jobberHeader}
-                setSelectedRow={setSelectedJobberRow}
-                setOfSelectedIndex={jobberSetOfSelectedIndex}
-                setSetOfSelectedIndex={setJobberSetOfSelectedIndex}
-              />
-            </div>
-
-            <div className="flex justify-center items-center mt-4">
+        {/* Jobber Selection Modal */}
+        {displayJobberModal && (
+          <div className="fixed inset-0 bg-gray-900 backdrop-blur-md bg-opacity-50 flex justify-center items-center z-50">
+            <div className="relative w-[90vw] bg-gray-200 border shadow-2xl p-4 rounded-lg">
               <button
-                type="button"
-                className="bg-gray-400 px-4 py-1 rounded hover:bg-gray-300"
-                onClick={handleSaveJobberSelection}
+                className="absolute top-2 right-2 text-red-500 hover:text-red-700 hover:scale-105 transition-all duration-200 ease-in-out rounded-full text-2xl font-bold"
+                onClick={() => setDisplayJobberModal(false)}
               >
-                Add
+                <MdCancel />
               </button>
+
+              <div className="">
+                <h2 className="text-2xl font-bold mb-4 text-center">
+                  Select Jobbers
+                </h2>
+                <SelectionTable
+                  NoOfColumns={jobberHeader.length}
+                  data={allJobber}
+                  headers={jobberHeader}
+                  setSelectedRow={setSelectedJobberRow}
+                  setOfSelectedIndex={jobberSetOfSelectedIndex}
+                  setSetOfSelectedIndex={setJobberSetOfSelectedIndex}
+                />
+              </div>
+
+              <div className="flex justify-center items-center mt-4">
+                <button
+                  type="button"
+                  className="bg-blue-900 px-4 py-1 rounded hover:bg-blue-700 text-white"
+                  onClick={handleSaveJobberSelection}
+                >
+                  Add
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
 
 
-      {/* {sfgLoader ? (
+        {/* {sfgLoader ? (
         <div className="flex justify-center items-center border border-gray-300 shadow-xl p-5 rounded-xl">
           <BounceLoader />
         </div>
@@ -602,52 +603,52 @@ const SFGBomSection = ({
                   ))}
               </select>
             </div> */}
-         
 
-<div className="flex flex-col">
-  <label className="text-gray-700 font-semibold mb-1">
-    SFG Material
-  </label>
-  <Select
-  name="sfg_material"
-  classNames={
-      "border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"}
-  isLoading={sfgLoader}
-    isDisabled={!SfgData.sfg_group}
-    placeholder={ sfgLoader ? "Loading SFG Materials..." : "Select SFG Material"}
-    options={
-      sfgMaterials?.map((item) => ({
-        label: item,
-        value: item,
-      })) || []
-    }
-    value={
-      SfgData.sfg_material
-        ? { label: SfgData.sfg_material, value: SfgData.sfg_material }
-        : null
-    }
-    onChange={(selectedOption) =>
-      sfgDataHandler({
-        target: {
-          name: "sfg_material",
-          value: selectedOption?.value || "",
-        },
-      })
-    }
-    className="react-select-container"
-    classNamePrefix="react-select"
-  />
-</div>
+
+            <div className="flex flex-col">
+              <label className="text-gray-700 font-semibold mb-1">
+                SFG Material
+              </label>
+              <Select
+                name="sfg_material"
+                classNames={
+                  "border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"}
+                isLoading={sfgLoader}
+                isDisabled={!SfgData.sfg_group}
+                placeholder={sfgLoader ? "Loading SFG Materials..." : "Select SFG Material"}
+                options={
+                  sfgMaterials?.map((item) => ({
+                    label: item,
+                    value: item,
+                  })) || []
+                }
+                value={
+                  SfgData.sfg_material
+                    ? { label: SfgData.sfg_material, value: SfgData.sfg_material }
+                    : null
+                }
+                onChange={(selectedOption) =>
+                  sfgDataHandler({
+                    target: {
+                      name: "sfg_material",
+                      value: selectedOption?.value || "",
+                    },
+                  })
+                }
+                className="react-select-container"
+                classNamePrefix="react-select"
+              />
+            </div>
             {/* Color1 */}
             <div className="flex flex-col">
               <label className="text-gray-700 font-semibold">Color</label>
               <select
                 name="sfg_color1"
                 className="border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                defaultValue="" 
+                defaultValue=""
                 onChange={sfgDataHandler}
                 value={SfgData.sfg_color1}
-                
+
               >
                 <option value="" disabled>
                   Select Color
@@ -656,12 +657,12 @@ const SFGBomSection = ({
                   sfgCustomColor.length > 0 &&
                   sfgCustomColor.map((item, idx) => (
                     <option key={idx} value={item.id}>
-                      {item.color_id} - {item.color_name}
+                      {`${item.color_id.slice(0, 10)} - ${item.color_name?.slice(0, 15)}`}
                     </option>
                   ))}
               </select>
             </div>
-           
+
             {/* Qty */}
             <div className="flex flex-col">
               <label className="text-gray-700 font-semibold">Qty</label>
@@ -686,11 +687,11 @@ const SFGBomSection = ({
               />
             </div>
 
-      </div>
-           
-           <div className="mt-5 flex">
+          </div>
 
-           {/* Selection buttons */}
+          <div className="mt-5 flex">
+
+            {/* Selection buttons */}
             <div className="flex w-1/2 items-center gap-3">
               <button
                 className="p-2 bg-blue-900 hover:bg-blue-800 text-white rounded-md w-full"
@@ -701,79 +702,79 @@ const SFGBomSection = ({
               </button>
             </div>
 
-        
-</div>
 
-            
+          </div>
 
-            {/* Raw Materials Section */}
-            {finalSelectedRawMaterials.length > 0 && (
-              <div className="col-span-2 flex flex-col">
-                <h3 className="text-xl font-semibold mb-1">
-                  Selected Raw Materials
-                </h3>
-                <SelectedRawMaterialsTable
-                  selectedMaterials={finalSelectedRawMaterials}
-                  updateQuantity={updateRawMaterialQty}
-                  removeItem={removeRawMaterial}
-                  onTotalCostChange={handleRawMaterialTotalCostChange}
-                />
-              </div>
-            )}
 
-              <div className="mt-5 flex">
-                <div className="flex w-1/2 items-center gap-3">
-                  <button
-                    className="p-2 bg-blue-900 hover:bg-blue-800 text-white rounded-md  w-full"
-                    type="button"
-                    onClick={handleSelectJobber}
-                  >
-                    Choose Jobber
-                  </button>
-                </div>
-              </div>
-            {/* Jobbers Section */}
-            {finalSelectedJobbers.length > 0 && (
-              <div className="col-span-2 flex flex-col">
-                <h3 className="text-xl font-semibold mb-1">Selected Jobbers</h3>
-                <SelectedJobbersTable
-                  selectedJobbers={finalSelectedJobbers}
-                  updateJobberRate={updateJobberRate}
-                  removeJobber={removeJobber}
-                  onTotalCostChange={handleJobberTotalCostChange}
-                  updateDescription={updateDescription}
-                />
-              </div>
-            )}
 
-            
-            
-          {/* Total Cost */}
-          <div className="flex w-1/2 mt-5 flex-col">
-              <label className="text-gray-700 font-semibold">Total Cost</label>
-              <input
-                value={SfgData.sfg_total_cost}
-                className="p-2 border bg-gray-100 border-gray-300 rounded-md"
-                type="text"
-                placeholder="0.0"
-                name="sfg_total_cost"
-                disabled
+          {/* Raw Materials Section */}
+          {finalSelectedRawMaterials.length > 0 && (
+            <div className="col-span-2 flex flex-col">
+              <h3 className="text-lg  font-semibold mt-2">
+                Selected Raw Materials
+              </h3>
+              <SelectedRawMaterialsTable
+                selectedMaterials={finalSelectedRawMaterials}
+                updateQuantity={updateRawMaterialQty}
+                removeItem={removeRawMaterial}
+                onTotalCostChange={handleRawMaterialTotalCostChange}
               />
             </div>
-    
+          )}
+
+          <div className="mt-5 flex">
+            <div className="flex w-1/2 items-center gap-3">
+              <button
+                className="p-2 bg-blue-900 hover:bg-blue-800 text-white rounded-md  w-full"
+                type="button"
+                onClick={handleSelectJobber}
+              >
+                Choose Jobber
+              </button>
+            </div>
+          </div>
+          {/* Jobbers Section */}
+          {finalSelectedJobbers.length > 0 && (
+            <div className="col-span-2 flex flex-col">
+              <h3 className="text-lg font-semibold mt-2">Selected Jobbers</h3>
+              <SelectedJobbersTable
+                selectedJobbers={finalSelectedJobbers}
+                updateJobberRate={updateJobberRate}
+                removeJobber={removeJobber}
+                onTotalCostChange={handleJobberTotalCostChange}
+                updateDescription={updateDescription}
+              />
+            </div>
+          )}
+
+
+
+          {/* Total Cost */}
+          <div className="flex w-1/2 mt-5 flex-col">
+            <label className="text-gray-700 font-semibold">Total Cost</label>
+            <input
+              value={SfgData.sfg_total_cost}
+              className="p-2 border bg-gray-100 border-gray-300 rounded-md"
+              type="text"
+              placeholder="0.0"
+              name="sfg_total_cost"
+              disabled
+            />
+          </div>
+
         </>
-      {/* )}   */}
-      <div className="flex justify-end ">
-            <button
-              type="button"
-              className="bg-green-600 hover:bg-green-500 flex items-center  gap-3 text-center rounded-md px-5 py-3  text-white font-semibold text-md"
-              onClick={(event) => updateSFGdata(event)}
-            >
-              Add BOM <Plus className="w-5 h-5" />
-            </button>
+        {/* )}   */}
+        <div className="flex justify-end ">
+          <button
+            type="button"
+            className="bg-green-600 hover:bg-green-500 flex items-center  gap-3 text-center rounded-md px-3 py-2  text-white font-semibold text-md"
+            onClick={(event) => updateSFGdata(event)}
+          >
+            Add BOM <Plus className="w-5 h-5" />
+          </button>
+        </div>
       </div>
     </div>
-      </div>
   );
 };
 

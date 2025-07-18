@@ -25,6 +25,7 @@ import BoardForm from "./BoardForm";
 import api from "./Api";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { BounceLoader } from "react-spinners";
 
 const BoardCard = ({
   board,
@@ -169,7 +170,7 @@ const BoardsList = () => {
   const onNavigateToBoard = (boardId) => {
     navigate("/kanban/board/" + boardId);
   };
-  
+
   const loadBoards = async () => {
     if (!token) return;
 
@@ -193,71 +194,71 @@ const BoardsList = () => {
     }
   };
 
-// CREATE BOARD
-const handleCreateBoard = async (boardData) => {
-  try {
-    const { success, data, error } = await api.createBoard(boardData, token);
-
-    if (!success) {
-      toast.error(error || "Failed to create board");
-      return;
-    }
-
-    toast.success("Board created successfully");
-    await loadBoards(); // Reload to get updated data
-    setShowBoardForm(false);
-  } catch (error) {
-    console.error("Error creating board:", error);
-    toast.error("Unexpected error while creating board");
-  }
-};
-
-// EDIT BOARD
-const handleEditBoard = async (boardData) => {
-  try {
-    const { success, data, error } = await api.updateBoard(editingBoard.id, boardData, token);
-
-    if (!success) {
-      toast.error(error || "Failed to update board");
-      return;
-    }
-
-    toast.success("Board updated successfully");
-    setBoards((prev) =>
-      prev.map((board) =>
-        board.id === editingBoard.id ? { ...board, ...boardData } : board
-      )
-    );
-    setEditingBoard(null);
-  } catch (error) {
-    console.error("Error updating board:", error);
-    toast.error("Unexpected error while updating board");
-  }
-};
-
-// DELETE BOARD
-const handleDeleteBoard = async (boardId) => {
-  if (
-    window.confirm(
-      "Are you sure you want to delete this board? This action cannot be undone."
-    )
-  ) {
+  // CREATE BOARD
+  const handleCreateBoard = async (boardData) => {
     try {
-      const { success, error } = await api.deleteBoard(boardId, token);
+      const { success, data, error } = await api.createBoard(boardData, token);
 
       if (!success) {
-        toast.error(error || "Failed to delete board");
+        toast.error(error || "Failed to create board");
         return;
       }
 
-      toast.success("Board deleted successfully");
-      setBoards((prev) => prev.filter((board) => board.id !== boardId));
+      toast.success("Board created successfully");
+      await loadBoards(); // Reload to get updated data
+      setShowBoardForm(false);
     } catch (error) {
-      console.error("Error deleting board:", error);
-      toast.error("Unexpected error while deleting board");
+      console.error("Error creating board:", error);
+      toast.error("Unexpected error while creating board");
     }
-  }
-};
+  };
+
+  // EDIT BOARD
+  const handleEditBoard = async (boardData) => {
+    try {
+      const { success, data, error } = await api.updateBoard(editingBoard.id, boardData, token);
+
+      if (!success) {
+        toast.error(error || "Failed to update board");
+        return;
+      }
+
+      toast.success("Board updated successfully");
+      setBoards((prev) =>
+        prev.map((board) =>
+          board.id === editingBoard.id ? { ...board, ...boardData } : board
+        )
+      );
+      setEditingBoard(null);
+    } catch (error) {
+      console.error("Error updating board:", error);
+      toast.error("Unexpected error while updating board");
+    }
+  };
+
+  // DELETE BOARD
+  const handleDeleteBoard = async (boardId) => {
+    if (
+      window.confirm(
+        "Are you sure you want to delete this board? This action cannot be undone."
+      )
+    ) {
+      try {
+        const { success, error } = await api.deleteBoard(boardId, token);
+
+        if (!success) {
+          toast.error(error || "Failed to delete board");
+          return;
+        }
+
+        toast.success("Board deleted successfully");
+        setBoards((prev) => prev.filter((board) => board.id !== boardId));
+      } catch (error) {
+        console.error("Error deleting board:", error);
+        toast.error("Unexpected error while deleting board");
+      }
+    }
+  };
 
 
   const filterBoards = () => {
@@ -276,54 +277,54 @@ const handleDeleteBoard = async (boardId) => {
     setFilteredBoards(filtered);
   };
 
-//   const handleCreateBoard = async (boardData) => {
-//     try {
-//       const newBoard = await api.createBoard(boardData, token);
-//       if (newBoard) {
-//         await loadBoards(); // Reload to get updated data
-//         setShowBoardForm(false);
-//       }
-//     } catch (error) {
-//       console.error("Error creating board:", error);
-//     }
-//   };
+  //   const handleCreateBoard = async (boardData) => {
+  //     try {
+  //       const newBoard = await api.createBoard(boardData, token);
+  //       if (newBoard) {
+  //         await loadBoards(); // Reload to get updated data
+  //         setShowBoardForm(false);
+  //       }
+  //     } catch (error) {
+  //       console.error("Error creating board:", error);
+  //     }
+  //   };
 
-//   const handleEditBoard = async (boardData) => {
-//     try {
-//       const updatedBoard = await api.updateBoard(
-//         editingBoard.id,
-//         boardData,
-//         token
-//       );
-//       if (updatedBoard) {
-//         setBoards((prev) =>
-//           prev.map((board) =>
-//             board.id === editingBoard.id ? { ...board, ...boardData } : board
-//           )
-//         );
-//         setEditingBoard(null);
-//       }
-//     } catch (error) {
-//       console.error("Error updating board:", error);
-//     }
-//   };
+  //   const handleEditBoard = async (boardData) => {
+  //     try {
+  //       const updatedBoard = await api.updateBoard(
+  //         editingBoard.id,
+  //         boardData,
+  //         token
+  //       );
+  //       if (updatedBoard) {
+  //         setBoards((prev) =>
+  //           prev.map((board) =>
+  //             board.id === editingBoard.id ? { ...board, ...boardData } : board
+  //           )
+  //         );
+  //         setEditingBoard(null);
+  //       }
+  //     } catch (error) {
+  //       console.error("Error updating board:", error);
+  //     }
+  //   };
 
-//   const handleDeleteBoard = async (boardId) => {
-//     if (
-//       window.confirm(
-//         "Are you sure you want to delete this board? This action cannot be undone."
-//       )
-//     ) {
-//       try {
-//         const success = await api.deleteBoard(boardId, token);
-//         if (success) {
-//           setBoards((prev) => prev.filter((board) => board.id !== boardId));
-//         }
-//       } catch (error) {
-//         console.error("Error deleting board:", error);
-//       }
-//     }
-//   };
+  //   const handleDeleteBoard = async (boardId) => {
+  //     if (
+  //       window.confirm(
+  //         "Are you sure you want to delete this board? This action cannot be undone."
+  //       )
+  //     ) {
+  //       try {
+  //         const success = await api.deleteBoard(boardId, token);
+  //         if (success) {
+  //           setBoards((prev) => prev.filter((board) => board.id !== boardId));
+  //         }
+  //       } catch (error) {
+  //         console.error("Error deleting board:", error);
+  //       }
+  //     }
+  //   };
 
   const handleToggleFavorite = async (boardId, isFavorite) => {
     try {
@@ -362,13 +363,10 @@ const handleDeleteBoard = async (boardId) => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-600 border-t-transparent mx-auto"></div>
-          <p className="mt-6 text-gray-600 text-lg">Loading your boards...</p>
-        </div>
+      <div className="flex justify-center items-center h-screen">
+        <BounceLoader color="#1e3a8a" />
       </div>
-    );
+    )
   }
 
   const stats = getTotalStats();
@@ -376,7 +374,7 @@ const handleDeleteBoard = async (boardId) => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 shadow-sm">
+      <div className="bg-white rounded-lg  border-b border-gray-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-6 py-6">
           <div className="flex items-center justify-between mb-6">
             <div>
@@ -427,21 +425,19 @@ const handleDeleteBoard = async (boardId) => {
               <div className="flex border border-gray-300 rounded-lg">
                 <button
                   onClick={() => setViewMode("grid")}
-                  className={`p-2 transition-colors ${
-                    viewMode === "grid"
-                      ? "bg-blue-600 text-white"
-                      : "text-gray-400 hover:text-gray-600"
-                  }`}
+                  className={`p-2 transition-colors ${viewMode === "grid"
+                    ? "bg-blue-600 text-white"
+                    : "text-gray-400 hover:text-gray-600"
+                    }`}
                 >
                   <Grid3X3 className="w-4 h-4" />
                 </button>
                 <button
                   onClick={() => setViewMode("list")}
-                  className={`p-2 transition-colors ${
-                    viewMode === "list"
-                      ? "bg-blue-600 text-white"
-                      : "text-gray-400 hover:text-gray-600"
-                  }`}
+                  className={`p-2 transition-colors ${viewMode === "list"
+                    ? "bg-blue-600 text-white"
+                    : "text-gray-400 hover:text-gray-600"
+                    }`}
                 >
                   <List className="w-4 h-4" />
                 </button>

@@ -626,37 +626,44 @@ const Sidebar = () => {
   return (
     <>
       <style>{`
-        /* Hide scrollbar but allow scroll */
-        .scrollbar-hide::-webkit-scrollbar {
-          display: none;
-        }
-        .scrollbar-hide {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-      `}</style>
+    .scrollbar-hide::-webkit-scrollbar {
+      display: none;
+    }
+    .scrollbar-hide {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  `}</style>
 
-      <div className="md:hidden w-1/4 fixed top-4 left-4 z-50">
-        <button onClick={() => setIsOpen(true)} className="text-white">
-          <IoMenu size={30} />
+      {/* Mobile Toggle Button */}
+      <div className="md:hidden fixed top-4 left-4 z-50">
+        <button onClick={() => setIsOpen(true)} className="text-blue-900 bg-white p-2 rounded-md shadow-md">
+          <IoMenu size={26} />
         </button>
       </div>
 
-      <div className={`fixed top-0 left-0 h-screen w-64 bg-blue-900 text-white flex flex-col rounded-r-3xl shadow-lg z-50 transition-transform duration-300 ease-in-out ${isOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`}>
+      {/* Sidebar */}
+      <aside
+        className={`fixed top-0 left-0 h-screen w-64 bg-blue-900 text-white flex flex-col shadow-xl z-40 transition-transform duration-300 ease-in-out rounded-r-3xl 
+      ${isOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`}
+      >
+        {/* Close button for mobile */}
         <div className="md:hidden absolute top-4 right-4">
           <button onClick={() => setIsOpen(false)} className="text-white">
-            <IoClose size={30} />
+            <IoClose size={26} />
           </button>
         </div>
 
-        <nav className="flex flex-col mt-10 space-y-4 px-4 overflow-y-auto h-full pb-10 scrollbar-hide">
+        {/* Sidebar Content */}
+        <nav className="flex flex-col mt-16 space-y-3 px-4 overflow-y-auto scrollbar-hide pb-10">
           {transformedSections.map((item, index) => {
             if (item.type === "flat") {
               const isActive = currentPath === item.path;
               return (
                 <div
                   key={index}
-                  className={`flex items-center space-x-3 p-2 rounded-lg cursor-pointer hover:bg-blue-800 ${isActive ? "bg-indigo-500 font-bold text-white" : ""}`}
+                  className={`flex items-center space-x-3 p-2 rounded-lg cursor-pointer transition hover:bg-blue-800 
+              ${isActive ? "bg-indigo-500 font-semibold" : ""}`}
                   onClick={() => {
                     navigate(item.path, { state: { title: item.label } });
                     setIsOpen(false);
@@ -671,18 +678,19 @@ const Sidebar = () => {
             const isAccordionOpen = activeIndex === index;
             return (
               <div key={index}>
+                {/* Accordion Header */}
                 <div
-                  className="flex items-center justify-between p-2 rounded-lg cursor-pointer hover:bg-blue-800 mt-1"
-                  // onClick={() => setActiveIndex(index)}
+                  className="flex items-center justify-between p-2 rounded-lg cursor-pointer hover:bg-blue-800"
                   onClick={() => setActiveIndex((prev) => (prev === index ? null : index))}
                 >
                   <div className="flex items-center space-x-3">
                     <img src={item.icon} className="w-5" />
                     <span className="text-sm font-semibold">{item.label}</span>
                   </div>
-                  {isAccordionOpen ? <IoChevronUp className="text-xl" /> : <IoChevronDown className="text-xl" />}
+                  {isAccordionOpen ? <IoChevronUp className="text-lg" /> : <IoChevronDown className="text-lg" />}
                 </div>
 
+                {/* Accordion Children */}
                 {isAccordionOpen && (
                   <div className="ml-9 mt-1 space-y-1">
                     {item.children.map((option, i) => {
@@ -690,7 +698,8 @@ const Sidebar = () => {
                       return (
                         <div
                           key={i}
-                          className={`text-sm px-2 py-1 rounded cursor-pointer hover:bg-blue-800 ${isActive ? "bg-indigo-500 font-bold text-white" : ""}`}
+                          className={`text-sm px-3 py-1 rounded cursor-pointer transition hover:bg-blue-800 
+                      ${isActive ? "bg-blue-700 font-semibold" : ""}`}
                           onClick={() => {
                             navigate(option.path, { state: { title: option.label } });
                             setIsOpen(false);
@@ -706,8 +715,9 @@ const Sidebar = () => {
             );
           })}
         </nav>
-      </div>
+      </aside>
     </>
+
   );
 };
 

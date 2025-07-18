@@ -319,8 +319,8 @@ const CustomerMaster = () => {
   }, [searchTerm, page, pageSize, token, navigate]);
 
   useEffect(() => {
-      setPage(1);
-    }, [searchTerm]);
+    setPage(1);
+  }, [searchTerm]);
 
   const clearHandler = (e) => {
     e.preventDefault();
@@ -399,39 +399,47 @@ const CustomerMaster = () => {
   //   setCurrentContact("");
   // };
   // console.log(formData);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <BounceLoader color="#1e3a8a" />
+      </div>
+    )
+  }
+
+
   return (
-    <div className="py-2 bg-white rounded-lg relative">
-      {loading ? (
-        <div className="absolute inset-0 flex justify-center items-center mt-64 bg-opacity-50 bg-gray-200 z-10">
-          <BounceLoader size={100} color={"#1e3a8a"} loading={loading} />
-        </div>
-      ) : (
-        <div>
-          <h1 className="text-3xl font-bold text-blue-900 mb-4">{title}</h1>
+    <div className="p-6 bg-white rounded-lg relative">
 
-          {openEditModal && (
-            <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50 overflow-y-auto">
-              <div className="bg-white p-6 rounded-lg shadow-lg max-h-[90vh] overflow-y-auto w-[100%] max-w-4xl">
-                <EditCustomerMaster
-                  selectedRow={selectedRow}
-                  setOpenEditModal={setOpenEditModal}
-                  fetchCustomerMasterData={fetchCustomerMasterData}
-                  groupName={groupName}
-                  addressCategory={addressCategory}
-                  statesOfIndia={statesOfIndia}
-                  // concernedPersonDetails={concernedPersonDetails}
-                  // setConcernedPersonDetails={setConcernedPersonDetails}
-                  // AddConcernedPerson={AddConcernedPerson}
-                  concerned_person_headers={concerned_person_headers}
-                  // AddedConcernedPerson={AddedConcernedPerson}
-                  // setAddedConcernedPerson={setAddedConcernedPerson}
-                  EditableDelte={EditableDelte}
-                />
-              </div>
+      <div>
+        <h1 className="text-2xl border-b pb-2 font-bold text-blue-900 mb-4">{title}</h1>
+
+        {openEditModal && (
+          <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50 overflow-y-auto">
+            <div className="bg-white p-6 rounded-lg shadow-lg max-h-[90vh] overflow-y-auto w-[100%] max-w-4xl">
+              <EditCustomerMaster
+                selectedRow={selectedRow}
+                setOpenEditModal={setOpenEditModal}
+                fetchCustomerMasterData={fetchCustomerMasterData}
+                groupName={groupName}
+                addressCategory={addressCategory}
+                statesOfIndia={statesOfIndia}
+                // concernedPersonDetails={concernedPersonDetails}
+                // setConcernedPersonDetails={setConcernedPersonDetails}
+                // AddConcernedPerson={AddConcernedPerson}
+                concerned_person_headers={concerned_person_headers}
+                // AddedConcernedPerson={AddedConcernedPerson}
+                // setAddedConcernedPerson={setAddedConcernedPerson}
+                EditableDelte={EditableDelte}
+              />
             </div>
-          )}
+          </div>
+        )}
 
-          <form className="grid grid-cols-2 gap-6 p-5 rounded-lg border border-gray-200 shadow-md mb-16" onSubmit={handleSubmit}>
+
+        <form className="rounded-lg border border-gray-200 shadow-md p-5" onSubmit={handleSubmit}>
+          <div className="grid grid-cols-2 gap-6 ">
             {/* Group Name */}
             <div className="flex flex-col">
               <label className="text-gray-700 font-semibold">Group Name</label>
@@ -646,7 +654,7 @@ const CustomerMaster = () => {
               </select>
             </div>
 
-            <div className="col-span-2">
+            <div className="col-span-2 border-t border-t-gray-300 pt-2">
               <h1 className="text-xl font-bold text-blue-700">
                 Company Legal Compliances
               </h1>
@@ -677,6 +685,8 @@ const CustomerMaster = () => {
                 onChange={handleInputChangeCompay}
               />
             </div>
+
+            <div className="col-span-2 border-b border-b-gray-300 pb-2"></div>
 
             <div className="col-span-2">
               <h1 className="text-xl font-bold text-blue-700">
@@ -836,7 +846,9 @@ const CustomerMaster = () => {
                 </button>
               </div>
             </div>
+          </div>
 
+          <div className="w-full overflow-hidden rounded-lg">
             {AddedConcernedPerson && AddedConcernedPerson.length > 0 && (
               <EditableDelte
                 key={AddedConcernedPerson.length}
@@ -845,65 +857,65 @@ const CustomerMaster = () => {
                 onDataChange={setAddedConcernedPerson}
               />
             )}
+          </div>
 
-            {/* Buttons */}
-            <div className="col-span-2 flex justify-end mt-4">
-              <button
-                onClick={clearHandler}
-                type="button"
-                className="bg-gray-200 px-4 py-1 rounded hover:bg-gray-600 hover:text-white transition"
-              >
-                Cancel
-              </button>
-              {/* <button
+          {/* Buttons */}
+          <div className="col-span-2 mt-5 flex justify-end ">
+            <button
+              onClick={clearHandler}
+              type="button"
+              className="bg-gray-200 px-4 py-1 rounded hover:bg-gray-600 hover:text-white transition"
+            >
+              Cancel
+            </button>
+            {/* <button
                 type="submit"
                 className="bg-gray-200 px-4 py-1 rounded hover:bg-gray-600 hover:text-white transition ml-4"
               >
                 Save
               </button> */}
-              <button
-                type="submit"
-                className={`bg-blue-900 ml-2 px-6 py-2 rounded text-white font-semibold transition-all ease-in-out duration-300 transform ${submitting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700'
-                  }`}
-                disabled={submitting}
-              >
-                {submitting ? (
-                  <div className="flex justify-center items-center space-x-2">
-                    <PuffLoader size={20} color="#fff" />
-                    <span>Saving...</span>
-                  </div>
-                ) : (
-                  'Save'
-                )}
-              </button>
-            </div>
-          </form>
-
-          <div className="mb-16">
-            {paginationLoading ? (
-              <div className="flex p-5 justify-center items-center space-x-2 mt-4 border border-gray-400 rounded-lg">
-                <BounceLoader size={20} color="#1e3a8a" />
-              </div>
-            ) : (
-              // <SmartTable headers={headers} data={enhancedData} />
-              <SmartTable
-                headers={headers}
-                data={enhancedData}
-                searchTerm={searchTerm}
-                setSearchTerm={setSearchTerm}
-              />
-            )}
-
-            <Pagination
-              setPage={setPage}
-              totalPages={totalPages}
-              page={page}
-              setPageSize={setPageSize}
-              pageSize={pageSize}
-            />
+            <button
+              type="submit"
+              className={`bg-blue-900 ml-2 px-6 py-2 rounded text-white font-semibold transition-all ease-in-out duration-300 transform ${submitting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700'
+                }`}
+              disabled={submitting}
+            >
+              {submitting ? (
+                <div className="flex justify-center items-center space-x-2">
+                  <PuffLoader size={20} color="#fff" />
+                  <span>Saving...</span>
+                </div>
+              ) : (
+                'Save'
+              )}
+            </button>
           </div>
+        </form>
+
+        <div className="mt-10">
+
+          <div className="">
+            <h3 className="text-2xl font-bold text-blue-900 pb-2 border-b">List Of Customers</h3>
+          </div>
+          <SmartTable
+            headers={headers}
+            data={enhancedData}
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            loading={paginationLoading}
+            setLoading={setPaginationLoading}
+          />
+
+          <Pagination
+            setPage={setPage}
+            totalPages={totalPages}
+            page={page}
+            setPageSize={setPageSize}
+            pageSize={pageSize}
+          />
         </div>
-      )}
+      </div>
+
     </div>
   );
 };

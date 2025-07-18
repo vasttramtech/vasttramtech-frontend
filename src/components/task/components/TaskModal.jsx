@@ -135,8 +135,8 @@ const TaskModal = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 w-screen">
-      <div className="bg-white rounded-lg w-[80%] h-screen overflow-auto">
+    <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-md flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg w-[80%]  overflow-auto">
         <div className="p-4 bg-gray-100 flex justify-between items-center border-b">
           {editMode ? (
             <input
@@ -147,7 +147,7 @@ const TaskModal = ({
               className="font-bold text-xl p-1 border-b-2 border-blue-500 bg-white w-full"
             />
           ) : (
-            <h2 className="text-xl font-bold">{task.subject}</h2>
+            <h2 className="text-xl text-blue-900 font-bold">{task.subject}</h2>
           )}
           <button
             onClick={onClose}
@@ -201,7 +201,7 @@ const TaskModal = ({
                 />
                 <button
                   type="submit"
-                  className="bg-blue-500 text-white px-3 py-2 rounded-r-md"
+                  className="bg-blue-900 hover:bg-blue-500 duration-200 ease-in-out cursor-pointer text-white px-3 py-2 rounded-r-md"
                   disabled={!newComment.trim() || commentsubmitting}
                 >
                   {commentsubmitting ? "Updating" : "Add Comment"}
@@ -291,7 +291,7 @@ const TaskModal = ({
               {!editMode && (isCreator || designation === "Admin") && (
                 <button
                   onClick={() => setEditMode(true)}
-                  className="bg-blue-500 text-white w-full py-2 rounded-md hover:bg-blue-600"
+                  className="bg-blue-900 text-white w-full py-2 rounded-md hover:bg-blue-700 duration-200 transition-all ease-in-out"
                 >
                   Edit Task
                 </button>

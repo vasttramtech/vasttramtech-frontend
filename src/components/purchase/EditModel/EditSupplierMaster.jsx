@@ -5,6 +5,8 @@ import { PuffLoader, BounceLoader } from "react-spinners";
 import { useParams, useNavigate } from "react-router-dom";
 import FormLabel from "../FormLabel";
 import { toast } from "react-toastify";
+import { MdCancel } from "react-icons/md";
+import { Plus } from "lucide-react";
 
 
 const EditSupplierMaster = ({ setOpenEditModal, selectedRow, fetchSupplierMasterData, statesOfIndia, concerned_person_headers, EditableDelte }) => {
@@ -103,7 +105,7 @@ const EditSupplierMaster = ({ setOpenEditModal, selectedRow, fetchSupplierMaster
             const updatedFormData = {
                 supplier_id: data?.supplier_id,
                 group_name: data?.group_name,
-                company_type:data?.company_type,
+                company_type: data?.company_type,
                 company_name: data?.company_name,
                 state: data?.state,
                 credit_limit: data?.credit_limit,
@@ -211,345 +213,348 @@ const EditSupplierMaster = ({ setOpenEditModal, selectedRow, fetchSupplierMaster
     console.log("formData: ", formData)
 
     return (
-        <div className="bg-white p-6 rounded-lg shadow-lg w-full">
-        {
-            loading && (
-                <div className="absolute inset-0 flex justify-center items-center bg-opacity-50 bg-gray-200 z-10">
-                    <BounceLoader size={100} color={"#1e3a8a"} loading={loading} />
-                </div>
-            )
-        }
-            <div className="flex justify-between">
-                <h1>Edit Color Master</h1>
-                <button onClick={() => setOpenEditModal(false)} className="text-gray-500 hover:text-red-700">
-                    ✖
+        <div className=" w-full">
+            {
+                loading && (
+                    <div className="absolute inset-0 flex justify-center items-center bg-opacity-50 bg-gray-200 z-10">
+                        <BounceLoader size={100} color={"#1e3a8a"} loading={loading} />
+                    </div>
+                )
+            }
+            <div className="flex justify-between items-center mb-4 pb-2 border-b">
+                <h1 className="text-xl font-bold text-blue-900 ">Edit Supplier Master</h1>
+                <button onClick={() => setOpenEditModal(false)} className="text-red-500 hover:text-red-700 hover:scale-105 duration-200 ease-in-out transition-all">
+                    <MdCancel className="w-8 h-8" />
                 </button>
             </div>
 
-            <form className="grid grid-cols-2 gap-6 p-2 mb-16" onSubmit={handleUpdate}>
-                {/* Group name */}
-                <div className="flex flex-col">
-                    <FormLabel title={"Group Name"} />
-                    <select
-                        className="border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        onChange={(e) => {
-                            e.target.classList.add("text-black");
-                            handleInputChangeCompay(e);
-                        }}
-                        name="group_name"
-                        value={formData.group_name}
-                    >
-                        <option value="" disabled selected>
-                            Group Name
-                        </option>
-                        <option value="Purchase">Purchase</option>
-                        <option value="In House">In House</option>
-                    </select>
-                </div>
-
-                {/* Company Type */}
-                <div className="flex flex-col">
-                    <FormLabel title={"Company Type"} />
-                    <select
-                        className="border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        onChange={(e) => {
-                            e.target.classList.add("text-black");
-                            handleInputChangeCompay(e);
-                        }}
-                        name="company_type"
-                        value={formData.company_type}
-                    >
-                        <option value="" disabled selected>
-                            Company Type
-                        </option>
-                        <option value="Fabric">Fabric</option>
-                        <option value="Glass Beads">Glass Beads</option>
-                        <option value="Thread">Thread</option>
-                        <option value="Zippers">Zippers</option>
-                    </select>
-                </div>
-
-                {/* Company Name */}
-                <div className="flex flex-col">
-                    <FormLabel title={"Company Name"} />
-                    <input
-                        type="text"
-                        className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="Company Name"
-                        name="company_name"
-                        value={formData.company_name}
-                        onChange={handleInputChangeCompay}
-                    />
-                </div>
-
-                {/* State */}
-                <div className="flex flex-col">
-                    <FormLabel title={"State"} />
-                    <select
-                        className="border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        onChange={handleInputChangeCompay}
-                        value={formData.state}
-                        name="state"
-                    >
-                        <option value="" className="text-gray-400">
-                            State
-                        </option>
-                        {statesOfIndia.map((state, index) => (
-                            <option key={index} value={state}>
-                                {state}
-                            </option>
-                        ))}
-                    </select>
-                </div>
-
-                {/* Credit Limit Amount*/}
-                <div className="flex flex-col">
-                    <FormLabel title={"Credit Limit(Amount)"} />
-                    <input
-                        type="text"
-                        className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="Credit Limit (Amount)"
-                        name="credit_limit"
-                        value={formData.credit_limit}
-                        onChange={handleInputChangeCompay}
-                    />
-                </div>
-
-                {/* Credit Limit Days*/}
-                <div className="flex flex-col">
-                    <FormLabel title={"Credit Limit (Days)"} />
-                    <input
-                        type="text"
-                        className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="Credit Limit (Days)"
-                        name="credit_limit_days"
-                        value={formData.credit_limit_days}
-                        onChange={handleInputChangeCompay}
-                    />
-                </div>
-
-                {/* Contact No */}
-                <div className="flex flex-col">
-                    <label className="text-gray-700 font-semibold">Contact No</label>
-                    <input
-                        type="text"
-                        className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="Contact No"
-                        name="contact_number"
-                        value={formData.contact_number}
-                        onChange={handleInputChangeCompay}
-                    />
-                </div>
-
-                {/* Website */}
-                <div className="flex flex-col">
-                    <label className="text-gray-700 font-semibold">Website</label>
-                    <input
-                        type="text"
-                        className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="Website"
-                        name="website"
-                        value={formData.website}
-                        onChange={handleInputChangeCompay}
-                    />
-                </div>
-
-                {/* Address Category */}
-                <div className="flex flex-col">
-                    <label className="text-gray-700 font-semibold">Address Category</label>
-                    <input
-                        type="text"
-                        className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="Address Category"
-                        name="address_category"
-                        value={formData.address_category}
-                        onChange={handleInputChangeCompay}
-                    />
-                </div>
-
-                {/* Address */}
-                <div className="flex flex-col">
-                    <FormLabel title={"Address"} />
-                    <input
-                        type="text"
-                        className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="Address"
-                        name="address"
-                        value={formData.address}
-                        onChange={handleInputChangeCompay}
-                    />
-                </div>
-
-                {/* Email Id */}
-                <div className="flex flex-col">
-                    <label className="text-gray-700 font-semibold">Email-Id</label>
-                    <input
-                        type="text"
-                        className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="Email-Id"
-                        name="email_id"
-                        value={formData.email_id}
-                        onChange={handleInputChangeCompay}
-                    />
-                </div>
-
-                {/* Concerned Person Name */}
-                <div className="col-span-2">
-                    <h1 className="text-xl font-bold text-blue-700">
-                        Concerned Person Details
-                    </h1>
-                </div>
-
-                {/* Concerned Person Name */}
-                <div className="flex flex-col">
-                    <label className="text-gray-700 font-semibold">
-                        Concerned Person Name
-                    </label>
-                    <input
-                        type="text"
-                        className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="Concerned Person Name"
-                        value={concernedPersonDetails.concerned_person_name}
-                        name="concerned_person_name"
-                        onChange={handleInputchangeConcernedPerson}
-                    />
-                </div>
-
-                {/* Designation */}
-                <div className="flex flex-col">
-                    <label className="text-gray-700 font-semibold">Designation</label>
-                    <select
-                        className="border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        onChange={(e) => {
-                            e.target.classList.add("text-black");
-                            handleInputchangeConcernedPerson(e);
-                        }}
-                        value={concernedPersonDetails.designation}
-                        name="designation"
-                    >
-                        <option value="" disabled selected>
-                            Designation
-                        </option>
-                        <option value="Owner">Owner</option>
-                        <option value="Retailer">Retailer</option>
-                    </select>
-                </div>
-
-                {/* Mobile 1 */}
-                <div className="flex flex-col">
-                    <label className="text-gray-700 font-semibold">Mobile 1</label>
-                    <input
-                        type="text"
-                        className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="Mobile 1"
-                        value={concernedPersonDetails.mobile_number_1}
-                        name="mobile_number_1"
-                        onChange={handleInputchangeConcernedPerson}
-                    />
-                </div>
-
-                {/* Mobile 2 */}
-                <div className="flex flex-col">
-                    <label className="text-gray-700 font-semibold">Mobile 2</label>
-                    <input
-                        type="text"
-                        className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="Mobile 2"
-                        value={concernedPersonDetails.mobile_number_2}
-                        name="mobile_number_2"
-                        onChange={handleInputchangeConcernedPerson}
-                    />
-                </div>
-
-                {/* Mobile 3 */}
-                <div className="flex flex-col">
-                    <label className="text-gray-700 font-semibold">Mobile 3</label>
-                    <input
-                        type="text"
-                        className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="Mobile 3"
-                        value={concernedPersonDetails.mobile_number_3}
-                        name="mobile_number_3"
-                        onChange={handleInputchangeConcernedPerson}
-                    />
-                </div>
-
-                {/* Board Desk No */}
-                <div className="flex flex-col">
-                    <label className="text-gray-700 font-semibold">Board Desk No</label>
-                    <input
-                        type="text"
-                        className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="Board Desk No"
-                        value={concernedPersonDetails.board_desk_no}
-                        name="board_desk_no"
-                        onChange={handleInputchangeConcernedPerson}
-                    />
-                </div>
-
-                {/* Direct Desk No */}
-                <div className="flex flex-col">
-                    <label className="text-gray-700 font-semibold">Direct Desk No</label>
-                    <input
-                        type="text"
-                        className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="Direct Desk No"
-                        value={concernedPersonDetails.direct_desk_no}
-                        name="direct_desk_no"
-                        onChange={handleInputchangeConcernedPerson}
-                    />
-                </div>
-
-                {/* Email Id */}
-                <div className="flex flex-col">
-                    <label className="text-gray-700 font-semibold">Email Id</label>
-                    <input
-                        type="text"
-                        className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="Email Id"
-                        value={concernedPersonDetails.email_id}
-                        name="email_id"
-                        onChange={handleInputchangeConcernedPerson}
-                    />
-                </div>
-
-                {/* Address */}
-                <div className="flex flex-col">
-                    <label className="text-gray-700 font-semibold">Address</label>
-                    <textarea
-                        className="border border-gray-300 bg-gray-100 rounded-md p-2 h-40 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
-                        placeholder="Address"
-                        value={concernedPersonDetails.address}
-                        name="address"
-                        onChange={handleInputchangeConcernedPerson}
-                    ></textarea>
-                </div>
-
-                {/* Alternate Id */}
-                <div className="flex flex-col">
-                    <label className="text-gray-700 font-semibold">
-                        Alternate email Id
-                    </label>
-                    <input
-                        type="text"
-                        className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="Address Id"
-                        value={concernedPersonDetails.alternate_email_id}
-                        name="alternate_email_id"
-                        onChange={handleInputchangeConcernedPerson}
-                    />
-                </div>
-
-                {/* Add Concerned Person Button inside container */}
-                <div className="col-span-2 flex border border-blue-500 justify-center mt-4 rounded p-2">
-                    <div className="  ">
-                        <button
-                            type="button"
-                            className="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-700 transition"
-                            onClick={AddConcernedPerson}
+            <form className=" p-2 " onSubmit={handleUpdate}>
+                <div className="grid grid-cols-2 gap-6 " >
+                    {/* Group name */}
+                    <div className="flex flex-col">
+                        <FormLabel title={"Group Name"} />
+                        <select
+                            className="border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            onChange={(e) => {
+                                e.target.classList.add("text-black");
+                                handleInputChangeCompay(e);
+                            }}
+                            name="group_name"
+                            value={formData.group_name}
                         >
-                            Add Concerned Person
-                        </button>
+                            <option value="" disabled selected>
+                                Group Name
+                            </option>
+                            <option value="Purchase">Purchase</option>
+                            <option value="In House">In House</option>
+                        </select>
+                    </div>
+
+                    {/* Company Type */}
+                    <div className="flex flex-col">
+                        <FormLabel title={"Company Type"} />
+                        <select
+                            className="border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            onChange={(e) => {
+                                e.target.classList.add("text-black");
+                                handleInputChangeCompay(e);
+                            }}
+                            name="company_type"
+                            value={formData.company_type}
+                        >
+                            <option value="" disabled selected>
+                                Company Type
+                            </option>
+                            <option value="Fabric">Fabric</option>
+                            <option value="Glass Beads">Glass Beads</option>
+                            <option value="Thread">Thread</option>
+                            <option value="Zippers">Zippers</option>
+                        </select>
+                    </div>
+
+                    {/* Company Name */}
+                    <div className="flex flex-col">
+                        <FormLabel title={"Company Name"} />
+                        <input
+                            type="text"
+                            className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Company Name"
+                            name="company_name"
+                            value={formData.company_name}
+                            onChange={handleInputChangeCompay}
+                        />
+                    </div>
+
+                    {/* State */}
+                    <div className="flex flex-col">
+                        <FormLabel title={"State"} />
+                        <select
+                            className="border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            onChange={handleInputChangeCompay}
+                            value={formData.state}
+                            name="state"
+                        >
+                            <option value="" className="text-gray-400">
+                                State
+                            </option>
+                            {statesOfIndia.map((state, index) => (
+                                <option key={index} value={state}>
+                                    {state}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    {/* Credit Limit Amount*/}
+                    <div className="flex flex-col">
+                        <FormLabel title={"Credit Limit(Amount)"} />
+                        <input
+                            type="text"
+                            className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Credit Limit (Amount)"
+                            name="credit_limit"
+                            value={formData.credit_limit}
+                            onChange={handleInputChangeCompay}
+                        />
+                    </div>
+
+                    {/* Credit Limit Days*/}
+                    <div className="flex flex-col">
+                        <FormLabel title={"Credit Limit (Days)"} />
+                        <input
+                            type="text"
+                            className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Credit Limit (Days)"
+                            name="credit_limit_days"
+                            value={formData.credit_limit_days}
+                            onChange={handleInputChangeCompay}
+                        />
+                    </div>
+
+                    {/* Contact No */}
+                    <div className="flex flex-col">
+                        <label className="text-gray-700 font-semibold">Contact No</label>
+                        <input
+                            type="text"
+                            className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Contact No"
+                            name="contact_number"
+                            value={formData.contact_number}
+                            onChange={handleInputChangeCompay}
+                        />
+                    </div>
+
+                    {/* Website */}
+                    <div className="flex flex-col">
+                        <label className="text-gray-700 font-semibold">Website</label>
+                        <input
+                            type="text"
+                            className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Website"
+                            name="website"
+                            value={formData.website}
+                            onChange={handleInputChangeCompay}
+                        />
+                    </div>
+
+                    {/* Address Category */}
+                    <div className="flex flex-col">
+                        <label className="text-gray-700 font-semibold">Address Category</label>
+                        <input
+                            type="text"
+                            className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Address Category"
+                            name="address_category"
+                            value={formData.address_category}
+                            onChange={handleInputChangeCompay}
+                        />
+                    </div>
+
+                    {/* Address */}
+                    <div className="flex flex-col">
+                        <FormLabel title={"Address"} />
+                        <input
+                            type="text"
+                            className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Address"
+                            name="address"
+                            value={formData.address}
+                            onChange={handleInputChangeCompay}
+                        />
+                    </div>
+
+                    {/* Email Id */}
+                    <div className="flex flex-col">
+                        <label className="text-gray-700 font-semibold">Email-Id</label>
+                        <input
+                            type="text"
+                            className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Email-Id"
+                            name="email_id"
+                            value={formData.email_id}
+                            onChange={handleInputChangeCompay}
+                        />
+                    </div>
+
+                    {/* Concerned Person Name */}
+                    <div className="col-span-2">
+                        <h1 className="text-xl font-bold text-blue-700">
+                            Concerned Person Details
+                        </h1>
+                    </div>
+
+                    {/* Concerned Person Name */}
+                    <div className="flex flex-col">
+                        <label className="text-gray-700 font-semibold">
+                            Concerned Person Name
+                        </label>
+                        <input
+                            type="text"
+                            className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Concerned Person Name"
+                            value={concernedPersonDetails.concerned_person_name}
+                            name="concerned_person_name"
+                            onChange={handleInputchangeConcernedPerson}
+                        />
+                    </div>
+
+                    {/* Designation */}
+                    <div className="flex flex-col">
+                        <label className="text-gray-700 font-semibold">Designation</label>
+                        <select
+                            className="border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            onChange={(e) => {
+                                e.target.classList.add("text-black");
+                                handleInputchangeConcernedPerson(e);
+                            }}
+                            value={concernedPersonDetails.designation}
+                            name="designation"
+                        >
+                            <option value="" disabled selected>
+                                Designation
+                            </option>
+                            <option value="Owner">Owner</option>
+                            <option value="Retailer">Retailer</option>
+                        </select>
+                    </div>
+
+                    {/* Mobile 1 */}
+                    <div className="flex flex-col">
+                        <label className="text-gray-700 font-semibold">Mobile 1</label>
+                        <input
+                            type="text"
+                            className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Mobile 1"
+                            value={concernedPersonDetails.mobile_number_1}
+                            name="mobile_number_1"
+                            onChange={handleInputchangeConcernedPerson}
+                        />
+                    </div>
+
+                    {/* Mobile 2 */}
+                    <div className="flex flex-col">
+                        <label className="text-gray-700 font-semibold">Mobile 2</label>
+                        <input
+                            type="text"
+                            className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Mobile 2"
+                            value={concernedPersonDetails.mobile_number_2}
+                            name="mobile_number_2"
+                            onChange={handleInputchangeConcernedPerson}
+                        />
+                    </div>
+
+                    {/* Mobile 3 */}
+                    <div className="flex flex-col">
+                        <label className="text-gray-700 font-semibold">Mobile 3</label>
+                        <input
+                            type="text"
+                            className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Mobile 3"
+                            value={concernedPersonDetails.mobile_number_3}
+                            name="mobile_number_3"
+                            onChange={handleInputchangeConcernedPerson}
+                        />
+                    </div>
+
+                    {/* Board Desk No */}
+                    <div className="flex flex-col">
+                        <label className="text-gray-700 font-semibold">Board Desk No</label>
+                        <input
+                            type="text"
+                            className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Board Desk No"
+                            value={concernedPersonDetails.board_desk_no}
+                            name="board_desk_no"
+                            onChange={handleInputchangeConcernedPerson}
+                        />
+                    </div>
+
+                    {/* Direct Desk No */}
+                    <div className="flex flex-col">
+                        <label className="text-gray-700 font-semibold">Direct Desk No</label>
+                        <input
+                            type="text"
+                            className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Direct Desk No"
+                            value={concernedPersonDetails.direct_desk_no}
+                            name="direct_desk_no"
+                            onChange={handleInputchangeConcernedPerson}
+                        />
+                    </div>
+
+                    {/* Email Id */}
+                    <div className="flex flex-col">
+                        <label className="text-gray-700 font-semibold">Email Id</label>
+                        <input
+                            type="text"
+                            className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Email Id"
+                            value={concernedPersonDetails.email_id}
+                            name="email_id"
+                            onChange={handleInputchangeConcernedPerson}
+                        />
+                    </div>
+
+                    {/* Address */}
+                    <div className="flex flex-col">
+                        <label className="text-gray-700 font-semibold">Address</label>
+                        <textarea
+                            className="border border-gray-300 bg-gray-100 rounded-md p-2 h-40 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
+                            placeholder="Address"
+                            value={concernedPersonDetails.address}
+                            name="address"
+                            onChange={handleInputchangeConcernedPerson}
+                        ></textarea>
+                    </div>
+
+                    {/* Alternate Id */}
+                    <div className="flex flex-col">
+                        <label className="text-gray-700 font-semibold">
+                            Alternate email Id
+                        </label>
+                        <input
+                            type="text"
+                            className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Address Id"
+                            value={concernedPersonDetails.alternate_email_id}
+                            name="alternate_email_id"
+                            onChange={handleInputchangeConcernedPerson}
+                        />
+                    </div>
+
+                    {/* Add Concerned Person Button inside container */}
+                    <div className="col-span-2 flex  justify-center mt-4 rounded p-2">
+                        <div className="  ">
+                            <button
+                                type="button"
+                                className="bg-blue-900 flex items-center text-white px-4 py-1 rounded hover:bg-blue-700 transition"
+                                onClick={AddConcernedPerson}
+                            >
+                                <p>  Add Concerned Person </p>
+                                <Plus className="w-4 h-4" />
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -562,36 +567,40 @@ const EditSupplierMaster = ({ setOpenEditModal, selectedRow, fetchSupplierMaster
                     />
                 )}
 
-                <div className="col-span-2 mt-4">
-                    <h1 className="text-xl font-bold text-blue-700">
+                <div className="col-span-2 my-2">
+                    <h1 className="text-lg font-bold text-blue-700">
                         Company Legal Compliances
                     </h1>
                 </div>
 
-                {/* Pan No */}
-                <div className="flex flex-col">
-                    <label className="text-gray-700 font-semibold">Pan No</label>
-                    <input
-                        type="text"
-                        className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="Pan No"
-                        name="pan_number"
-                        value={formData.pan_number}
-                        onChange={handleInputChangeCompay}
-                    />
-                </div>
+                <div className="grid grid-cols-2 gap-6">
 
-                {/* GSTIN */}
-                <div className="flex flex-col">
-                    <label className="text-gray-700 font-semibold">GSTIN</label>
-                    <input
-                        type="text"
-                        className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="GSTIN"
-                        name="gstin_number"
-                        value={formData.gstin_number}
-                        onChange={handleInputChangeCompay}
-                    />
+
+                    {/* Pan No */}
+                    <div className="flex flex-col">
+                        <label className="text-gray-700 font-semibold">Pan No</label>
+                        <input
+                            type="text"
+                            className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Pan No"
+                            name="pan_number"
+                            value={formData.pan_number}
+                            onChange={handleInputChangeCompay}
+                        />
+                    </div>
+
+                    {/* GSTIN */}
+                    <div className="flex flex-col">
+                        <label className="text-gray-700 font-semibold">GSTIN</label>
+                        <input
+                            type="text"
+                            className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="GSTIN"
+                            name="gstin_number"
+                            value={formData.gstin_number}
+                            onChange={handleInputChangeCompay}
+                        />
+                    </div>
                 </div>
 
                 {/* Buttons */}
@@ -605,7 +614,7 @@ const EditSupplierMaster = ({ setOpenEditModal, selectedRow, fetchSupplierMaster
                     </button>
                     <button
                         type="submit"
-                        className={`bg-gray-500 ml-2 px-6 py-2 rounded text-white font-semibold transition-all ease-in-out duration-300 transform ${submitting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-700'
+                        className={`bg-blue-900 ml-2 px-6 py-2 rounded text-white font-semibold transition-all ease-in-out duration-300 transform ${submitting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700'
                             }`}
                         disabled={submitting}
                     >

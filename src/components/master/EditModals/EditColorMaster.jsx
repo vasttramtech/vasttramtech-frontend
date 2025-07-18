@@ -5,9 +5,10 @@ import { PuffLoader, BounceLoader } from "react-spinners";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import AddKarigar from "../AddKarigar";
+import { MdCancel } from "react-icons/md";
 
 
-const EditColorMaster = ({ setOpenEditModal, selectedRow,fetchColorMasterData }) => {
+const EditColorMaster = ({ setOpenEditModal, selectedRow, fetchColorMasterData }) => {
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -15,8 +16,8 @@ const EditColorMaster = ({ setOpenEditModal, selectedRow,fetchColorMasterData })
     const { token } = useSelector((state) => state.auth);
     const [submitting, setSubmitting] = useState(false);
     const [formData, setFormData] = useState({
-        colorId:"",
-        colorName:""
+        colorId: "",
+        colorName: ""
     });
 
     const handleInputChange = (e) => {
@@ -98,15 +99,15 @@ const EditColorMaster = ({ setOpenEditModal, selectedRow,fetchColorMasterData })
     };
 
     return (
-        <div className="bg-white p-6 rounded-lg shadow-lg w-full">
-            <div className="flex justify-between">
-                <h1>Edit Color Master</h1>
-                <button onClick={() => setOpenEditModal(false)} className="text-gray-500 hover:text-red-700">
-                    ✖
+        <div className="bg-white w-full">
+            <div className="flex justify-between items-center mb-4 pb-2 border-b">
+                <h1 className="text-xl font-bold text-blue-900">Edit Color Master</h1>
+                <button onClick={() => setOpenEditModal(false)} className="text-red-500 hover:text-red-700 hover:scale-105 transition-all ease-in-out duration-200">
+                    <MdCancel className="w-8 h-8" />
                 </button>
             </div>
 
-            <form className="grid grid-cols-2 gap-6 p-2 mb-16" onSubmit={handleUpdate}>
+            <form className="grid grid-cols-2 gap-6 p-2 " onSubmit={handleUpdate}>
 
 
                 {/* Color ID */}
@@ -132,13 +133,13 @@ const EditColorMaster = ({ setOpenEditModal, selectedRow,fetchColorMasterData })
                 {/* Buttons */}
                 <div className="col-span-2 flex justify-end mt-4">
                     <button type="button" className="bg-gray-200 px-4 py-1 rounded hover:bg-gray-600 hover:text-white transition"
-                    onClick={() => setOpenEditModal(false)}
+                        onClick={() => setOpenEditModal(false)}
                     >
                         Cancel
                     </button>
                     <button
                         type="submit"
-                        className={`bg-gray-500 ml-2 px-6 py-2 rounded text-white font-semibold transition-all ease-in-out duration-300 transform ${submitting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-700'
+                        className={`bg-blue-900 ml-2 px-6 py-2 rounded text-white font-semibold transition-all ease-in-out duration-300 transform ${submitting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700'
                             }`}
                         disabled={submitting}
                     >

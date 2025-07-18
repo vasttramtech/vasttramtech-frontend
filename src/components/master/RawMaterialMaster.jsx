@@ -16,6 +16,7 @@ import EditIcon from "../../assets/Others/EditIcon.png";
 import EditRawMaterialMaster from "./EditModals/EditRawMaterialMaster";
 import Pagination from "../utility/Pagination";
 import AddKarigar from "./AddKarigar";
+import { Plus } from "lucide-react";
 
 const headers = ["document_id", "Item Id", "Group", "Item Name", "Unit", "HSN/SAC Code", "Description", "Color", "Price/unit", "Edit", ""];
 
@@ -291,7 +292,7 @@ const RawMaterialMaster = () => {
 
     useEffect(() => {
         setPage(1);
-      }, [searchTerm]);
+    }, [searchTerm]);
 
 
     const clearHandler = (e) => {
@@ -307,239 +308,244 @@ const RawMaterialMaster = () => {
         });
 
     }
+
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <BounceLoader color="#1e3a8a" />
+            </div>
+        )
+    }
+
     return (
-        <div className="py-2 bg-white rounded-lg relative">
-            {loading ? (
-                <div className="absolute inset-0 flex justify-center items-center mt-64 bg-opacity-50 bg-gray-200 z-10">
-                    <BounceLoader size={100} color={"#1e3a8a"} loading={loading} />
-                </div>
-            ) : (
-                <div>
-                    {/* <h1 className="text-3xl font-bold text-blue-900 mb-4">{title}</h1> */}
-                    <h1 className="text-3xl font-bold text-blue-900 mb-4">Raw Material Master</h1>
+        <div className="p-6 bg-white rounded-lg relative">
 
-                    {rawMaterialModel &&
-                        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                            <RawMaterialGroup setRawMaterialModel={setRawMaterialModel} setRefresh={setRefresh} refresh={refresh} />
-                        </div>
-                    }
+            <div>
+                {/* <h1 className="text-3xl font-bold text-blue-900 mb-4">{title}</h1> */}
+                <h1 className="text-2xl font-bold text-blue-900 pb-2 border-b mb-4">Raw Material Master</h1>
 
-                    {unitModel &&
-                        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                            <UnitGroup setUnitModel={setUnitModel} setRefresh={setRefresh} refresh={refresh} />
-                        </div>
-                    }
+                {rawMaterialModel &&
+                    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 backdrop-blur-md">
+                        <RawMaterialGroup setRawMaterialModel={setRawMaterialModel} setRefresh={setRefresh} refresh={refresh} />
+                    </div>
+                }
 
-                    {hsnModel &&
-                        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                            <HSNCodeGroup setHsnModel={setHsnModel} setRefresh={setRefresh} refresh={refresh} />
-                        </div>
-                    }
+                {unitModel &&
+                    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 backdrop-blur-md">
+                        <UnitGroup setUnitModel={setUnitModel} setRefresh={setRefresh} refresh={refresh} />
+                    </div>
+                }
 
-                    {openEditModal && (
-                        <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50 overflow-y-auto">
-                            <div className="bg-white p-6 rounded-lg shadow-lg max-h-[90vh] overflow-y-auto w-[90%] max-w-4xl">
-                                <EditRawMaterialMaster
-                                    selectedRow={selectedRow}
-                                    setOpenEditModal={setOpenEditModal}
-                                    materialGroup={materialGroup}
-                                    fetchRawMaterialData={fetchRawMaterialData}
-                                    unit={unit}
-                                    HSN_SAC_Code={HSN_SAC_Code}
-                                    colors={colors}
-                                />
-                            </div>
-                        </div>
-                    )}
+                {hsnModel &&
+                    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 backdrop-blur-md">
+                        <HSNCodeGroup setHsnModel={setHsnModel} setRefresh={setRefresh} refresh={refresh} />
+                    </div>
+                }
 
-
-
-                    <form className="grid grid-cols-2 gap-6 p-5 rounded-lg border border-gray-200 shadow-md mb-16" onSubmit={handleSubmit}>
-                        {/* Group */}
-                        <div className="flex flex-col">
-                            <label className="text-gray-700 font-semibold">Group</label>
-                            <div className="flex items-center gap-2">
-                                <select className="flex-grow border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500" name="group"
-                                    value={formData.group}
-                                    onChange={handleInputChange}
-                                >
-                                    <option value="" disabled selected>Group</option>
-                                    {materialGroup.map((group, index) => (
-                                        <option key={index} value={group?.id
-                                        }>{group?.group_name
-                                            }</option>
-                                    ))}
-                                </select>
-                                <button
-                                    type="button"
-                                    className="flex items-center justify-center w-8 h-8 bg-blue-500 text-white rounded-full text-xl hover:bg-blue-700 transition"
-                                    onClick={() => setRawMaterialModel(true)}
-                                >
-                                    +
-                                </button>
-                            </div>
-                        </div>
-
-                        {/* HSN/SAC Code */}
-                        <div className="flex flex-col">
-                            <label className="text-gray-700 font-semibold">HSN/SAC Code</label>
-                            <div className="flex items-center gap-2">
-                                <select className="flex-grow border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500" name="hsn_sac_code"
-                                    value={formData.hsn_sac_code}
-                                    onChange={handleInputChange}
-                                >
-                                    <option value="" disabled selected>HSN/SAC Code</option>
-                                    {HSN_SAC_Code.map((group, index) => (
-                                        <option key={index} value={group?.id
-                                        }>{group?.hsn_sac_code
-                                            }</option>
-                                    ))}
-                                </select>
-                                <button
-                                    type="button"
-                                    className="flex items-center justify-center w-8 h-8 bg-blue-500 text-white rounded-full text-xl hover:bg-blue-700 transition"
-                                    onClick={() => setHsnModel(true)}
-                                >
-                                    +
-                                </button>
-                            </div>
-                        </div>
-
-                        {/* Item Name */}
-                        <div className="flex flex-col">
-                            <label className="text-gray-700 font-semibold">Item Name</label>
-                            <input type="text" className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="semi-Finished Goods Name"
-                                name="item_name"
-                                value={formData.item_name}
-                                onChange={handleInputChange}
+                {openEditModal && (
+                    <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50 overflow-y-auto">
+                        <div className="bg-white p-6 rounded-lg shadow-lg max-h-[90vh] overflow-y-auto w-[90%] max-w-4xl">
+                            <EditRawMaterialMaster
+                                selectedRow={selectedRow}
+                                setOpenEditModal={setOpenEditModal}
+                                materialGroup={materialGroup}
+                                fetchRawMaterialData={fetchRawMaterialData}
+                                unit={unit}
+                                HSN_SAC_Code={HSN_SAC_Code}
+                                colors={colors}
                             />
                         </div>
+                    </div>
+                )}
 
-                        {/* Unit */}
-                        <div className="flex flex-col">
-                            <label className="text-gray-700 font-semibold">Unit</label>
-                            <div className="flex items-center gap-2">
-                                <select
-                                    name="unit"
-                                    className="flex-grow border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    value={formData.unit}
-                                    onChange={handleInputChange}
-                                >
-                                    <option value="" disabled>
-                                        Select Unit
-                                    </option>
-                                    {unit.map((unit) => (
-                                        <option key={unit.id} value={unit.
-                                            id}>
-                                            {unit.
-                                                unit_name}
-                                        </option>
-                                    ))}
-                                </select>
-                                <button
-                                    type="button"
-                                    className="flex items-center justify-center w-8 h-8 bg-blue-500 text-white rounded-full text-xl hover:bg-blue-700 transition"
-                                    onClick={() => setUnitModel(true)}
-                                >
-                                    +
-                                </button>
-                            </div>
-                        </div>
 
-                        {/* Price per unit */}
-                        <div className="flex flex-col">
-                            <label className="text-gray-700 font-semibold">Price per unit</label>
-                            <input type="number" className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="semi-Finished Goods Name"
-                                name="pricePerUnit"
-                                value={formData.pricePerUnit}
-                                onChange={handleInputChange}
-                            />
-                        </div>
 
-                        {/* Color */}
-                        <div className="flex flex-col">
-                            <label className="text-gray-700 font-semibold">Color</label>
-                            <select className="border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                name="color"
-                                value={formData.color}
+                <form className="grid grid-cols-2 gap-6 p-5 rounded-lg border border-gray-200 shadow-md mb-16" onSubmit={handleSubmit}>
+                    {/* Group */}
+                    <div className="flex flex-col">
+                        <label className="text-gray-700 font-semibold">Group</label>
+                        <div className="flex items-center gap-2">
+                            <select className="flex-grow border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500" name="group"
+                                value={formData.group}
                                 onChange={handleInputChange}
                             >
-                                <option value="" disabled selected>Color</option>
-                                {colors.map((color) => (
-                                    <option key={color.id} value={color.
+                                <option value="" disabled selected>Group</option>
+                                {materialGroup.map((group, index) => (
+                                    <option key={index} value={group?.id
+                                    }>{group?.group_name
+                                        }</option>
+                                ))}
+                            </select>
+                            <button
+                                type="button"
+                                className="flex items-center justify-center w-8 h-8 bg-blue-900 text-white rounded-full text-xl hover:bg-blue-700 transition"
+                                onClick={() => setRawMaterialModel(true)}
+                            >
+                                <Plus className="w-6 h-6" />
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* HSN/SAC Code */}
+                    <div className="flex flex-col">
+                        <label className="text-gray-700 font-semibold">HSN/SAC Code</label>
+                        <div className="flex items-center gap-2">
+                            <select className="flex-grow border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500" name="hsn_sac_code"
+                                value={formData.hsn_sac_code}
+                                onChange={handleInputChange}
+                            >
+                                <option value="" disabled selected>HSN/SAC Code</option>
+                                {HSN_SAC_Code.map((group, index) => (
+                                    <option key={index} value={group?.id
+                                    }>{group?.hsn_sac_code
+                                        }</option>
+                                ))}
+                            </select>
+                            <button
+                                type="button"
+                                className="flex items-center justify-center w-8 h-8 bg-blue-900 text-white rounded-full text-xl hover:bg-blue-700 transition"
+                                onClick={() => setHsnModel(true)}
+                            >
+                                <Plus className="w-6 h-6" />
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Item Name */}
+                    <div className="flex flex-col">
+                        <label className="text-gray-700 font-semibold">Item Name</label>
+                        <input type="text" className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="semi-Finished Goods Name"
+                            name="item_name"
+                            value={formData.item_name}
+                            onChange={handleInputChange}
+                        />
+                    </div>
+
+                    {/* Unit */}
+                    <div className="flex flex-col">
+                        <label className="text-gray-700 font-semibold">Unit</label>
+                        <div className="flex items-center gap-2">
+                            <select
+                                name="unit"
+                                className="flex-grow border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                value={formData.unit}
+                                onChange={handleInputChange}
+                            >
+                                <option value="" disabled>
+                                    Select Unit
+                                </option>
+                                {unit.map((unit) => (
+                                    <option key={unit.id} value={unit.
                                         id}>
-                                        {`${color.color_id} - ${color.color_name}`}
+                                        {unit.
+                                            unit_name}
                                     </option>
                                 ))}
                             </select>
-                        </div>
-
-                        {/* Description */}
-                        <div className="flex flex-col">
-                            <label className="text-gray-700 font-semibold">Description</label>
-                            <textarea className="border border-gray-300 bg-gray-100 rounded-md p-2 h-40 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full" placeholder="Description"
-                                name="description"
-                                value={formData.description}
-                                onChange={handleInputChange}
-                            ></textarea>
-                        </div>
-
-
-
-
-
-
-
-                        {/* Buttons */}
-                        <div className="col-span-2 flex justify-end mt-4">
                             <button
-                                onClick={clearHandler}
-                                type="button" className="bg-gray-200 px-4 py-1 rounded hover:bg-gray-600 hover:text-white transition">
-                                Cancel
-                            </button>
-                            <button
-                                type="submit"
-                                className={`bg-blue-900 ml-2 px-6 py-2 rounded text-white font-semibold transition-all ease-in-out duration-300 transform ${submitting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700'
-                                    }`}
-                                disabled={submitting}
+                                type="button"
+                                className="flex items-center justify-center w-8 h-8 bg-blue-900 text-white rounded-full text-xl hover:bg-blue-700 transition"
+                                onClick={() => setUnitModel(true)}
                             >
-                                {submitting ? (
-                                    <div className="flex justify-center items-center space-x-2">
-                                        <PuffLoader size={20} color="#fff" />
-                                        <span>Saving...</span>
-                                    </div>
-                                ) : (
-                                    'Save'
-                                )}
+                                <Plus className="w-6 h-6" />
                             </button>
                         </div>
-                    </form>
+                    </div>
 
-                    <div className="mb-16">
-                        {paginationLoading ? (
-                            <div className="flex p-5 justify-center items-center space-x-2 mt-4 border border-gray-400 rounded-lg">
-                                <BounceLoader size={20} color="#1e3a8a" />
-                            </div>
-                        ) : (
-                            // <SmartTable headers={headers} data={enhancedData} />
-                            <SmartTable
-                                headers={headers}
-                                data={enhancedData}
-                                searchTerm={searchTerm}
-                                setSearchTerm={setSearchTerm}
-                            />
-                        )}
-
-                        <Pagination
-                            setPage={setPage}
-                            totalPages={totalPages}
-                            page={page}
-                            setPageSize={setPageSize}
-                            pageSize={pageSize}
+                    {/* Price per unit */}
+                    <div className="flex flex-col">
+                        <label className="text-gray-700 font-semibold">Price per unit</label>
+                        <input type="number" className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="semi-Finished Goods Name"
+                            name="pricePerUnit"
+                            value={formData.pricePerUnit}
+                            onChange={handleInputChange}
                         />
                     </div>
+
+                    {/* Color */}
+                    <div className="flex flex-col">
+                        <label className="text-gray-700 font-semibold">Color</label>
+                        <select className="border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            name="color"
+                            value={formData.color}
+                            onChange={handleInputChange}
+                        >
+                            <option value="" disabled selected>Color</option>
+                            {colors.map((color) => (
+                                <option key={color.id} value={color.
+                                    id}>
+                                    {`${color.color_id} - ${color.color_name}`}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    {/* Description */}
+                    <div className="flex flex-col">
+                        <label className="text-gray-700 font-semibold">Description</label>
+                        <textarea className="border border-gray-300 bg-gray-100 rounded-md p-2 h-40 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full" placeholder="Description"
+                            name="description"
+                            value={formData.description}
+                            onChange={handleInputChange}
+                        ></textarea>
+                    </div>
+
+
+
+
+
+
+
+                    {/* Buttons */}
+                    <div className="col-span-2 flex justify-end mt-4">
+                        <button
+                            onClick={clearHandler}
+                            type="button" className="bg-gray-200 px-4 py-1 rounded hover:bg-gray-600 hover:text-white transition">
+                            Cancel
+                        </button>
+                        <button
+                            type="submit"
+                            className={`bg-blue-900 ml-2 px-6 py-2 rounded text-white font-semibold transition-all ease-in-out duration-300 transform ${submitting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700'
+                                }`}
+                            disabled={submitting}
+                        >
+                            {submitting ? (
+                                <div className="flex justify-center items-center space-x-2">
+                                    <PuffLoader size={20} color="#fff" />
+                                    <span>Saving...</span>
+                                </div>
+                            ) : (
+                                'Save'
+                            )}
+                        </button>
+                    </div>
+                </form>
+
+                <div className="">
+
+                    <div className="">
+                        <h3 className="text-2xl font-bold text-blue-900 pb-2 border-b">List Of Raw Materials</h3>
+                    </div>
+                    <SmartTable
+                        headers={headers}
+                        data={enhancedData}
+                        searchTerm={searchTerm}
+                        setSearchTerm={setSearchTerm}
+                        loading={paginationLoading}
+                        setLoading={setPaginationLoading}
+                    />
+
+
+                    <Pagination
+                        setPage={setPage}
+                        totalPages={totalPages}
+                        page={page}
+                        setPageSize={setPageSize}
+                        pageSize={pageSize}
+                    />
                 </div>
-            )}
+            </div>
+
         </div>
     );
 };

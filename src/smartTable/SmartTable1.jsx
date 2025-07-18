@@ -85,7 +85,7 @@ import { useNavigate } from "react-router-dom";
 import filter from "../assets/Others/Filter.png";
 import Search from "../assets/Others/Search.png";
 
-const SmartTable1 = ({ headers, data, onRowClick ,searchTerm, setSearchTerm }) => {
+const SmartTable1 = ({ headers, data, onRowClick, searchTerm, setSearchTerm }) => {
     const navigate = useNavigate();
     // const [searchTerm, setSearchTerm] = useState("");
 
@@ -108,10 +108,10 @@ const SmartTable1 = ({ headers, data, onRowClick ,searchTerm, setSearchTerm }) =
                     className="px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
                 />
                 <button className="px-4 py-2 bg-blue-600 text-white rounded-md shadow-md hover:bg-blue-700 transition">
-                    <img src={Search} alt="Search" className="w-6 h-6"/>
+                    <img src={Search} alt="Search" className="w-6 h-6" />
                 </button>
                 <button className="px-4 py-2 bg-blue-600 text-white rounded-md shadow-md hover:bg-blue-700 transition">
-                    <img src={filter} alt="Filter" className="w-6 h-6"/>
+                    <img src={filter} alt="Filter" className="w-6 h-6" />
                 </button>
             </div>
 
