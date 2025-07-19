@@ -310,21 +310,21 @@ const EditSalesOrderModel = () => {
       const response =
         type === "internal"
           ? await axios.get(
-              `${process.env.REACT_APP_BACKEND_URL}/api/internal-sales-order-entry/edit/${id}`,
-              {
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                },
-              }
-            )
+            `${process.env.REACT_APP_BACKEND_URL}/api/internal-sales-order-entry/edit/${id}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          )
           : await axios.get(
-              `${process.env.REACT_APP_BACKEND_URL}/api/sales-order-entry/edit/${id}`,
-              {
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                },
-              }
-            );
+            `${process.env.REACT_APP_BACKEND_URL}/api/sales-order-entry/edit/${id}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
       // console.log(response);
       if (!response || !response.data) {
         toast.error("Error at getting data");
@@ -364,7 +364,7 @@ const EditSalesOrderModel = () => {
       setLoading(false);
     }
   };
-  console.log("formData:zzzzzzzz ",formData);
+  console.log("formData:zzzzzzzz ", formData);
 
   useEffect(() => {
     fetchPageData();
@@ -646,7 +646,7 @@ const EditSalesOrderModel = () => {
       console.log("Error at creating Sales Order", error);
       toast.error(
         error?.response?.data?.error?.message ||
-          "Error at Updating Sales Order Entry"
+        "Error at Updating Sales Order Entry"
       );
     } finally {
       setsubmitting(false);
@@ -863,7 +863,7 @@ const EditSalesOrderModel = () => {
       console.log("Error at creating Sales Order", error);
       toast.error(
         error?.response?.data?.error?.message ||
-          "Error at Updating Sales Order Entry"
+        "Error at Updating Sales Order Entry"
       );
     } finally {
       // setLoading(false);
@@ -1003,38 +1003,41 @@ const EditSalesOrderModel = () => {
     );
 
   return (
-    <div>
-      <h1 className="text-3xl font-bold text-blue-900 mb-4">
+    <div className="bg-white p-6 rounded-lg">
+      <h1 className="text-2xl font-bold text-blue-900 mb-4 pb-2 border-b">
         Edit Sales Order Entry
       </h1>
       {showEditSfgModal && (
-        <div className="fixed w-[90vw] h-[90vh] z-10 p-5 bg-gray-200 rounded-xl px-2 overflow-y-auto  top-2">
-          <div className="flex justify-between  my-1 items-center overflow-y-auto">
-            <h3 className="text-xl font-bold">Update Semi Finished Goods</h3>
-            <p
-              className="text-xl px-2 border bg-red-600 rounded text-white hover:bg-red-500 cursor-pointer"
-              onClick={() => {
-                setShowEditSfgModal(!showEditSfgModal);
-              }}
-            >
-              X
-            </p>
+        <div className="fixed inset-0 animate-fade-in bg-gray-900 backdrop-blur-md bg-opacity-50 flex justify-center items-center z-50">
+
+          <div className=" w-[80vw] h-[90vh] bg-white z-40  rounded-xl p-6 overflow-y-auto  top-2">
+            <div className="flex justify-between items-center overflow-y-auto mb-4 pb-2 border-b border-b-gray-300">
+              <h3 className="text-xl font-bold text-blue-900 ">Update Semi Finished Goods</h3>
+              <p
+                className="text-xl px-2 border bg-red-700 rounded-full text-white hover:bg-red-500 cursor-pointer duration-200 transition-all ease-in-out"
+                onClick={() => {
+                  setShowEditSfgModal(!showEditSfgModal);
+                }}
+              >
+                X
+              </p>
+            </div>
+            <EditSfgComponent
+              index={selectedSFGindex}
+              token={token}
+              allJobber={jobberList}
+              allRawMaterial={RawMaterialList}
+              sfgmGroup={availableSfgmGroups}
+              dataDesign={designData}
+              allSemiFinishedGoods={allSemiFinishedGoods}
+              allSavedSemiFinishedGoods={allSavedSemiFinishedGoods}
+              setAllSavedSemiFinishedGoods={setAllSavedSemiFinishedGoods}
+              setAllSemiFinishedGoods={setAllSemiFinishedGoods}
+              sfglist={sfglist}
+              setShowEditSfgModal={setShowEditSfgModal}
+              BillOfSaleStatus={BillOfSaleStatus}
+            />
           </div>
-          <EditSfgComponent
-            index={selectedSFGindex}
-            token={token}
-            allJobber={jobberList}
-            allRawMaterial={RawMaterialList}
-            sfgmGroup={availableSfgmGroups}
-            dataDesign={designData}
-            allSemiFinishedGoods={allSemiFinishedGoods}
-            allSavedSemiFinishedGoods={allSavedSemiFinishedGoods}
-            setAllSavedSemiFinishedGoods={setAllSavedSemiFinishedGoods}
-            setAllSemiFinishedGoods={setAllSemiFinishedGoods}
-            sfglist={sfglist}
-            setShowEditSfgModal={setShowEditSfgModal}
-            BillOfSaleStatus={BillOfSaleStatus}
-          />
         </div>
       )}
       {showDesignTable && (
@@ -1279,10 +1282,10 @@ const EditSalesOrderModel = () => {
       )}
 
       <form
-        className="rounded-lg mb-4 border border-gray-200 shadow-md p-5"
+        className=""
         onSubmit={handleSubmit}
       >
-        <div className="grid grid-cols-2 gap-6 p-2 mb-16">
+        <div className="grid grid-cols-2 gap-6 p-2 mb-5 ">
           {/* SO ID */}
           <FormInput
             type={"text"}
@@ -1371,7 +1374,7 @@ const EditSalesOrderModel = () => {
           />
         }
         <button
-          className="mt-4 ml-4 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:scale-100 hover:shadow-2xl transition-all duration-300 ease-in-out flex items-center gap-2"
+          className="my-4 ml-4 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:scale-100 hover:shadow-2xl transition-all duration-300 ease-in-out flex items-center gap-2"
           onClick={() => setAddSfgModal(true)}
           type="button"
         >

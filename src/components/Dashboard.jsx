@@ -5,7 +5,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { BounceLoader } from "react-spinners";
 import { Link, useNavigate } from "react-router-dom";
-import Pagination from "./utility/Pagination";
+import Pagination10 from "./utility/Pagination10";
 import { useSelector } from "react-redux";
 import CountsDashboard from "./CountsDashboard";
 import ExportToExcel from "./utility/ExportToExcel";
@@ -292,7 +292,7 @@ const Dashboard = ({ company, setSelectedSOId, setSalesOrder, setBom, setFormDat
 
 
   return (
-    <div className="p-2 bg-white rounded-lg relative min-h-screen">
+    <div className="p-6 bg-white rounded-lg relative min-h-screen">
 
       <h1 className="text-2xl font-bold text-blue-900">DashBoard</h1>
 
@@ -345,7 +345,7 @@ const Dashboard = ({ company, setSelectedSOId, setSalesOrder, setBom, setFormDat
               loading={paginationLoading}
             />
 
-            <Pagination
+            <Pagination10
               setPage={setPage}
               totalPages={totalPages}
               page={page}

@@ -12,6 +12,7 @@ import EditSfgComponent from "./component/EditSfgComponent";
 import BOMSection from "./component/BOMSection";
 import ExtraBOMSfgCreate from "./component/ExtraBOMSfgCreate";
 import ConvertIDSfgDataTable from "./component/ConvertIDSfgDataTable";
+import { MdCancel } from "react-icons/md";
 
 const SalesOrderEntry = () => {
   const { token } = useSelector((state) => state.auth);
@@ -426,8 +427,8 @@ const SalesOrderEntry = () => {
         ...prev,
         processor: res?.data?.processor?.id,
         merchandiser: res?.data?.merchandiser?.id,
-        remark:res?.data?.remark,
-        goods_received_remark:res?.data?.goods_received_remark,
+        remark: res?.data?.remark,
+        goods_received_remark: res?.data?.goods_received_remark,
       }));
       setOrder_items(res.data?.order_items)
       const exta_bom = res?.data?.extra_bom_so[0]?.Extra_bom || [];
@@ -623,7 +624,7 @@ const SalesOrderEntry = () => {
       console.log("Error at creating Sales Order", error);
       toast.error(
         error?.response?.data?.error?.message ||
-          "Error at creating Sales Order Entry"
+        "Error at creating Sales Order Entry"
       );
     } finally {
       setsubmitting(false);
@@ -700,7 +701,7 @@ const SalesOrderEntry = () => {
       console.log("Error at creating Sales Order", error);
       toast.error(
         error?.response?.data?.error?.message ||
-          "Error at creating Sales Order Entry"
+        "Error at creating Sales Order Entry"
       );
     } finally {
       // setLoading(false);
@@ -886,92 +887,106 @@ const SalesOrderEntry = () => {
   };
   // console.log(allSemiFinishedGoods,allSavedSemiFinishedGoods)
 
+
   console.log("formData: ", formData);
 
   if ((load && !error) || fetchingData || loading)
+
     return (
-      <div className="absolute inset-0 flex justify-center items-center mt-64 bg-opacity-50 bg-gray-200 z-10">
-        <BounceLoader size={100} color={"#1e3a8a"} />
+      <div className="flex justify-center items-center h-screen">
+        <BounceLoader color="#1e3a8a" />
       </div>
-    );
+    )
+  }
 
   return (
-    <div>
-      <h1 className="text-3xl font-bold text-blue-900 mb-4">
+    <div className="p-6 rounded-lg bg-white">
+      <h1 className="text-2xl font-bold text-blue-900 mb-4 pb-2 border-b">
         Sales Order Entry
       </h1>
       {showEditSfgModal && (
-        <div className="fixed w-[90vw] h-[90vh] z-10 p-5 bg-gray-200 rounded-xl px-2 overflow-y-auto  top-2">
-          <div className="flex justify-between  my-1 items-center overflow-y-auto">
-            <h3 className="text-xl font-bold">Update Semi Finished Goods</h3>
-            <p
-              className="text-xl px-2 border bg-red-600 rounded text-white hover:bg-red-500 cursor-pointer"
-              onClick={() => {
-                setShowEditSfgModal(!showEditSfgModal);
-              }}
-            >
-              X
-            </p>
+
+        <div className="fixed inset-0 bg-gray-900 backdrop-blur-md bg-opacity-50 flex justify-center items-center z-40 rounded-lg animate-fade-in">
+
+          <div className="fixed w-[70vw] h-[80vh] overflow-auto p-5 border border-gray-400 bg-white rounded-xl">
+            <div className="flex justify-between  items-center mb-4 pb-2 border-b border-gray-300">
+              <h3 className="text-xl font-bold text-blue-900 ">Update Semi Finished Goods</h3>
+              <p
+                className=" text-red-500 rounded hover:text-red-700 duration-200 hover:scale-100 transition-all ease-in-out cursor-pointer"
+                onClick={() => {
+                  setShowEditSfgModal(!showEditSfgModal);
+                }}
+              >
+                <MdCancel className="w-8 h-8" />
+              </p>
+            </div>
+            <EditSfgComponent
+              index={selectedSFGindex}
+              token={token}
+              allJobber={jobberList}
+              allRawMaterial={RawMaterialList}
+              sfgmGroup={availableSfgmGroups}
+              dataDesign={designData}
+              allSemiFinishedGoods={allSemiFinishedGoods}
+              allSavedSemiFinishedGoods={allSavedSemiFinishedGoods}
+              setAllSavedSemiFinishedGoods={setAllSavedSemiFinishedGoods}
+              setAllSemiFinishedGoods={setAllSemiFinishedGoods}
+              sfglist={sfglist}
+              setShowEditSfgModal={setShowEditSfgModal}
+            />
           </div>
-          <EditSfgComponent
-            index={selectedSFGindex}
-            token={token}
-            allJobber={jobberList}
-            allRawMaterial={RawMaterialList}
-            sfgmGroup={availableSfgmGroups}
-            dataDesign={designData}
-            allSemiFinishedGoods={allSemiFinishedGoods}
-            allSavedSemiFinishedGoods={allSavedSemiFinishedGoods}
-            setAllSavedSemiFinishedGoods={setAllSavedSemiFinishedGoods}
-            setAllSemiFinishedGoods={setAllSemiFinishedGoods}
-            sfglist={sfglist}
-            setShowEditSfgModal={setShowEditSfgModal}
-          />
         </div>
       )}
       {showDesignTable && (
-        <div className="fixed w-[80vw] z-10 p-5 border border-gray-400 bg-gray-100 rounded-xl">
-          <div className="flex justify-between items-center">
-            <h3 className="text-xl font-semibold ">Select Design</h3>
-            <p
-              className="text-xl border px-2 bg-red-600 rounded-full text-white hover:bg-red-400 cursor-pointer"
-              onClick={() => {
-                setShowDesignTable(!showDesignTable);
-              }}
-            >
-              X
-            </p>
+
+        <div className="fixed inset-0 bg-gray-900 backdrop-blur-md bg-opacity-50 flex justify-center items-center z-40 animate-fade-in">
+
+          <div className="fixed w-[80vw] p-5 border border-gray-400 bg-gray-100 rounded-xl">
+            <div className="flex justify-between items-center pb-2  border-b">
+              <h3 className="text-xl font-bold text-blue-900  ">Select Design</h3>
+              <p
+                className="text-xl border px-2 bg-red-600 rounded-full text-white hover:bg-red-400 cursor-pointer"
+                onClick={() => {
+                  setShowDesignTable(!showDesignTable);
+                }}
+              >
+                X
+              </p>
+            </div>
+            <SingleAddTable
+              data={formattedDesignMasters}
+              setSelectedData={setSelectedData}
+              setSelectedRow={setSelectedRow}
+              NoOfColumns={NoOfColumns}
+              headers={headersForDesignTable}
+            />
           </div>
-          <SingleAddTable
-            data={formattedDesignMasters}
-            setSelectedData={setSelectedData}
-            setSelectedRow={setSelectedRow}
-            NoOfColumns={NoOfColumns}
-            headers={headersForDesignTable}
-          />
         </div>
       )}
 
       {showConvertIdTable && (
-        <div className="fixed w-[80vw] z-10 bg-gray-200 rounded-xl p-5">
-          <div className="flex justify-between items-center">
-            <h3 className="text-xl font-semibold">Select Convert ID</h3>
-            <p
-              className="text-xl px-2 border bg-red-600 rounded-full text-white hover:bg-red-500 cursor-pointer"
-              onClick={() => {
-                setShowConvertIdTable(!showConvertIdTable);
-              }}
-            >
-              X
-            </p>
+        <div className="fixed inset-0 bg-gray-900 backdrop-blur-md bg-opacity-50 flex justify-center items-center z-40 animate-fade-in">
+
+          <div className="fixed w-[80vw] z-10 bg-gray-100 border rounded-xl p-5">
+            <div className="flex justify-between items-center pb-2 border-b">
+              <h3 className="text-xl font-bold text-blue-900">Select Convert ID</h3>
+              <p
+                className="text-xl px-2 border bg-red-600 rounded-full text-white hover:bg-red-500 cursor-pointer"
+                onClick={() => {
+                  setShowConvertIdTable(!showConvertIdTable);
+                }}
+              >
+                X
+              </p>
+            </div>
+            <SingleAddTable
+              data={convertIdDatas}
+              setSelectedData={setSelectedConvertIdData}
+              setSelectedRow={setSelectedConvertIdRow}
+              NoOfColumns={headersforConvertId.length}
+              headers={headersforConvertId}
+            />
           </div>
-          <SingleAddTable
-            data={convertIdDatas}
-            setSelectedData={setSelectedConvertIdData}
-            setSelectedRow={setSelectedConvertIdRow}
-            NoOfColumns={headersforConvertId.length}
-            headers={headersforConvertId}
-          />
         </div>
       )}
 
@@ -1018,7 +1033,7 @@ const SalesOrderEntry = () => {
       )}
 
       {soViewModal && (
-        <div className="my-8 overflow-x-auto">
+        <div className="my-8 overflow-x-auto animate-fade-in">
           <table className="min-w-full table-auto bg-white shadow-lg rounded-2xl overflow-hidden">
             <thead className="bg-gradient-to-r from-blue-100 to-blue-200 text-blue-900">
               <tr>
@@ -1174,7 +1189,7 @@ const SalesOrderEntry = () => {
       )}
 
       <form
-        className="rounded-lg mb-4 border border-gray-200 shadow-md p-5"
+        className="rounded-lg mb-4 "
         onSubmit={handleSubmit}
       >
         <div className="grid grid-cols-2 gap-6 p-2 mb-16">
@@ -1302,7 +1317,7 @@ const SalesOrderEntry = () => {
               SalesOrderQty={formData.qty}
             />
             <button
-              className="mt-4 ml-4 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:scale-100 hover:shadow-2xl transition-all duration-300 ease-in-out flex items-center gap-2"
+              className="my-4 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:scale-100 hover:shadow-2xl transition-all duration-300 ease-in-out flex items-center gap-2"
               onClick={() => setAddSfgModal(true)}
               type="button"
             >
@@ -1776,13 +1791,13 @@ const SalesOrderEntry = () => {
             <button
               onClick={clearHandler}
               type="button"
-              className="bg-gray-200 px-4 py-1 rounded hover:bg-gray-600 hover:text-white transition"
+              className="bg-gray-200 px-4 py-2 rounded hover:bg-gray-600 hover:text-white transition"
             >
               Clear
             </button>
             <button
               type="submit"
-              className={`bg-blue-900 text-white px-4 py-1 rounded hover:bg-blue-800 hover:text-white transition duration-200 ease-in-out
+              className={`bg-blue-900 text-white px-4 py-2 rounded hover:bg-blue-800 hover:text-white transition duration-200 ease-in-out
               `}
               disabled={submitting}
             >

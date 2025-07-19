@@ -8,6 +8,7 @@ import SelectedJobbersTable from "./SelectedJobbersTable";
 import SelectedRawMaterialsTable from "./SelectedRawMaterialsTable";
 import { ColumnsIcon, Plus } from "lucide-react";
 import Select from "react-select";
+import { MdCancel } from "react-icons/md";
 
 const rawmaterialHeader = [
   "Item Name",
@@ -452,17 +453,18 @@ const SFGBomSection = ({
     <div>
       {/* Raw Material Selection Modal */}
       {displayRawMaterialModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50">
+        <div className="fixed inset-0 bg-gray-900 bg-opacity-50 backdrop-blur-md flex justify-center items-center z-40 animate-fade-in">
+
           <div className="relative w-[90vw] bg-gray-200 border shadow-2xl p-4 rounded-lg">
             <button
-              className="absolute top-2 right-2 text-gray-700 hover:text-red-500 text-2xl font-bold"
+              className="absolute top-2 right-2 text-red-700 hover:text-red-500 hover:scale-105 duration-200 ease-in-out font-bold"
               onClick={() => setDisplayRawMaterialModal(false)}
             >
-              ✖
+              <MdCancel className="w-8 h-8 " />
             </button>
 
-            <div className="mt-8">
-              <h2 className="text-xl font-bold mb-4 text-center">
+            <div className="">
+              <h2 className="text-xl font-bold mb-4 pb-2 border-b border-gray-300 text-blue-900 text-center">
                 Select Raw Materials
               </h2>
               <SelectionTable
@@ -478,7 +480,7 @@ const SFGBomSection = ({
             <div className="flex justify-center items-center mt-4">
               <button
                 type="button"
-                className="bg-gray-400 px-4 py-1 rounded hover:bg-gray-300"
+                className="bg-blue-900 px-4 py-1 rounded hover:bg-blue-700 text-white"
                 onClick={handleSaveRawMaterialSelection}
               >
                 Add
@@ -490,17 +492,17 @@ const SFGBomSection = ({
 
       {/* Jobber Selection Modal */}
       {displayJobberModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50">
+        <div className="fixed inset-0 bg-gray-900 bg-opacity-50 backdrop-blur-md flex justify-center items-center z-50 animate-fade-in">
           <div className="relative w-[90vw] bg-gray-200 border shadow-2xl p-4 rounded-lg">
             <button
-              className="absolute top-2 right-2 text-gray-700 hover:text-red-500 text-2xl font-bold"
+              className="absolute top-2 right-2 text-red-700 hover:text-red-500 hover:scale-105 duration-200 ease-in-out font-bold"
               onClick={() => setDisplayJobberModal(false)}
             >
-              ✖
+              <MdCancel className="w-8 h-8 " />
             </button>
 
-            <div className="mt-8">
-              <h2 className="text-xl font-bold mb-4 text-center">
+            <div className="">
+              <h2 className="text-xl font-bold mb-4 pb-2 border-b border-gray-300 text-blue-900 text-center">
                 Select Jobbers
               </h2>
               <SelectionTable
@@ -516,7 +518,7 @@ const SFGBomSection = ({
             <div className="flex justify-center items-center mt-4">
               <button
                 type="button"
-                className="bg-gray-400 px-4 py-1 rounded hover:bg-gray-300"
+                className="bg-blue-900 px-4 py-1 rounded hover:bg-blue-700 text-white"
                 onClick={handleSaveJobberSelection}
               >
                 Add
@@ -527,7 +529,7 @@ const SFGBomSection = ({
       )}
 
       <div className="flex items-center gap-2">
-        <p className="text-xl font-semibold">Semi Finished Goods Master </p>
+        <p className="text-xl font-semibold mb-2">Semi Finished Goods Master </p>
 
       </div>
 
@@ -677,63 +679,63 @@ const SFGBomSection = ({
 
           <div className="w-full flex flex-col gap-3 mt-6">
 
-          {/* Selection buttons */}
-          <div className="flex w-1/2 items-center gap-3">
-            <button
-              className="p-2 bg-blue-900 hover:bg-blue-800 text-white rounded-md w-full"
-              type="button"
-              onClick={handleSelectRawMaterial}
-            >
-              Choose Raw Material
-            </button>
-          </div>
-
-
-          {/* Raw Materials Section */}
-          {finalSelectedRawMaterials.length > 0 && (
-            <div className="col-span-2 flex flex-col justify-center items-center">
-              <h3 className="text-xl font-semibold mb-1">
-                Selected Raw Materials
-              </h3>
-              <SelectedRawMaterialsTable
-                selectedMaterials={finalSelectedRawMaterials}
-                updateQuantity={updateRawMaterialQty}
-                removeItem={removeRawMaterial}
-                onTotalCostChange={handleRawMaterialTotalCostChange}
-              />
+            {/* Selection buttons */}
+            <div className="flex w-1/2 items-center gap-3">
+              <button
+                className="p-2 bg-blue-900 hover:bg-blue-800 text-white rounded-md w-full"
+                type="button"
+                onClick={handleSelectRawMaterial}
+              >
+                Choose Raw Material
+              </button>
             </div>
-          )}
 
 
-          <div className="flex w-1/2 items-center gap-3">
-            <button
-              className="p-2 bg-blue-900 hover:bg-blue-800 text-white rounded-md  w-full"
-              type="button"
-              onClick={handleSelectJobber}
-            >
-              Choose Jobber
-            </button>
-          </div>
+            {/* Raw Materials Section */}
+            {finalSelectedRawMaterials.length > 0 && (
+              <div className="col-span-2 flex flex-col justify-center items-center">
+                <h3 className="text-xl font-semibold mb-1">
+                  Selected Raw Materials
+                </h3>
+                <SelectedRawMaterialsTable
+                  selectedMaterials={finalSelectedRawMaterials}
+                  updateQuantity={updateRawMaterialQty}
+                  removeItem={removeRawMaterial}
+                  onTotalCostChange={handleRawMaterialTotalCostChange}
+                />
+              </div>
+            )}
 
-          {/* Jobbers Section */}
-          {finalSelectedJobbers.length > 0 && (
-            <div className="col-span-2 flex flex-col justify-center items-center">
-              <h3 className="text-xl font-semibold mb-1">Selected Jobbers</h3>
-              <SelectedJobbersTable
-                selectedJobbers={finalSelectedJobbers}
-                updateJobberRate={updateJobberRate}
-                removeJobber={removeJobber}
-                onTotalCostChange={handleJobberTotalCostChange}
-                updateDescription={updateDescription}
-              />
+
+            <div className="flex w-1/2 items-center gap-3">
+              <button
+                className="p-2 bg-blue-900 hover:bg-blue-800 text-white rounded-md  w-full"
+                type="button"
+                onClick={handleSelectJobber}
+              >
+                Choose Jobber
+              </button>
             </div>
-          )}
+
+            {/* Jobbers Section */}
+            {finalSelectedJobbers.length > 0 && (
+              <div className="col-span-2 flex flex-col justify-center items-center">
+                <h3 className="text-xl font-semibold mb-1">Selected Jobbers</h3>
+                <SelectedJobbersTable
+                  selectedJobbers={finalSelectedJobbers}
+                  updateJobberRate={updateJobberRate}
+                  removeJobber={removeJobber}
+                  onTotalCostChange={handleJobberTotalCostChange}
+                  updateDescription={updateDescription}
+                />
+              </div>
+            )}
 
           </div>
 
 
 
- <div className=" grid grid-cols-2 gap-6">
+          <div className=" grid grid-cols-2 gap-6">
 
 
             {/* Total Cost */}
@@ -753,16 +755,16 @@ const SFGBomSection = ({
 
           <div className="flex justify-end">
 
-           <button
-          type="button"
-          className="bg-green-500 hover:bg-green-800 flex items-center  gap-3 text-center rounded-md px-4 py-2 text-white font-semibold text-md"
-          onClick={(event) => updateSFGdata(event)}
-        >
-          Add <Plus className="w-4 h-4" />
-        </button>
+            <button
+              type="button"
+              className="bg-green-500 hover:bg-green-800 flex items-center  gap-3 text-center rounded-md px-4 py-2 text-white font-semibold text-md"
+              onClick={(event) => updateSFGdata(event)}
+            >
+              Add <Plus className="w-4 h-4" />
+            </button>
           </div>
         </div>
-              </>
+      </>
       {/* )} */}
     </div>
   );

@@ -34,9 +34,9 @@ const SingleAddTable = ({
   );
 
   return (
-    <div className=" my-4">
-      
-      <div className="flex justify-start mb-2">
+    <div className="my-4">
+
+      <div className="flex justify-start mb-2" >
         <input
           type="text"
           placeholder="Search..."
@@ -94,7 +94,7 @@ const SingleAddTable = ({
           </tbody>
         </table>
       </div>
-    </div>
+    </div >
   );
 };
 

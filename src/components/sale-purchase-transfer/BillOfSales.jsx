@@ -47,7 +47,7 @@ const BillOfSales = () => {
     const title = location.state?.title || "Bill of Sales";
     const [loading, setLoading] = useState(false);
     const [submitting, setSubmitting] = useState(false);
-    const { token ,designation , id } = useSelector((state) => state.auth);
+    const { token, designation, id } = useSelector((state) => state.auth);
     const { load, error, availableProcessor } = useSelector((state) => state.fetchData);
     const navigate = useNavigate();
     const [selectedSO, setSelectedSO] = useState([]);
@@ -437,10 +437,10 @@ const BillOfSales = () => {
                 });
                 setFormData(prev => ({
                     ...prev,
-                    date : new Date().toISOString().split("T")[0],
+                    date: new Date().toISOString().split("T")[0],
                     remarks: data?.remark,
-                    processor:data?.processor?.id,
-                    merchandiser:data?.merchandiser?.id,
+                    processor: data?.processor?.id,
+                    merchandiser: data?.merchandiser?.id,
                     purchaser_details: company?.gst_no
                 }));
             }
@@ -465,8 +465,8 @@ const BillOfSales = () => {
         e.preventDefault();
         setSubmitting(true);
         // const api_point = (type === "sales-oder-entries") ? "sales-order-entry" : "internal-sales-order-entries";
-        const api_point = (type === "internal-sales-order-entries") ? "internal-sales-order-entries" : "sales-order-entry" ;
-        const orderType = (type === "internal-sales-order-entries") ? "internal-sales-order-entry" : "sales-order-entry"  ;                                                                  
+        const api_point = (type === "internal-sales-order-entries") ? "internal-sales-order-entries" : "sales-order-entry";
+        const orderType = (type === "internal-sales-order-entries") ? "internal-sales-order-entry" : "sales-order-entry";
 
         const postData = {
             data: {
@@ -505,7 +505,7 @@ const BillOfSales = () => {
                     })),
                     total_jobber_cost_on_sfg: currentBomRow.total_row_amount
                 },
-                merchandiser:formData?.merchandiser
+                merchandiser: formData?.merchandiser
             }
         };
         // const data = {
@@ -563,221 +563,144 @@ const BillOfSales = () => {
     console.log("type: ", type);
 
 
+    if (loading || load) {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <BounceLoader color="#1e3a8a" />
+            </div>
+        )
+    }
+
     return (
 
         <div>
-            <div className="p-2 bg-white  relative">
-                <h1 className="text-3xl font-bold text-blue-900 mb-4">{title}</h1>
+            <div className="p-6 rounded-lg bg-white  relative">
+                <h1 className="text-2xl pb-2 border-b font-bold text-blue-900 mb-4">{title}</h1>
 
 
-                {/*  locader or main component */}
-                {loading || load ? (
-                    <div className="absolute inset-0 flex justify-center items-center mt-64 bg-opacity-50 bg-gray-200 z-10">
 
-                        <BounceLoader size={100} color={"#1e3a8a"} loading={loading} />
-                    </div>
-                ) : (
-                    <div className='p-5 border border-gray-300 rounded-xl shadow-xl '>
+                <div className='px-5 '>
 
 
-                        {selectSOModal && (
-                            <div className="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50">
-                                    <div className="relative w-[90vw] bg-gray-100 border shadow-2xl p-4 rounded-lg">
-                                        <div className='flex justify-between items-center'>
-                                            <h3 className='text-2xl font-semibold'>Select Sales Order</h3>
-                                            <p
-                                                className="text-xl px-2 border bg-red-600 rounded-full text-white hover:bg-red-500 cursor-pointer"
-                                                onClick={() => {
-                                                    setSelectSOModal(false);
-                                                }}
-                                            >
-                                                X
-                                            </p>
-                                        </div>
+                    {selectSOModal && (
+                        <div className="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50 animate-fade-in">
+                            <div className="relative w-[90vw] bg-gray-100 border shadow-2xl p-4 rounded-lg">
+                                <div className='flex justify-between items-center  pb-2 border-b'>
+                                    <h3 className='text-xl text-blue-900  font-bold'>Select Sales Order</h3>
+                                    <p
+                                        className="text-xl px-2 border bg-red-600 rounded-full text-white hover:bg-red-500 cursor-pointer duration-200 ease-in-out transition-all"
+                                        onClick={() => {
+                                            setSelectSOModal(false);
+                                        }}
+                                    >
+                                        X
+                                    </p>
+                                </div>
 
-                                    <div className="">
-                                        <SelectSOTable
-                                            NoOfColumns={selctionHeaderSO.length}
-                                            data={selectedSO}
-                                            headers={selctionHeaderSO}
-                                            setSelectedRow={setSelectedRow}
-                                            setSelectSOModal={setSelectSOModal}
-                                            selectedSOId={selectedSOId}
-                                            setSelectedSOId={setSelectedSOId}
-                                            type={type}
-                                            setLoading={setLoading}
-                                            navigate={navigate}
-                                            setSalesOrder={setSalesOrder}
-                                            setBom={setBom}
-                                            setSOViewModal={setSOViewModal}
-                                            company={company}
-                                            setFormData={setFormData}
-                                        />
-                                    </div>
+                                <div className="">
+                                    <SelectSOTable
+                                        NoOfColumns={selctionHeaderSO.length}
+                                        data={selectedSO}
+                                        headers={selctionHeaderSO}
+                                        setSelectedRow={setSelectedRow}
+                                        setSelectSOModal={setSelectSOModal}
+                                        selectedSOId={selectedSOId}
+                                        setSelectedSOId={setSelectedSOId}
+                                        type={type}
+                                        setLoading={setLoading}
+                                        navigate={navigate}
+                                        setSalesOrder={setSalesOrder}
+                                        setBom={setBom}
+                                        setSOViewModal={setSOViewModal}
+                                        company={company}
+                                        setFormData={setFormData}
+                                    />
                                 </div>
                             </div>
-                        )}
+                        </div>
+                    )}
 
 
-                        {/* Choose sales order */}
-                        <form className='' onSubmit={handleSubmit}>
+                    {/* Choose sales order */}
+                    <form className='' onSubmit={handleSubmit}>
 
-                            <div className='flex justify-center items-center relative' ref={popupRef}>
+                        <div className='flex justify-center items-center relative' ref={popupRef}>
+
+                            <div className='w-full border border-gray-300 py-2 shadow-sm flex items-center justify-center rounded-lg gap-2'>
+                                <p className='text-gray-500 text-md'>Choose Sales Order:</p>
                                 <button
-                                    className='p-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-all ease-in-out duration-100 hover:scale-105'
+                                    className='p-3 bg-blue-900 hover:bg-blue-700 text-white rounded-lg transition-all ease-in-out duration-200 hover:scale-105'
                                     type="button"
                                     onClick={() => setShowSalesPopup(prev => !prev)}
                                 >
                                     Choose Sales Order
                                 </button>
-
-                                {showSalesPopup && (
-                                    <div className="absolute top-14 bg-white border shadow-lg rounded-lg p-4 z-10 w-64 flex flex-col gap-2">
-                                        <button
-                                            type="button"
-                                            onClick={() => {
-                                                handleSalesOrderType('vasttram');
-                                                setShowSalesPopup(false);
-                                            }}
-                                            className="px-4 py-2 rounded hover:bg-blue-100 text-left"
-                                        >
-                                            Vasttram Sales Order
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={() => {
-                                                handleSalesOrderType('customer');
-                                                setShowSalesPopup(false);
-                                            }}
-                                            className="px-4 py-2 rounded hover:bg-blue-100 text-left"
-                                        >
-                                            Customer Sales Order
-                                        </button>
-                                    </div>
-                                )}
                             </div>
 
-
-                            {bomModalVisible && currentBomRow && (
-                                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                                    <div className="bg-white p-6 rounded-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-lg">
-                                        <h2 className="text-2xl font-bold mb-6 border-b pb-2">BOS Details</h2>
-                                        <h3 className="text-lg font-semibold mb-2 border-b pb-1 mt-4">Jobber Detail</h3>
-                                        {currentBomRow.length > 0 && currentBomRow[0]?.selectedJobber?.jobber_master && (
-                                            <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-4 rounded-lg shadow-md mb-6">
-                                                <h3 className="text-xl font-semibold text-blue-900 mb-3 border-b pb-2">Jobber Details</h3>
-                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                    <div>
-                                                        <p><span className="font-semibold">Name:</span> {currentBomRow[0].selectedJobber.jobber_master.jobber_name}</p>
-                                                        <p><span className="font-semibold">Address:</span> {currentBomRow[0].selectedJobber.jobber_master.jobber_address}</p>
-                                                    </div>
-                                                    <div>
-                                                        <p><span className="font-semibold">GSTIN:</span> {currentBomRow[0].selectedJobber.jobber_master.jobber_gstin}</p>
-                                                        <p><span className="font-semibold">Process:</span> {currentBomRow[0].selectedJobber.jobber_master.work_type}</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        )}
-
-
-                                        <table>
-                                            <thead className="bg-gradient-to-r from-blue-100 to-blue-200 text-blue-900">
-                                                <tr>
-                                                    <th className="px-6 py-4 text-left font-semibold">#</th>
-                                                    <th className="px-6 py-4 text-left font-semibold">Semi-Finished Goods</th>
-                                                    <th className="px-6 py-4 text-left font-semibold">Color</th>
-                                                    <th className="px-6 py-4 text-left font-semibold">Quantity</th>
-                                                    <th className="px-6 py-4 text-left font-semibold">Jobber Rate</th>
-                                                    <th className="px-6 py-4 text-left font-semibold">Total</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody className="divide-y divide-gray-200">
-                                                {currentBomRow.map((item, index) => {
-                                                    // Disable checkbox based on stock_status and bom_status
-
-
-                                                    return (
-                                                        <tr key={item.id} className="hover:bg-blue-50 transition">
-                                                            <td className="px-6 py-4 text-gray-700">{index + 1}</td>
-                                                            <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                                                                {item?.semi_finished_goods?.semi_finished_goods_name}
-                                                            </td>
-                                                            <td className="px-6 py-4 text-gray-600 whitespace-nowrap">
-                                                                {item?.color?.color_name}
-                                                            </td>
-                                                            <td className="px-6 py-4 text-gray-600 whitespace-nowrap">
-                                                                {item?.qty}
-                                                            </td>
-
-
-                                                            <td className="px-6 py-4 text-gray-600 whitespace-nowrap">
-                                                                {item?.selectedJobber?.jobber_rate}
-                                                            </td>
-                                                            <td className="px-6 py-4 text-gray-600 whitespace-nowrap">
-                                                                {item?.qty * item?.selectedJobber?.jobber_rate}
-                                                            </td>
-                                                        </tr>
-                                                    );
-                                                })}
-                                            </tbody>
-                                        </table>
-
-                                        <hr className="w-full border-t-2 border-gray-300 my-2" />
-
-                                        <div className="flex justify-end mb-4">
-                                            <p className="text-lg font-semibold">
-                                                Total Cost: ₹
-                                                {currentBomRow.reduce((total, item) => {
-                                                    const qty = item?.qty || 0;
-                                                    const rate = item?.selectedJobber?.jobber_rate || 0;
-                                                    return total + (qty * rate);
-                                                }, 0)}
-                                            </p>
-                                        </div>
-
-
-                                        <div className="mt-6 flex justify-end gap-4">
-                                            <button
-                                                type='button'
-                                                className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400"
-                                                onClick={() => setBomModalVisible(false)}
-                                            >
-                                                Cancel
-                                            </button>
-                                            <button className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
-                                                onClick={handleConfirmBos}
-                                                type="button"
-                                            >
-                                                Confirm BOS
-                                            </button>
-                                        </div>
-                                    </div>
+                            {showSalesPopup && (
+                                <div className="absolute top-14 bg-white border shadow-lg rounded-lg p-4 z-10 w-64 flex flex-col gap-2">
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            handleSalesOrderType('vasttram');
+                                            setShowSalesPopup(false);
+                                        }}
+                                        className="px-4 py-2 rounded hover:bg-blue-100 text-left"
+                                    >
+                                        Vasttram Sales Order
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            handleSalesOrderType('customer');
+                                            setShowSalesPopup(false);
+                                        }}
+                                        className="px-4 py-2 rounded hover:bg-blue-100 text-left"
+                                    >
+                                        Customer Sales Order
+                                    </button>
                                 </div>
                             )}
+                        </div>
 
 
-                            {soViewModal && (
-                                <div className="my-8 overflow-x-auto">
-                                    <table className="min-w-full table-auto bg-white shadow-lg rounded-2xl overflow-hidden">
+                        {bomModalVisible && currentBomRow && (
+                            <div className="fixed inset-0 bg-gray-900 backdrop-blur-md bg-opacity-50 flex items-center justify-center z-50">
+                                <div className="bg-white p-6 rounded-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-lg">
+                                    <h2 className="text-2xl font-bold mb-4 border-b pb-2 text-blue-900">BOS Details</h2>
+                                    <h3 className="text-lg font-semibold mb-2 border-b pb-1 mt-4">Jobber Detail</h3>
+                                    {currentBomRow.length > 0 && currentBomRow[0]?.selectedJobber?.jobber_master && (
+                                        <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-4 rounded-lg shadow-md mb-6">
+                                            <h3 className="text-xl font-semibold text-blue-900 mb-3 border-b pb-2">Jobber Details</h3>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <div>
+                                                    <p><span className="font-semibold">Name:</span> {currentBomRow[0].selectedJobber.jobber_master.jobber_name}</p>
+                                                    <p><span className="font-semibold">Address:</span> {currentBomRow[0].selectedJobber.jobber_master.jobber_address}</p>
+                                                </div>
+                                                <div>
+                                                    <p><span className="font-semibold">GSTIN:</span> {currentBomRow[0].selectedJobber.jobber_master.jobber_gstin}</p>
+                                                    <p><span className="font-semibold">Process:</span> {currentBomRow[0].selectedJobber.jobber_master.work_type}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+
+
+                                    <table>
                                         <thead className="bg-gradient-to-r from-blue-100 to-blue-200 text-blue-900">
                                             <tr>
                                                 <th className="px-6 py-4 text-left font-semibold">#</th>
                                                 <th className="px-6 py-4 text-left font-semibold">Semi-Finished Goods</th>
                                                 <th className="px-6 py-4 text-left font-semibold">Color</th>
                                                 <th className="px-6 py-4 text-left font-semibold">Quantity</th>
-                                                <th className="px-6 py-4 text-left font-semibold">Select Jobber</th>
-                                                <th className="px-6 py-4 text-left font-semibold">Stock Reduced</th>
-                                                <th className="px-6 py-4 text-left font-semibold">Status</th>
-                                                <th className="px-6 py-4 text-left font-semibold">Processes</th>
-                                                <th className="px-6 py-4 text-left font-semibold">Select</th>
+                                                <th className="px-6 py-4 text-left font-semibold">Jobber Rate</th>
+                                                <th className="px-6 py-4 text-left font-semibold">Total</th>
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-gray-200">
-                                            {bom?.Extra_bom?.map((item, index) => {
+                                            {currentBomRow.map((item, index) => {
                                                 // Disable checkbox based on stock_status and bom_status
-                                                const isButtonDisabled =
-                                                    item?.stock_status === false ||
-                                                    ["sendToJobber", "readyToStitch", "SendToStitcher", "completed"].includes(item?.bom_status);
+
 
                                                 return (
                                                     <tr key={item.id} className="hover:bg-blue-50 transition">
@@ -792,8 +715,91 @@ const BillOfSales = () => {
                                                             {item?.qty}
                                                         </td>
 
-                                                        {/* Jobber Selection */}
-                                                        {/* <td className="px-6 py-4">
+
+                                                        <td className="px-6 py-4 text-gray-600 whitespace-nowrap">
+                                                            {item?.selectedJobber?.jobber_rate}
+                                                        </td>
+                                                        <td className="px-6 py-4 text-gray-600 whitespace-nowrap">
+                                                            {item?.qty * item?.selectedJobber?.jobber_rate}
+                                                        </td>
+                                                    </tr>
+                                                );
+                                            })}
+                                        </tbody>
+                                    </table>
+
+                                    <hr className="w-full border-t-2 border-gray-300 my-2" />
+
+                                    <div className="flex justify-end mb-4">
+                                        <p className="text-lg font-semibold">
+                                            Total Cost: ₹
+                                            {currentBomRow.reduce((total, item) => {
+                                                const qty = item?.qty || 0;
+                                                const rate = item?.selectedJobber?.jobber_rate || 0;
+                                                return total + (qty * rate);
+                                            }, 0)}
+                                        </p>
+                                    </div>
+
+
+                                    <div className="mt-6 flex justify-end gap-4">
+                                        <button
+                                            type='button'
+                                            className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-all ease-in-out duration-300"
+                                            onClick={() => setBomModalVisible(false)}
+                                        >
+                                            Cancel
+                                        </button>
+                                        <button className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all ease-in-out duration-300"
+                                            onClick={handleConfirmBos}
+                                            type="button"
+                                        >
+                                            Confirm BOS
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+
+                        {soViewModal && (
+                            <div className="my-4 overflow-x-auto">
+                                <table className=" table-auto bg-white shadow-lg rounded-2xl overflow-x-auto">
+                                    <thead className="bg-gradient-to-r from-blue-100 to-blue-200 text-blue-900">
+                                        <tr>
+                                            <th className="px-6 py-4 text-left font-semibold">#</th>
+                                            <th className="px-6 py-4 text-left font-semibold">Semi-Finished Goods</th>
+                                            <th className="px-6 py-4 text-left font-semibold">Color</th>
+                                            <th className="px-6 py-4 text-left font-semibold">Quantity</th>
+                                            <th className="px-6 py-4 text-left font-semibold">Select Jobber</th>
+                                            <th className="px-6 py-4 text-left font-semibold">Stock Reduced</th>
+                                            <th className="px-6 py-4 text-left font-semibold">Status</th>
+                                            <th className="px-6 py-4 text-left font-semibold">Processes</th>
+                                            <th className="px-6 py-4 text-left font-semibold">Select</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-gray-200">
+                                        {bom?.Extra_bom?.map((item, index) => {
+                                            // Disable checkbox based on stock_status and bom_status
+                                            const isButtonDisabled =
+                                                item?.stock_status === false ||
+                                                ["sendToJobber", "readyToStitch", "SendToStitcher", "completed"].includes(item?.bom_status);
+
+                                            return (
+                                                <tr key={item.id} className="hover:bg-blue-50 transition">
+                                                    <td className="px-6 py-4 text-gray-700">{index + 1}</td>
+                                                    <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                                                        {item?.semi_finished_goods?.semi_finished_goods_name}
+                                                    </td>
+                                                    <td className="px-6 py-4 text-gray-600 whitespace-nowrap">
+                                                        {item?.color?.color_name}
+                                                    </td>
+                                                    <td className="px-6 py-4 text-gray-600 whitespace-nowrap">
+                                                        {item?.qty}
+                                                    </td>
+
+                                                    {/* Jobber Selection */}
+                                                    {/* <td className="px-6 py-4">
                                                             <select
                                                                 className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-300 bg-white"
                                                                 value={jobberSelectionMap[item.id]?.jobber_master?.id || ""}
@@ -822,50 +828,50 @@ const BillOfSales = () => {
                                                             </select>
                                                         </td> */}
 
-                                                        <td className="px-6 py-4">
-                                                            <select
-                                                                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-300 bg-white"
-                                                                value={jobberSelectionMap[item.id]?.jobber_master?.id || ""}
-                                                                onChange={(e) => {
-                                                                    const selectedJobber = item?.jobber_master_sfg?.find(
-                                                                        (jobber) => jobber?.jobber_master?.id === parseInt(e.target.value)
-                                                                    );
+                                                    <td className="px-6 py-4">
+                                                        <select
+                                                            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-300 bg-white"
+                                                            value={jobberSelectionMap[item.id]?.jobber_master?.id || ""}
+                                                            onChange={(e) => {
+                                                                const selectedJobber = item?.jobber_master_sfg?.find(
+                                                                    (jobber) => jobber?.jobber_master?.id === parseInt(e.target.value)
+                                                                );
 
-                                                                    if (selectedJobber) {
-                                                                        setJobberSelectionMap((prev) => ({
-                                                                            ...prev,
-                                                                            [item.id]: selectedJobber,
-                                                                        }));
-                                                                    }
-                                                                }}
-                                                                disabled={isButtonDisabled}
-                                                            >
-                                                                <option value="" disabled>
-                                                                    -- Select Jobber --
-                                                                </option>
-                                                                {item?.jobber_master_sfg
-                                                                    ?.filter(
-                                                                        (jobber) =>
-                                                                            jobber.completed === "Incomplete" || jobber.completed === "Processing"
-                                                                    )
-                                                                    .map((jobber) => (
-                                                                        <option key={jobber.id} value={jobber?.jobber_master?.id}>
-                                                                            {jobber?.jobber_master?.id} - {jobber?.jobber_master?.jobber_name} - {jobber?.jobber_master?.work_type}
-                                                                        </option>
-                                                                    ))}
-                                                            </select>
-                                                        </td>
+                                                                if (selectedJobber) {
+                                                                    setJobberSelectionMap((prev) => ({
+                                                                        ...prev,
+                                                                        [item.id]: selectedJobber,
+                                                                    }));
+                                                                }
+                                                            }}
+                                                            disabled={isButtonDisabled}
+                                                        >
+                                                            <option value="" disabled>
+                                                                -- Select Jobber --
+                                                            </option>
+                                                            {item?.jobber_master_sfg
+                                                                ?.filter(
+                                                                    (jobber) =>
+                                                                        jobber.completed === "Incomplete" || jobber.completed === "Processing"
+                                                                )
+                                                                .map((jobber) => (
+                                                                    <option key={jobber.id} value={jobber?.jobber_master?.id}>
+                                                                        {jobber?.jobber_master?.id} - {jobber?.jobber_master?.jobber_name} - {jobber?.jobber_master?.work_type}
+                                                                    </option>
+                                                                ))}
+                                                        </select>
+                                                    </td>
 
 
-                                                        <td className="px-6 py-4 text-gray-600 whitespace-nowrap">
-                                                            {item?.stock_status === true ? "Yes" : "No"}
-                                                        </td>
-                                                        <td className="px-6 py-4 text-gray-600 whitespace-nowrap">
-                                                            {/* {item?.bom_status} */}
-                                                            {item?.bom_status === "in_process" ? "No Process Done" : item?.bom_status}
-                                                        </td>
+                                                    <td className="px-6 py-4 text-gray-600 whitespace-nowrap">
+                                                        {item?.stock_status === true ? "Yes" : "No"}
+                                                    </td>
+                                                    <td className="px-6 py-4 text-gray-600 whitespace-nowrap">
+                                                        {/* {item?.bom_status} */}
+                                                        {item?.bom_status === "in_process" ? "No Process Done" : item?.bom_status}
+                                                    </td>
 
-                                                        {/* <tr key={`${item.id}-process`} className="bg-gray-50">
+                                                    {/* <tr key={`${item.id}-process`} className="bg-gray-50">
                                                             <td colSpan={6} className="px-6 py-4 text-gray-600 whitespace-nowrap">
                                                                 {item?.processes?.length > 0 ? (
                                                                     <div className="flex gap-4 items-center">
@@ -889,49 +895,49 @@ const BillOfSales = () => {
                                                             </td>
                                                         </tr> */}
 
-                                                        <tr key={`${item.id}-process`} className="bg-gray-50">
-                                                            <td colSpan={6} className="px-6 py-4 text-gray-600 whitespace-nowrap">
-                                                                {item?.processes?.length > 0 ? (
-                                                                    <div className="flex flex-col gap-1">
-                                                                        {item?.processes?.map((process, index) => (
-                                                                            <div key={index} className="text-sm text-gray-700">
-                                                                                <span className="font-medium">{process?.process}</span>
-                                                                                {" - Done by - "}
-                                                                                <span className="text-green-800 font-semibold">{process?.jobber?.jobber_name}</span>
-                                                                            </div>
-                                                                        ))}
-                                                                    </div>
-                                                                ) : (
-                                                                    <span className="text-gray-500 italic">No Process Yet</span>
-                                                                )}
-                                                            </td>
-                                                        </tr>
-
-
-                                                        {/* Checkbox for row selection */}
-                                                        <td className="px-6 py-4">
-                                                            <input
-                                                                type="checkbox"
-                                                                checked={selectedRows.includes(item.id)}
-                                                                disabled={isButtonDisabled}
-                                                                onChange={(e) => {
-                                                                    if (e.target.checked) {
-                                                                        setSelectedRows((prev) => [...prev, item.id]);
-                                                                    } else {
-                                                                        setSelectedRows((prev) => prev.filter((id) => id !== item.id));
-                                                                    }
-                                                                }}
-                                                            />
+                                                    <tr key={`${item.id}-process`} className="bg-gray-50">
+                                                        <td colSpan={6} className="px-6 py-4 text-gray-600 whitespace-nowrap">
+                                                            {item?.processes?.length > 0 ? (
+                                                                <div className="flex flex-col gap-1">
+                                                                    {item?.processes?.map((process, index) => (
+                                                                        <div key={index} className="text-sm text-gray-700">
+                                                                            <span className="font-medium">{process?.process}</span>
+                                                                            {" - Done by - "}
+                                                                            <span className="text-green-800 font-semibold">{process?.jobber?.jobber_name}</span>
+                                                                        </div>
+                                                                    ))}
+                                                                </div>
+                                                            ) : (
+                                                                <span className="text-gray-500 italic">No Process Yet</span>
+                                                            )}
                                                         </td>
                                                     </tr>
-                                                );
-                                            })}
-                                        </tbody>
-                                    </table>
 
 
-                                    <div className="mt-4 flex justify-end items-center">
-                                        {/* <button
+                                                    {/* Checkbox for row selection */}
+                                                    <td className="px-6 py-4">
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={selectedRows.includes(item.id)}
+                                                            disabled={isButtonDisabled}
+                                                            onChange={(e) => {
+                                                                if (e.target.checked) {
+                                                                    setSelectedRows((prev) => [...prev, item.id]);
+                                                                } else {
+                                                                    setSelectedRows((prev) => prev.filter((id) => id !== item.id));
+                                                                }
+                                                            }}
+                                                        />
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })}
+                                    </tbody>
+                                </table>
+
+
+                                <div className="mt-4 flex justify-end items-center">
+                                    {/* <button
                                             className="mt-4 ml-4 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:scale-100 hover:shadow-2xl transition-all duration-300 ease-in-out flex items-center gap-2"
                                             onClick={() => setAddSfgModal(true)}
                                             type="button"
@@ -942,64 +948,66 @@ const BillOfSales = () => {
                                             Add SFG from Stock
                                         </button> */}
 
-                                        <button
-                                            className="bg-gradient-to-r from-green-400 via-blue-500 to-teal-600 text-white font-semibold py-3 px-8 mr-4 rounded-full shadow-lg hover:scale-100 hover:shadow-2xl hover:text-lg  transition-all duration-300 ease-in-out flex items-center gap-2"
-                                            type="button"
-                                            onClick={() => {
-                                                if (selectedRows.length === 0) {
-                                                    alert("Please select at least one row.");
-                                                    return;
-                                                }
+                                    <button
+                                        className="
+                                        bg-gradient-to-r from-blue-500 via-blue-700 to-blue-900 
+                                        text-white font-semibold py-3 px-8 mr-4 rounded-full shadow-lg  hover:from-blue-900 hover:via-blue-700 hover:to-blue-500   transition-all duration-300 ease-in-out flex items-center gap-2"
+                                        type="button"
+                                        onClick={() => {
+                                            if (selectedRows.length === 0) {
+                                                alert("Please select at least one row.");
+                                                return;
+                                            }
 
-                                                const selectedJobbers = selectedRows.map((id) => jobberSelectionMap[id]?.jobber_master?.id);
-                                                const uniqueJobbers = [...new Set(selectedJobbers)];
+                                            const selectedJobbers = selectedRows.map((id) => jobberSelectionMap[id]?.jobber_master?.id);
+                                            const uniqueJobbers = [...new Set(selectedJobbers)];
 
-                                                if (uniqueJobbers.length !== 1 || !uniqueJobbers[0]) {
-                                                    alert("Please select the same jobber for every selected row.");
-                                                    return;
-                                                }
+                                            if (uniqueJobbers.length !== 1 || !uniqueJobbers[0]) {
+                                                alert("Please select the same jobber for every selected row.");
+                                                return;
+                                            }
 
-                                                // const selectedBomRows = bom?.Extra_bom?.filter((item) => selectedRows.includes(item.id));
-                                                const selectedBomRows = bom?.Extra_bom?.filter((item) => selectedRows.includes(item.id)).map((item) => ({
-                                                    ...item,
-                                                    selectedJobber: jobberSelectionMap[item.id],
-                                                    rowCost: item.qty * jobberSelectionMap[item.id]?.jobber_rate
-                                                }));
-                                                console.log("Selected BOM Rows:", selectedBomRows);
-                                                setCurrentBomRow(selectedBomRows);
-                                                setBomModalVisible(true);
-                                            }}
-                                        >
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
-                                                <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
-                                            </svg>
-                                            Proceed For BOS
-                                        </button>
-                                    </div>
-
-
-
+                                            // const selectedBomRows = bom?.Extra_bom?.filter((item) => selectedRows.includes(item.id));
+                                            const selectedBomRows = bom?.Extra_bom?.filter((item) => selectedRows.includes(item.id)).map((item) => ({
+                                                ...item,
+                                                selectedJobber: jobberSelectionMap[item.id],
+                                                rowCost: item.qty * jobberSelectionMap[item.id]?.jobber_rate
+                                            }));
+                                            console.log("Selected BOM Rows:", selectedBomRows);
+                                            setCurrentBomRow(selectedBomRows);
+                                            setBomModalVisible(true);
+                                        }}
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
+                                        </svg>
+                                        Proceed For BOS
+                                    </button>
                                 </div>
-                            )}
 
 
 
-                            {addSfgModal &&
-                                <ExtraBOMSfg
-                                    onClose={() => setAddSfgModal(false)}
-                                    so_id={salesOrder?.so_id}
-                                    type={type}
-                                    setSOViewModal={setSOViewModal}
-                                    id={salesOrder.id}
-                                    setSalesOrder={setSalesOrder}
-                                    setBom={setBom}
-                                    setSelectSOModal={setSelectSOModal}
-                                    company={company}
-                                    setFormData={setFormData}
-                                />
-                            }
+                            </div>
+                        )}
 
-                            {/* {confirmedBosList.length > 0 && (
+
+
+                        {addSfgModal &&
+                            <ExtraBOMSfg
+                                onClose={() => setAddSfgModal(false)}
+                                so_id={salesOrder?.so_id}
+                                type={type}
+                                setSOViewModal={setSOViewModal}
+                                id={salesOrder.id}
+                                setSalesOrder={setSalesOrder}
+                                setBom={setBom}
+                                setSelectSOModal={setSelectSOModal}
+                                company={company}
+                                setFormData={setFormData}
+                            />
+                        }
+
+                        {/* {confirmedBosList.length > 0 && (
                                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                                     <div className="bg-white p-6 rounded-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-lg">
                                         <h2 className="text-2xl font-bold mb-6 border-b pb-2">BOS Details</h2>
@@ -1092,81 +1100,81 @@ const BillOfSales = () => {
                                 </div>
                             )} */}
 
-                            {confirmedBosList.length > 0 && (
-                                <div className="bg-white p-6 rounded-xl mb-4 shadow-lg">
-                                    <h2 className="text-2xl font-bold mb-6 border-b pb-2">Confirmed BOS Details</h2>
+                        {confirmedBosList.length > 0 && (
+                            <div className="bg-white p-6 rounded-xl mb-4 shadow-lg">
+                                <h2 className="text-2xl font-bold mb-6 border-b pb-2">Confirmed BOS Details</h2>
 
-                                    {confirmedBosList.map((bom, bosIndex) => (
-                                        <div key={bosIndex} className="mb-8">
-                                            {/* Jobber Details */}
-                                            {bom.length > 0 && bom[0]?.selectedJobber?.jobber_master && (
-                                                <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-4 rounded-lg shadow-md mb-6">
-                                                    <h3 className="text-xl font-semibold text-blue-900 mb-3 border-b pb-2">Jobber Details</h3>
-                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                        <div>
-                                                            <p><span className="font-semibold">Name:</span> {bom[0].selectedJobber.jobber_master.jobber_name}</p>
-                                                            <p><span className="font-semibold">Address:</span> {bom[0].selectedJobber.jobber_master.jobber_address}</p>
-                                                        </div>
-                                                        <div>
-                                                            <p><span className="font-semibold">GSTIN:</span> {bom[0].selectedJobber.jobber_master.jobber_gstin}</p>
-                                                            <p><span className="font-semibold">Process:</span> {bom[0].selectedJobber.jobber_master.work_type}</p>
-                                                        </div>
+                                {confirmedBosList.map((bom, bosIndex) => (
+                                    <div key={bosIndex} className="mb-8">
+                                        {/* Jobber Details */}
+                                        {bom.length > 0 && bom[0]?.selectedJobber?.jobber_master && (
+                                            <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-4 rounded-lg shadow-md mb-6">
+                                                <h3 className="text-xl font-semibold text-blue-900 mb-3 border-b pb-2">Jobber Details</h3>
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                    <div>
+                                                        <p><span className="font-semibold">Name:</span> {bom[0].selectedJobber.jobber_master.jobber_name}</p>
+                                                        <p><span className="font-semibold">Address:</span> {bom[0].selectedJobber.jobber_master.jobber_address}</p>
+                                                    </div>
+                                                    <div>
+                                                        <p><span className="font-semibold">GSTIN:</span> {bom[0].selectedJobber.jobber_master.jobber_gstin}</p>
+                                                        <p><span className="font-semibold">Process:</span> {bom[0].selectedJobber.jobber_master.work_type}</p>
                                                     </div>
                                                 </div>
-                                            )}
-
-                                            {/* BOS Table */}
-                                            <table className="w-full mb-4 border border-gray-300 rounded-lg overflow-hidden">
-                                                <thead className="bg-gradient-to-r from-blue-100 to-blue-200 text-blue-900">
-                                                    <tr>
-                                                        <th className="px-6 py-4 text-left font-semibold">#</th>
-                                                        <th className="px-6 py-4 text-left font-semibold">Semi-Finished Goods</th>
-                                                        <th className="px-6 py-4 text-left font-semibold">Color</th>
-                                                        <th className="px-6 py-4 text-left font-semibold">Quantity</th>
-                                                        <th className="px-6 py-4 text-left font-semibold">Jobber Rate</th>
-                                                        <th className="px-6 py-4 text-left font-semibold">Total</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody className="divide-y divide-gray-200">
-                                                    {bom.map((item, index) => (
-                                                        <tr key={item.id} className="hover:bg-blue-50 transition">
-                                                            <td className="px-6 py-4 text-gray-700">{index + 1}</td>
-                                                            <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                                                                {item?.semi_finished_goods?.semi_finished_goods_name || 'N/A'}
-                                                            </td>
-                                                            <td className="px-6 py-4 text-gray-600 whitespace-nowrap">
-                                                                {item?.color?.color_name || 'N/A'}
-                                                            </td>
-                                                            <td className="px-6 py-4 text-gray-600 whitespace-nowrap">
-                                                                {item?.qty || 0}
-                                                            </td>
-                                                            <td className="px-6 py-4 text-gray-600 whitespace-nowrap">
-                                                                {item?.selectedJobber?.jobber_rate || 0}
-                                                            </td>
-                                                            <td className="px-6 py-4 text-gray-600 whitespace-nowrap">
-                                                                {(item?.qty || 0) * (item?.selectedJobber?.jobber_rate || 0)}
-                                                            </td>
-                                                        </tr>
-                                                    ))}
-                                                </tbody>
-                                            </table>
-
-                                            <hr className="w-full border-t-2 border-gray-300 my-2" />
-                                            {/* Total Cost */}
-                                            <div className="flex justify-end mb-4">
-                                                <p className="text-lg font-semibold">
-                                                    Total Cost: ₹
-                                                    {bom.reduce((total, item) => {
-                                                        const qty = item?.qty || 0;
-                                                        const rate = item?.selectedJobber?.jobber_rate || 0;
-                                                        return total + (qty * rate);
-                                                    }, 0)}
-                                                </p>
                                             </div>
+                                        )}
+
+                                        {/* BOS Table */}
+                                        <table className="w-full mb-4 border border-gray-300 rounded-lg overflow-hidden">
+                                            <thead className="bg-gradient-to-r from-blue-100 to-blue-200 text-blue-900">
+                                                <tr>
+                                                    <th className="px-6 py-4 text-left font-semibold">#</th>
+                                                    <th className="px-6 py-4 text-left font-semibold">Semi-Finished Goods</th>
+                                                    <th className="px-6 py-4 text-left font-semibold">Color</th>
+                                                    <th className="px-6 py-4 text-left font-semibold">Quantity</th>
+                                                    <th className="px-6 py-4 text-left font-semibold">Jobber Rate</th>
+                                                    <th className="px-6 py-4 text-left font-semibold">Total</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-gray-200">
+                                                {bom.map((item, index) => (
+                                                    <tr key={item.id} className="hover:bg-blue-50 transition">
+                                                        <td className="px-6 py-4 text-gray-700">{index + 1}</td>
+                                                        <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                                                            {item?.semi_finished_goods?.semi_finished_goods_name || 'N/A'}
+                                                        </td>
+                                                        <td className="px-6 py-4 text-gray-600 whitespace-nowrap">
+                                                            {item?.color?.color_name || 'N/A'}
+                                                        </td>
+                                                        <td className="px-6 py-4 text-gray-600 whitespace-nowrap">
+                                                            {item?.qty || 0}
+                                                        </td>
+                                                        <td className="px-6 py-4 text-gray-600 whitespace-nowrap">
+                                                            {item?.selectedJobber?.jobber_rate || 0}
+                                                        </td>
+                                                        <td className="px-6 py-4 text-gray-600 whitespace-nowrap">
+                                                            {(item?.qty || 0) * (item?.selectedJobber?.jobber_rate || 0)}
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+
+                                        <hr className="w-full border-t-2 border-gray-300 my-2" />
+                                        {/* Total Cost */}
+                                        <div className="flex justify-end mb-4">
+                                            <p className="text-lg font-semibold">
+                                                Total Cost: ₹
+                                                {bom.reduce((total, item) => {
+                                                    const qty = item?.qty || 0;
+                                                    const rate = item?.selectedJobber?.jobber_rate || 0;
+                                                    return total + (qty * rate);
+                                                }, 0)}
+                                            </p>
                                         </div>
-                                    ))}
-                                </div>
-                            )}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
 
 
 
@@ -1174,260 +1182,258 @@ const BillOfSales = () => {
 
 
 
-                            {/*  form started */}
+                        {/*  form started */}
 
-                            {/* Your Bill of Sales Form */}
-
-
-
-                            <div className=' grid grid-cols-2 gap-6 p-2 mb-16'>
-
-                                {/* adding date */}
-                                <div className=" mb-4">
-                                    <label className="text-sm font-medium text-gray-700 mr-4" htmlFor="date">
-                                        Date: <span className=' text-red-600 '>*</span>
-                                    </label>
-                                    <input
-                                        className="border border-gray-300 rounded-md w-full p-2"
-                                        type="date"
-                                        id="date"
-                                        name="date"
-                                        value={formData.date}
-                                        onChange={formDataChangeHandler}
-                                        required
-                                        readOnly
-                                    />
-                                </div>
+                        {/* Your Bill of Sales Form */}
 
 
-                                {/* So Id */}
-                                <div className=" mb-4">
-                                    <label className="text-sm font-medium  text-gray-700 mr-4" htmlFor="so_id">
-                                        SO ID:  <span className=' text-red-600 '>*</span>
-                                    </label>
-                                    <input
-                                        className="border border-gray-300 rounded-md w-full p-2"
-                                        type="text"
-                                        id="so_id"
-                                        name="so_id"
-                                        value={salesOrder?.so_id || ""}
-                                        onChange={formDataChangeHandler}
-                                        required
-                                        readOnly
-                                    />
-                                </div>
 
-                                {/* Design  */}
-                                <div className="mb-4">
-                                    <label className="text-sm font-medium text-gray-700 mr-4" htmlFor="design">
-                                        Design: <span className=' text-red-600 '>*</span>
-                                    </label>
-                                    <input
-                                        className="border border-gray-300 rounded-md w-full p-2"
-                                        type="text"
-                                        id="design"
-                                        name="design"
-                                        value={salesOrder?.design_number?.design_number || ""}
-                                        onChange={formDataChangeHandler}
-                                        required
-                                        readOnly
-                                    />
-                                </div>
+                        <div className=' grid grid-cols-2 gap-x-6 p-2 '>
 
-                                {/*  Ex Date */}
-                                <div className="mb-4">
-                                    <label className="text-sm font-medium text-gray-700 " htmlFor="exDate">
-                                        Ex Date:  <span className=' text-red-600 '>*</span>
-                                    </label>
-                                    <input
-                                        className="border border-gray-300 rounded-md w-full p-2"
-                                        type="date"
-                                        id="exDate"
-                                        name="ex_date"
-                                        placeholder='SO-24105'
-                                        value={formData.ex_date}
-                                        onChange={formDataChangeHandler}
-                                        required
-                                    />
-                                </div>
-
-
-                                {/* Remarks */}
-                                <div className="mb-4">
-                                    <label className="text-sm font-medium text-gray-700 mr-4" htmlFor="remarks">
-                                        SO Remarks:
-                                    </label>
-                                    <input
-                                        className="border border-gray-300 rounded-md w-full p-2"
-                                        type="text"
-                                        id="remarks"
-                                        name="remarks"
-
-                                        value={formData.remarks}
-                                        onChange={formDataChangeHandler}
-                                   
-                                    />
-                                </div>
-
-                                {/* Job Note */}
-                                <div className=" mb-4">
-                                    <label className="text-sm font-medium text-gray-700 mr-4" htmlFor="jobNote">
-                                        Job Note:
-                                    </label>
-                                    <input
-                                        className="border border-gray-300 rounded-md w-full p-2"
-                                        type="text"
-                                        id="job_note"
-                                        name="job_note"
-                                        value={formData.job_note}
-                                        onChange={formDataChangeHandler}
-                                     
-                                    />
-                                </div>
-
-
-                                {/* Processor selector */}
-                                <div className="flex flex-col">
-                                    <label className="text-gray-700 font-semibold">Processor  <span className=' text-red-600 '>*</span></label>
-                                    <select className="border border-gray-300 bg-gray-100 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                        name="processor"
-                                        value={formData.processor}
-                                        onChange={formDataChangeHandler}
-                                    >
-                                        <option value="" className="text-gray-400">Select Processor</option>
-                                        {
-                                            availableProcessor &&
-                                            Array.isArray(availableProcessor) &&
-                                            availableProcessor
-                                                .filter(processor => processor.designation !== "Merchandiser") 
-                                                .map(processor => (
-                                                    <option key={processor.id} value={processor.id}>
-                                                        {processor.name + " - " + processor.designation}
-                                                    </option>
-                                                ))
-                                        }
-                                    </select>
-                                </div>
-
-                                <div className="flex flex-col">
-                                    <label className="text-gray-700 font-semibold">Merchandiser  <span className=' text-red-600 '>*</span></label>
-                                    <select className="border border-gray-300 bg-gray-100 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                        name="merchandiser"
-                                        value={formData.merchandiser}
-                                        onChange={formDataChangeHandler}
-                                    >
-                                        <option value="" className="text-gray-400">Select Merchandiser</option>
-                                        {
-                                            availableProcessor &&
-                                            Array.isArray(availableProcessor) &&
-                                            availableProcessor
-                                                .filter(processor => processor.designation === "Merchandiser") 
-                                                .map(processor => (
-                                                    <option key={processor.id} value={processor.id}>
-                                                        {processor.name + " - " + processor.designation}
-                                                    </option>
-                                                ))
-                                        }
-                                    </select>
-                                </div>
-
-                                {/*  Seller Details */}
-                                <div>
-                                    <label htmlFor="seller_details" className='text-sm font-medium text-gray-700 mr-4'>Seller Details  <span className=' text-red-600 '>*</span></label>
-                                    <input
-                                        className="border border-gray-300 rounded-md w-full p-2"
-                                        type="text"
-                                        name='seller_datails'
-                                        placeholder='19AAECG772L1Z9'
-                                        value={formData.seller_datails}
-                                        onChange={formDataChangeHandler}
-                                        required
-                                        readOnly
-                                    />
-                                </div>
-
-                                {/* purchaser details */}
-                                <div className='flex flex-col'>
-                                    <label htmlFor="purchase_details" className='text-sm font-medium text-gray-700 mr-4'>Purchaser Details  <span className=' text-red-600 '>*</span></label>
-                                    <input
-                                        className="border border-gray-300 rounded-md w-full p-2"
-                                        type="text"
-                                        name='purchaser_details'
-                                        placeholder='purchaser details'
-                                        value={formData.purchaser_details}
-                                        onChange={formDataChangeHandler}
-                                        required
-                                        readOnly
-                                    />
-                                </div>
-
+                            {/* adding date */}
+                            <div className=" mb-4">
+                                <label className="text-sm font-medium text-gray-700 mr-4" htmlFor="date">
+                                    Date: <span className=' text-red-600 '>*</span>
+                                </label>
+                                <input
+                                    className="border border-gray-300 rounded-md w-full p-2"
+                                    type="date"
+                                    id="date"
+                                    name="date"
+                                    value={formData.date}
+                                    onChange={formDataChangeHandler}
+                                    required
+                                    readOnly
+                                />
                             </div>
 
 
-
-                            {/*  last ohter charges and total bill amount  */}
-                            <div className=' flex justify-center items-center gap-2 mt-10'>
-                                <div className='flex gap-2 justify-center items-center'>
-                                    <label htmlFor="other_charges">Other Charges:  
-                                        {/* <span className=' text-red-600 '>*</span> */}
-                                        </label>
-                                    <input
-                                        type="text"
-                                        className='p-2  border-gray-300 border rounded-md'
-                                        placeholder='0.00'
-                                        name='other_charges'
-                                        id='other_charges'
-                                        value={otherCharges}
-                                        onChange={(e) => {
-                                            setOtherCharges(parseFloat(e.target.value || 0));
-                                            setSelectedBOSIndex(0); // or let user choose the index dynamically
-                                        }}
-                                    />
-                                </div>
-
-                                <div className='flex gap-2 justify-center items-center'>
-                                    <label htmlFor="total_amount">Total Bill Amount:  <span className=' text-red-600 '>*</span></label>
-                                    <input
-                                        type="text"
-                                        className='p-2 border-gray-300 border rounded-md'
-                                        placeholder='0.00'
-                                        name='total_amount'
-                                        id='total_amount'
-                                        value={totalAmount}
-                                        readOnly
-                                    />
-                                </div>
+                            {/* So Id */}
+                            <div className=" mb-4">
+                                <label className="text-sm font-medium  text-gray-700 mr-4" htmlFor="so_id">
+                                    SO ID:  <span className=' text-red-600 '>*</span>
+                                </label>
+                                <input
+                                    className="border border-gray-300 rounded-md w-full p-2"
+                                    type="text"
+                                    id="so_id"
+                                    name="so_id"
+                                    value={salesOrder?.so_id || ""}
+                                    onChange={formDataChangeHandler}
+                                    required
+                                    readOnly
+                                />
                             </div>
 
-                            <div className=' flex justify-center items-center m-5 gap-2 text-white'>
-                                <button
-                                    type="submit"
-                                    className={`p-3 bg-green-500 rounded-md transition-all duration-100 ease-in-out ${submitting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-green-600 hover:scale-105'
-                                        }`}
-                                    disabled={submitting}
+                            {/* Design  */}
+                            <div className="mb-4">
+                                <label className="text-sm font-medium text-gray-700 mr-4" htmlFor="design">
+                                    Design: <span className=' text-red-600 '>*</span>
+                                </label>
+                                <input
+                                    className="border border-gray-300 rounded-md w-full p-2"
+                                    type="text"
+                                    id="design"
+                                    name="design"
+                                    value={salesOrder?.design_number?.design_number || ""}
+                                    onChange={formDataChangeHandler}
+                                    required
+                                    readOnly
+                                />
+                            </div>
+
+                            {/*  Ex Date */}
+                            <div className="mb-4">
+                                <label className="text-sm font-medium text-gray-700 " htmlFor="exDate">
+                                    Ex Date:  <span className=' text-red-600 '>*</span>
+                                </label>
+                                <input
+                                    className="border border-gray-300 rounded-md w-full p-2"
+                                    type="date"
+                                    id="exDate"
+                                    name="ex_date"
+                                    placeholder='SO-24105'
+                                    value={formData.ex_date}
+                                    onChange={formDataChangeHandler}
+                                    required
+                                />
+                            </div>
+
+
+                            {/* Remarks */}
+                            <div className="mb-4">
+                                <label className="text-sm font-medium text-gray-700 mr-4" htmlFor="remarks">
+                                    SO Remarks:
+                                </label>
+                                <input
+                                    className="border border-gray-300 rounded-md w-full p-2"
+                                    type="text"
+                                    id="remarks"
+                                    name="remarks"
+
+                                    value={formData.remarks}
+                                    onChange={formDataChangeHandler}
+
+                                />
+                            </div>
+
+                            {/* Job Note */}
+                            <div className=" mb-4">
+                                <label className="text-sm font-medium text-gray-700 mr-4" htmlFor="jobNote">
+                                    Job Note:
+                                </label>
+                                <input
+                                    className="border border-gray-300 rounded-md w-full p-2"
+                                    type="text"
+                                    id="job_note"
+                                    name="job_note"
+                                    value={formData.job_note}
+                                    onChange={formDataChangeHandler}
+
+                                />
+                            </div>
+
+
+                            {/* Processor selector */}
+                            <div className="flex flex-col">
+                                <label className="text-gray-700 font-semibold">Processor  <span className=' text-red-600 '>*</span></label>
+                                <select className="border border-gray-300 bg-gray-100 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    name="processor"
+                                    value={formData.processor}
+                                    onChange={formDataChangeHandler}
                                 >
-                                    {submitting ? (
-                                        <div className="flex justify-center items-center gap-2">
-                                            <PuffLoader size={20} color="#fff" />
-                                            <span>Saving...</span>
-                                        </div>
-                                    ) : (
-                                        'Save'
-                                    )}
-                                </button>
-
-                                <button className='p-3 bg-yellow-500 rounded-md hover:bg-yellow-600 hover:scale-105 transition-all duration-100 ease-in-out' onClick={clearData}> Clear </button>
-
-
-                                {/* <button className='p-3 bg-blue-500 rounded-md hover:bg-blue-600 hover:scale-105 transition-all duration-100 ease-in-out' type="button" onClick={totalChargesHandler}> Calculate</button> */}
+                                    <option value="" className="text-gray-400">Select Processor</option>
+                                    {
+                                        availableProcessor &&
+                                        Array.isArray(availableProcessor) &&
+                                        availableProcessor
+                                            .filter(processor => processor.designation !== "Merchandiser")
+                                            .map(processor => (
+                                                <option key={processor.id} value={processor.id}>
+                                                    {processor.name + " - " + processor.designation}
+                                                </option>
+                                            ))
+                                    }
+                                </select>
                             </div>
 
-                        </form>
+                            <div className="flex flex-col">
+                                <label className="text-gray-700 font-semibold">Merchandiser  <span className=' text-red-600 '>*</span></label>
+                                <select className="border border-gray-300 bg-gray-100 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    name="merchandiser"
+                                    value={formData.merchandiser}
+                                    onChange={formDataChangeHandler}
+                                >
+                                    <option value="" className="text-gray-400">Select Merchandiser</option>
+                                    {
+                                        availableProcessor &&
+                                        Array.isArray(availableProcessor) &&
+                                        availableProcessor
+                                            .filter(processor => processor.designation === "Merchandiser")
+                                            .map(processor => (
+                                                <option key={processor.id} value={processor.id}>
+                                                    {processor.name + " - " + processor.designation}
+                                                </option>
+                                            ))
+                                    }
+                                </select>
+                            </div>
 
-                    </div>
+                            {/*  Seller Details */}
+                            <div className='mt-4'>
+                                <label htmlFor="seller_details" className='text-sm font-medium text-gray-700 mr-4'>Seller Details  <span className=' text-red-600 '>*</span></label>
+                                <input
+                                    className="border border-gray-300 rounded-md w-full p-2"
+                                    type="text"
+                                    name='seller_datails'
+                                    placeholder='19AAECG772L1Z9'
+                                    value={formData.seller_datails}
+                                    onChange={formDataChangeHandler}
+                                    required
+                                    readOnly
+                                />
+                            </div>
+
+                            {/* purchaser details */}
+                            <div className='flex flex-col mt-4'>
+                                <label htmlFor="purchase_details" className='text-sm font-medium text-gray-700 mr-4'>Purchaser Details  <span className=' text-red-600 '>*</span></label>
+                                <input
+                                    className="border border-gray-300 rounded-md w-full p-2"
+                                    type="text"
+                                    name='purchaser_details'
+                                    placeholder='purchaser details'
+                                    value={formData.purchaser_details}
+                                    onChange={formDataChangeHandler}
+                                    required
+                                    readOnly
+                                />
+                            </div>
+
+                        </div>
 
 
-                )}
+
+                        {/*  last ohter charges and total bill amount  */}
+                        <div className=' flex justify-center items-center gap-2 mt-10'>
+                            <div className='flex gap-2 justify-center items-center'>
+                                <label htmlFor="other_charges">Other Charges:
+                                    {/* <span className=' text-red-600 '>*</span> */}
+                                </label>
+                                <input
+                                    type="text"
+                                    className='p-2  border-gray-300 border rounded-md'
+                                    placeholder='0.00'
+                                    name='other_charges'
+                                    id='other_charges'
+                                    value={otherCharges}
+                                    onChange={(e) => {
+                                        setOtherCharges(parseFloat(e.target.value || 0));
+                                        setSelectedBOSIndex(0); // or let user choose the index dynamically
+                                    }}
+                                />
+                            </div>
+
+                            <div className='flex gap-2 justify-center items-center'>
+                                <label htmlFor="total_amount">Total Bill Amount:  <span className=' text-red-600 '>*</span></label>
+                                <input
+                                    type="text"
+                                    className='p-2 border-gray-300 border rounded-md'
+                                    placeholder='0.00'
+                                    name='total_amount'
+                                    id='total_amount'
+                                    value={totalAmount}
+                                    readOnly
+                                />
+                            </div>
+                        </div>
+
+                        <div className=' flex justify-center items-center m-5 gap-2 text-white'>
+                            <button
+                                type="submit"
+                                className={`p-3 bg-green-500 rounded-md transition-all duration-100 ease-in-out ${submitting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-green-600 hover:scale-105'
+                                    }`}
+                                disabled={submitting}
+                            >
+                                {submitting ? (
+                                    <div className="flex justify-center items-center gap-2">
+                                        <PuffLoader size={20} color="#fff" />
+                                        <span>Saving...</span>
+                                    </div>
+                                ) : (
+                                    'Save'
+                                )}
+                            </button>
+
+                            <button className='p-3 bg-yellow-500 rounded-md hover:bg-yellow-600 hover:scale-105 transition-all duration-100 ease-in-out' onClick={clearData}> Clear </button>
+
+
+                            {/* <button className='p-3 bg-blue-500 rounded-md hover:bg-blue-600 hover:scale-105 transition-all duration-100 ease-in-out' type="button" onClick={totalChargesHandler}> Calculate</button> */}
+                        </div>
+
+                    </form>
+
+                </div>
+
 
             </div>
         </div>
