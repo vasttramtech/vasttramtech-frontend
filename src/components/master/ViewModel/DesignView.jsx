@@ -569,7 +569,9 @@ const DesignView = () => {
                   <table className="w-full text-sm mt-2 border border-gray-300">
                     <thead className="bg-gray-100">
                       <tr>
+                        <th className="border p-2">Group</th>
                         <th className="border p-2">Raw Material</th>
+                        <th className="border p-2">Color</th>
                         <th className="border p-2">Quantity</th>
                         <th className="border p-2">Unit</th>
                         <th className="border p-2">Rate (₹)</th>
@@ -578,7 +580,9 @@ const DesignView = () => {
                     <tbody>
                       {entry.raw_material_bom.map((rm) => (
                         <tr key={rm.id} className="text-center">
+                          <td className="border p-2">{rm.raw_material_master?.group?.group_name || "N/A"}</td>
                           <td className="border p-2">{rm.raw_material_master?.item_name || "N/A"}</td>
+                          <td className="border p-2">{rm.raw_material_master?.color?.color_name || "N/A"}</td>
                           <td className="border p-2">{rm.rm_qty}</td>
                           <td className="border p-2">{rm.raw_material_master?.unit?.unit_name || "N/A"}</td>
                           <td className="border p-2">{rm.raw_material_master?.price_per_unit}</td>
@@ -690,7 +694,9 @@ const DesignView = () => {
                   <table className="w-full text-sm border border-gray-300">
                     <thead className="bg-gray-100">
                       <tr>
+                        <th className="border p-2">Group</th>
                         <th className="border p-2">Name</th>
+                        <th className="border p-2">Color</th>
                         <th className="border p-2">Qty</th>
                         <th className="border p-2">Unit</th>
                         <th className="border p-2">Rate</th>
@@ -699,7 +705,9 @@ const DesignView = () => {
                     <tbody>
                       {entry.raw_material_bom.map((rm) => (
                         <tr key={rm.id} className="text-center">
+                          <td className="border p-2">{rm.raw_material_master?.group?.group_name}</td>
                           <td className="border p-2">{rm.raw_material_master?.item_name}</td>
+                          <td className="border p-2">{rm.raw_material_master?.color?.color_name}</td>
                           <td className="border p-2">{rm.rm_qty}</td>
                           <td className="border p-2">{rm.raw_material_master?.unit?.unit_name || "N/A"}</td>
                           <td className="border p-2">₹{rm.raw_material_master?.price_per_unit}</td>

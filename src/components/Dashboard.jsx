@@ -68,7 +68,7 @@ const Dashboard = ({ company, setSelectedSOId, setSalesOrder, setBom, setFormDat
                   item?.customerType === "Vasttram Admin"
                     ? "internal"
                     : "external";
-                navigate(`/sales-order-report/report/${type}/${item?.id}`);
+                navigate(`/dashboard-sales-order-report/report/${type}/${item?.id}`);
               }}
             >
               View

@@ -189,6 +189,11 @@ const JobberMaster = () => {
             return;
         }
 
+        if (isNaN(formData.jobber_code)) {
+            toast.error("Jobber Code must be a number!", { position: "top-right" });
+            return;
+        }
+
         setSubmitting(true);
 
         const postData = {
@@ -237,6 +242,12 @@ const JobberMaster = () => {
     const handleUpdate = async (e) => {
         e.preventDefault();
         setUpdateSubmitting(true);
+
+        if (isNaN(updateFormData.jobber_code)) {
+            toast.error("Jobber Code must be a number!", { position: "top-right" });
+            setUpdateSubmitting(false);
+            return;
+        }
 
 
         const updateData = {
@@ -328,7 +339,7 @@ const JobberMaster = () => {
         <div className="p-6 bg-white rounded-2xl relative">
 
             <div>
-                <h1 className="text-2xl font-bold text-blue-900 mb-4 border-b pb-2">{title}</h1>
+                <h1 className="text-2xl font-bold text-blue-900 mb-4 border-b pb-2">Jobber Master</h1>
 
                 {openEditModal && (
                     <div className="fixed inset-0 bg-gray-900 backdrop-blur-md bg-opacity-50 flex justify-center items-center z-50">

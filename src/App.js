@@ -325,6 +325,10 @@ function App() {
             path="/sales-order-report/report/:type/:id"
             element={<IndividualReport />}
           />
+          <Route
+            path="/dashboard-sales-order-report/report/:type/:id"
+            element={<IndividualReport />}
+          />
           <Route path="/sales-return-entry" element={<SalesReturnForm />} />
           <Route path="/sales-return-reports" element={<SalesReturnReports />} />
           <Route path="/sales-return-view/:id" element={<SalesReturnView />} />

@@ -887,7 +887,11 @@ const SalesOrderEntry = () => {
   };
   // console.log(allSemiFinishedGoods,allSavedSemiFinishedGoods)
 
-  if ((load && !error) || fetchingData || loading) {
+
+  console.log("formData: ", formData);
+
+  if ((load && !error) || fetchingData || loading)
+
     return (
       <div className="flex justify-center items-center h-screen">
         <BounceLoader color="#1e3a8a" />

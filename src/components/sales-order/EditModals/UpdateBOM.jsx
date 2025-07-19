@@ -88,7 +88,7 @@ const UpdateBOM = ({
     if (!IndividualSfg) return;
     setSfgData({
       sfg_group: IndividualSfg?.group?.id,
-      sfg_material: IndividualSfg?.id,
+      sfg_material: IndividualSfg?.semi_finished_goods_name,
       sfg_color1: FinalSFGData?.color,
       sfg_qty: Number(FinalSFGData.qty),
       sfg_description: FinalSFGData?.sfg_description,
@@ -726,7 +726,8 @@ const UpdateBOM = ({
               <label className="text-gray-700 font-semibold">
                 SFG Material
               </label>
-              <select
+              <input type="text" className="border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500" name="sfg_material" value={SfgData.sfg_material} disabled></input>
+              {/* <select
                 name="sfg_material"
                 // onChange={sfgDataHandler}
                 value={SfgData.sfg_material}
@@ -743,7 +744,7 @@ const UpdateBOM = ({
                       {item}
                     </option>
                   ))}
-              </select>
+              </select> */}
             </div>
 
             {/* Color1 */}
