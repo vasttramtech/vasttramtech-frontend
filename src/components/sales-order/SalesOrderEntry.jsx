@@ -886,6 +886,8 @@ const SalesOrderEntry = () => {
   };
   // console.log(allSemiFinishedGoods,allSavedSemiFinishedGoods)
 
+  console.log("formData: ", formData);
+
   if ((load && !error) || fetchingData || loading)
     return (
       <div className="absolute inset-0 flex justify-center items-center mt-64 bg-opacity-50 bg-gray-200 z-10">

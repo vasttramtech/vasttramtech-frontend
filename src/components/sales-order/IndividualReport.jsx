@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams ,useLocation } from "react-router-dom";
 import { BounceLoader } from "react-spinners";
 import { toast } from "react-toastify";
 import axios from "axios";
@@ -21,6 +21,10 @@ const IndividualReport = () => {
   const [savedSfgData, setSavedSfgData] = useState([]);
   const [approvedSFG, setapprovedSFG] = useState([]);
   const [SFGStatusStock, setSFGstatusStock] = useState([]);
+  const location = useLocation();
+  const pathname = location.pathname;
+  const pathParts = pathname.split("/").filter(Boolean);
+  const baseRoute = pathParts[0];
   const fetchStock = async () => {
     try {
       if (!token) return;
@@ -267,6 +271,14 @@ const IndividualReport = () => {
     });
   };
 
+  const handleNavigate = () => {
+    if (baseRoute === "dashboard-sales-order-report") {
+      navigate("/"); // Navigate to home
+    } else {
+      navigate("/sales-order-report"); // Navigate to sales order report
+    }
+  };
+
   // Check if it's an internal order
   const isInternal = type === "internal";
 
@@ -276,7 +288,7 @@ const IndividualReport = () => {
       <div className="bg-blue-700 text-white p-4 rounded-t-lg mb-6 flex justify-between items-center print:bg-blue-700">
         <button
           className="flex items-center gap-2 px-4 py-2 bg-gray-200 text-black rounded-lg transition"
-          onClick={() => navigate("/sales-order-report")}
+          onClick={handleNavigate}
         >
           <ArrowLeft size={18} />
           Back

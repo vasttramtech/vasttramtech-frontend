@@ -17,7 +17,7 @@ import EditSemiFinishedGoodsMaster from "./EditModals/EditSemiFinishedGoodsMaste
 import Pagination from "../utility/Pagination";
 import { Plus } from "lucide-react";
 
-const headers = ["document_id", "Id", "Semi-Finished Goods Id", "Group", "Semi-Finished Goods Name", "Description", "Unit", "View/Edit", "Pin"];
+const headers = ["document_id", "Id", "Semi-Finished Goods Id", "Group", "Semi-Finished Goods Name", "Description", "Unit", "View/Edit"];
 
 
 const SemiFinishedGoodsMaster = () => {
@@ -249,11 +249,11 @@ const SemiFinishedGoodsMaster = () => {
                 </button>
             </div>
         ),
-        Pin: (
-            <button onClick={() => handlePin(item)}>
-                <img src={PinIcon} alt="Pin" className="" />
-            </button>
-        ),
+        // Pin: (
+        //     <button onClick={() => handlePin(item)}>
+        //         <img src={PinIcon} alt="Pin" className="" />
+        //     </button>
+        // ),
     }));
 
     const handleView = (rowData) => {

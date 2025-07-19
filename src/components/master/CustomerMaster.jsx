@@ -24,7 +24,7 @@ const statesOfIndia = [
   "Uttar Pradesh", "Uttarakhand", "West Bengal"
 ];
 
-const headers = ["document_id", "Customer Id", "Group Name", "Company Name", "Branch", "Edit", ""];
+const headers = ["document_id", "Customer Id", "Group Name", "Company Name", "Branch", "Edit"];
 
 const concerned_person_headers = [
   "concerned_person_name",
@@ -368,11 +368,11 @@ const CustomerMaster = () => {
         </button>
       </div>
     ),
-    Pin: (
-      <button onClick={() => handlePin(item)}>
-        <img src={Message} alt="Pin" className="" />
-      </button>
-    ),
+    // Pin: (
+    //   <button onClick={() => handlePin(item)}>
+    //     <img src={Message} alt="Pin" className="" />
+    //   </button>
+    // ),
   }));
   // const Addmail = (e) => {
   //   e.preventDefault();

@@ -533,7 +533,7 @@ const Sidebar = () => {
       options: [
         { label: "Alerts", isModule: true },
         { label: "Task Management", path: "/tasks" },
-        { label: "Reminders", path: "/reminders" },
+        // { label: "Reminders", path: "/reminders" },
       ],
     },
     {

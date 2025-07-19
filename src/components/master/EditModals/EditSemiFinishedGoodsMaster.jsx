@@ -152,14 +152,14 @@ const EditSemiFinishedGoodsMaster = ({ selectedRow, setOpenEditModal, semiFinish
                                     }</option>
                             ))}
                         </select>
-                        <button
+                        {/* <button
                             type="button"
                             className="flex items-center justify-center w-8 h-8 bg-blue-900 text-white rounded-full text-xl hover:bg-blue-700 transition"
                             onClick={() => setSemiGoodsModel(true)}
                         >
                             <Plus className="w-4 h-4" />
 
-                        </button>
+                        </button> */}
                     </div>
                 </div>
 
@@ -185,14 +185,14 @@ const EditSemiFinishedGoodsMaster = ({ selectedRow, setOpenEditModal, semiFinish
                                 </option>
                             ))}
                         </select>
-                        <button
+                        {/* <button
                             type="button"
                             className="flex items-center justify-center w-8 h-8 bg-blue-900 text-white rounded-full text-xl hover:bg-blue-700 transition"
                             onClick={() => setUnitModel(true)}
                         >
                             <Plus className="w-4 h-4" />
 
-                        </button>
+                        </button> */}
                     </div>
                 </div>
 

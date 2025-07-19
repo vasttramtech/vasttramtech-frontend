@@ -18,7 +18,7 @@ import Pagination from "../utility/Pagination";
 import AddKarigar from "./AddKarigar";
 import { Plus } from "lucide-react";
 
-const headers = ["document_id", "Item Id", "Group", "Item Name", "Unit", "HSN/SAC Code", "Description", "Color", "Price/unit", "Edit", ""];
+const headers = ["document_id", "Item Id", "Group", "Item Name", "Unit", "HSN/SAC Code", "Description", "Color", "Price/unit", "Edit"];
 
 const RawMaterialMaster = () => {
     const location = useLocation();
@@ -97,11 +97,11 @@ const RawMaterialMaster = () => {
                 </button>
             </div>
         ),
-        Pin: (
-            <button onClick={() => handlePin(item)}>
-                <img src={PinIcon} alt="Pin" className="" />
-            </button>
-        ),
+        // Pin: (
+        //     <button onClick={() => handlePin(item)}>
+        //         <img src={PinIcon} alt="Pin" className="" />
+        //     </button>
+        // ),
     }));
 
     const fetchDropDownData = async () => {

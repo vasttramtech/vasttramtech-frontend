@@ -29,8 +29,7 @@ const headers = [
   "Description",
   "Unit",
   "Item Id",
-  "View  Edit",
-  "Pin",
+  "View  Edit"
 ];
 
 const BOMsfgHeader = [
@@ -289,52 +288,6 @@ const DesignMaster = () => {
       );
     }
   };
-
-  // const fetchDesignMasterData = async () => {
-  //   try {
-  //     // setLoading(true);
-  //     setPaginationLoading(true);
-  //     const response = await axios.get(
-  //       `${process.env.REACT_APP_BACKEND_URL}/api/design-masters?populate=*`,
-  //       {
-  //         params: {
-  //           "pagination[page]": page,
-  //           "pagination[pageSize]": pageSize,
-  //           "sort[0]": "createdAt:desc",
-  //         },
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       }
-  //     );
-  //     setTotalPages(response.data.meta.pagination.pageCount);
-  //     const designData = Array.isArray(response.data.data)
-  //       ? response.data.data
-  //       : [];
-
-  //     //   console.log("designData: ", designData);
-
-  //     const mappedDesign = designData.map((design) => ({
-  //       id: design?.documentId,
-  //       group: design?.design_group?.group_name,
-  //       design_number: design.design_number,
-  //       color: design.color?.color_name,
-  //       description: design.description,
-  //       unit: design?.unit?.unit_name,
-  //       item_id: design?.id,
-  //     }));
-  //     setRefreshTable((prev) => prev + 1);
-  //     setDesignMaster(mappedDesign);
-  //   } catch (error) {
-  //     console.error("Error fetching design master data:", error);
-  //     if (error.response?.status === 401) {
-  //       navigate("/login");
-  //     }
-  //   } finally {
-  //     setPaginationLoading(false);
-  //     // setLoading(false);
-  //   }
-  // };
 
   const fetchDesignMasterData = async () => {
     try {
@@ -646,11 +599,11 @@ const DesignMaster = () => {
         </button>
       </div>
     ),
-    Pin: (
-      <button onClick={() => handlePin(item)}>
-        <img src={PinIcon} alt="Pin" className="w-4" />
-      </button>
-    ),
+    // Pin: (
+    //   <button onClick={() => handlePin(item)}>
+    //     <img src={PinIcon} alt="Pin" className="w-4" />
+    //   </button>
+    // ),
   }));
 
 

@@ -255,7 +255,7 @@ const UpdateUser = () => {
             <div className="mt-8 flex justify-end">
               <button
                 type="button"
-                onClick={() => navigate(`/access-control/user/${id}`)}
+                onClick={() => navigate(`/access-control/user/view/${id}`)}
                 className="mr-4 px-6 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 font-medium transition-colors duration-200"
               >
                 Cancel
