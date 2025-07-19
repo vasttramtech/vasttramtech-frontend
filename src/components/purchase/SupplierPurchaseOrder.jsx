@@ -6,6 +6,8 @@ import axios from "axios";
 import { BounceLoader, PuffLoader } from "react-spinners";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import { Plus } from "lucide-react";
+import { MdCancel } from "react-icons/md";
 
 
 const SupplierPurchaseOrder = () => {
@@ -267,196 +269,201 @@ const SupplierPurchaseOrder = () => {
   // console.log("finalSelectedRows", finalSelectedRows);
 
   return (
-    <div className="py-2 bg-white rounded-lg relative">
-      {loading ? (
-        <div className="absolute inset-0 flex justify-center items-center mt-64 bg-opacity-50 bg-gray-200 z-10">
-          <BounceLoader size={100} color={"#1e3a8a"} loading={loading} />
-        </div>
-      ) : (
-        <div>
-          {/* <h1 className="text-3xl font-bold text-blue-900 mb-4">{title}</h1> */}
-          <h1 className="text-3xl font-bold text-blue-900 mb-4">Purchase order</h1>
+    <div className="p-6 bg-white rounded-lg relative">
 
-          {/* Selection Modal */}
+      <div>
+        {/* <h1 className="text-3xl font-bold text-blue-900 mb-4">{title}</h1> */}
+        <h1 className="text-2xl font-bold text-blue-900 pb-2 border-b mb-4">Purchase order</h1>
 
-          {displayModal && (
-            <div className="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50">
-              <div className="relative w-[90vw] bg-gray-200 border shadow-2xl p-4 rounded-lg">
-                {/* Close Button */}
+        {/* Selection Modal */}
+
+        {displayModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50">
+            <div className="relative w-[90vw] bg-gray-200 border shadow-2xl p-4 rounded-lg">
+              {/* Close Button */}
+
+              <div>
+
+
                 <button
-                  className="absolute top-2 right-2 text-gray-700 hover:text-red-500 text-2xl font-bold"
+                  className="absolute top-2 right-2 text-red-700 hover:text-red-500 hover:scale-105 duration-200 transition-all ease-in-out text-2xl font-bold"
                   onClick={() => setDisplayModal(false)}
                 >
-                  ✖
+                  <MdCancel className="w-8 h-8" />
                 </button>
-
-                <SelectionTable
-                  NoOfColumns={selctionHeader.length}
-                  data={selectionData}
-                  headers={selctionHeader}
-                  setSelectedRow={setSelectedRow}
-                  setOfSelectedIndex={setOfSelectedIndex}
-                  setSetOfSelectedIndex={setSetOfSelectedIndex}
-                />
-
-                {/* Add Button */}
-                <div className="flex justify-center items-center mt-4">
-                  <button
-                    type="button"
-                    className="bg-gray-400 px-4 py-1 rounded hover:bg-gray-300"
-                    onClick={handleSaveSelection}
-                  >
-                    Add
-                  </button>
-                </div>
               </div>
+
+              <h2 className="text-2xl font-bold mb-4 text-center">
+                Select Raw Material
+              </h2>
+
+              <SelectionTable
+                NoOfColumns={selctionHeader.length}
+                data={selectionData}
+                headers={selctionHeader}
+                setSelectedRow={setSelectedRow}
+                setOfSelectedIndex={setOfSelectedIndex}
+                setSetOfSelectedIndex={setSetOfSelectedIndex}
+              />
+
+              {/* Add Button */}
+              <div className="flex justify-center items-center mt-4">
+                <button
+                  type="button"
+                  className="bg-blue-900 px-4 py-1 rounded hover:bg-blue-700 duration-200 ease-in-out transition-all  text-white"
+                  onClick={handleSaveSelection}
+                >
+                  Add
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+
+        <form className="grid grid-cols-2 gap-6 p-5 rounded-lg border border-gray-200 shadow-md " onSubmit={handleSubmit}>
+          <div className="flex flex-col">
+            <FormLabel title={"Supplier"} />
+            <select
+              className="border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              name="supplier"
+              onChange={handleFormChange}
+              value={formData.supplier}
+            >
+              <option value="" disabled selected>
+                Supplier
+              </option>
+              {supplier.map((supplier, index) => (
+                <option key={index} value={supplier?.id}>
+                  {supplier?.company_name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="flex flex-col">
+            <FormLabel title={"Date"} />
+            <input
+              type="date"
+              className="border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              name="date"
+              onChange={handleFormChange}
+              value={formData.date}
+            />
+          </div>
+          <div className="flex flex-col">
+            <FormLabel title={"Remarks"} />
+            <textarea
+              className="border border-gray-300 bg-gray-100 rounded-md p-2 h-40 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
+              placeholder="Remarks"
+              name="remark"
+              onChange={handleFormChange}
+              value={formData.remark}
+            ></textarea>
+          </div>
+          <div className="col-span-2 flex border border-blue-500 justify-center mt-4 rounded p-2">
+            <button
+              type="button"
+              className="bg-blue-900 flex items-center gap-2 text-white px-4 py-1 rounded hover:bg-blue-700 transition-all duration-200 ease-in-out"
+              onClick={handleSelectRawmaterial}
+            >
+              Choose Raw Material <Plus className="w-4 h-4" />
+            </button>
+          </div>
+
+          {/* Selected Items Table */}
+          {finalSelectedRows.length > 0 && (
+            <div className="col-span-2 mt-4 border p-2 rounded bg-gray-100">
+              <h3 className="text-lg font-bold mb-2">Selected Items</h3>
+              <table className="w-full border-collapse border border-gray-400">
+                <thead>
+                  <tr className="bg-gray-300">
+                    {selctionHeader.map((header, index) => (
+                      <th key={index} className="border p-2">
+                        {header}
+                      </th>
+                    ))}
+                    <th className="border p-2">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {finalSelectedRows.map((row, index) => (
+                    <tr key={index} className="text-center bg-white">
+                      {selctionHeader.map((header, i) => (
+                        <td key={i} className="border p-2">
+                          {header === "Price" ? (
+                            <input
+                              type="number"
+                              value={row.Price}
+                              min="0"
+                              step="any"
+                              className="w-16 border p-1 text-center"
+                              onChange={(e) => handlePriceChange(index, Number(e.target.value))}
+                            />
+                          ) : header === "Qty" ? (
+                            <input
+                              type="number"
+                              value={row.Qty}
+                              min="1"
+                              step="any"
+                              className="w-16 border p-1 text-center"
+                              onChange={(e) => handleQtyChange(index, Number(e.target.value))}
+                            />
+                          ) : header === "Total" ? (
+                            row.Total.toFixed(2)
+                          ) : (
+                            row[header] || "N/A"
+                          )}
+                        </td>
+                      ))}
+
+                      <td className="border p-2">
+                        <button
+                          className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-700 transition"
+                          onClick={() => handleDeleteRow(index)}
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           )}
 
-
-          <form className="grid grid-cols-2 gap-6 p-5 rounded-lg border border-gray-200 shadow-md mb-16" onSubmit={handleSubmit}>
-            <div className="flex flex-col">
-              <FormLabel title={"Supplier"} />
-              <select
-                className="border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                name="supplier"
-                onChange={handleFormChange}
-                value={formData.supplier}
-              >
-                <option value="" disabled selected>
-                  Supplier
-                </option>
-                {supplier.map((supplier, index) => (
-                  <option key={index} value={supplier?.id}>
-                    {supplier?.company_name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="flex flex-col">
-              <FormLabel title={"Date"} />
-              <input
-                type="date"
-                className="border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                name="date"
-                onChange={handleFormChange}
-                value={formData.date}
-              />
-            </div>
-            <div className="flex flex-col">
-              <FormLabel title={"Remarks"} />
-              <textarea
-                className="border border-gray-300 bg-gray-100 rounded-md p-2 h-40 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
-                placeholder="Remarks"
-                name="remark"
-                onChange={handleFormChange}
-                value={formData.remark}
-              ></textarea>
-            </div>
-            <div className="col-span-2 flex border border-blue-500 justify-center mt-4 rounded p-2">
-              <button
-                type="button"
-                className="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-700 transition"
-                onClick={handleSelectRawmaterial}
-              >
-                Choose Raw Material
-              </button>
-            </div>
-
-            {/* Selected Items Table */}
-            {finalSelectedRows.length > 0 && (
-              <div className="col-span-2 mt-4 border p-2 rounded bg-gray-100">
-                <h3 className="text-lg font-bold mb-2">Selected Items</h3>
-                <table className="w-full border-collapse border border-gray-400">
-                  <thead>
-                    <tr className="bg-gray-300">
-                      {selctionHeader.map((header, index) => (
-                        <th key={index} className="border p-2">
-                          {header}
-                        </th>
-                      ))}
-                      <th className="border p-2">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {finalSelectedRows.map((row, index) => (
-                      <tr key={index} className="text-center bg-white">
-                        {selctionHeader.map((header, i) => (
-                          <td key={i} className="border p-2">
-                            {header === "Price" ? (
-                              <input
-                                type="number"
-                                value={row.Price}
-                                min="0"
-                                step="any"
-                                className="w-16 border p-1 text-center"
-                                onChange={(e) => handlePriceChange(index, Number(e.target.value))}
-                              />
-                            ) : header === "Qty" ? (
-                              <input
-                                type="number"
-                                value={row.Qty}
-                                min="1"
-                                step="any"
-                                className="w-16 border p-1 text-center"
-                                onChange={(e) => handleQtyChange(index, Number(e.target.value))}
-                              />
-                            ) : header === "Total" ? (
-                              row.Total.toFixed(2)
-                            ) : (
-                              row[header] || "N/A"
-                            )}
-                          </td>
-                        ))}
-
-                        <td className="border p-2">
-                          <button
-                            className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-700 transition"
-                            onClick={() => handleDeleteRow(index)}
-                          >
-                            Delete
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-
-            <div className="col-span-2 mt-4 flex justify-end">
-              <h3 className="text-xl font-bold"
-                name="total"
-                onChange={handleFormChange}
-                value={formData.total}
-              >Grand Total: ₹{grandTotal.toFixed(2)}</h3>
-            </div>
+          <div className="col-span-2 mt-4 flex justify-end">
+            <h3 className="text-xl font-bold"
+              name="total"
+              onChange={handleFormChange}
+              value={formData.total}
+            >Grand Total: ₹{grandTotal.toFixed(2)}</h3>
+          </div>
 
 
-            <div className="col-span-2 flex justify-end mt-4">
-              <button type="button"
-                onClick={clearHandler}
-                className="bg-gray-200 px-4 py-1 rounded hover:bg-gray-600 hover:text-white transition">
-                Clear
-              </button>
-              <button
-                type="submit"
-                className={`bg-blue-900 ml-2 px-6 py-2 rounded text-white font-semibold transition-all ease-in-out duration-300 transform ${submitting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700'
-                  }`}
-                disabled={submitting}
-              >
-                {submitting ? (
-                  <div className="flex justify-center items-center space-x-2">
-                    <PuffLoader size={20} color="#fff" />
-                    <span>Saving...</span>
-                  </div>
-                ) : (
-                  'Save'
-                )}
-              </button>
-            </div>
-          </form>
-        </div>)}
+          <div className="col-span-2 flex justify-end mt-4">
+            <button type="button"
+              onClick={clearHandler}
+              className="bg-gray-200 px-4 py-1 rounded hover:bg-gray-600 hover:text-white transition">
+              Clear
+            </button>
+            <button
+              type="submit"
+              className={`bg-blue-900 ml-2 px-6 py-2 rounded text-white font-semibold transition-all ease-in-out duration-300 transform ${submitting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700'
+                }`}
+              disabled={submitting}
+            >
+              {submitting ? (
+                <div className="flex justify-center items-center space-x-2">
+                  <PuffLoader size={20} color="#fff" />
+                  <span>Saving...</span>
+                </div>
+              ) : (
+                'Save'
+              )}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

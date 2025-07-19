@@ -14,39 +14,39 @@ const Card = ({ task, onClick }) => {
 };
 
 const AdminCard = ({ task, onClick }) => {
-    return (
-      <div
-        className="bg-[#d9d9d9] rounded-lg p-4 shadow-md hover:bg-blue-900 hover:text-white cursor-pointer"
-        onClick={() => onClick(task)}
-      >
-        <h3 className="font-semibold text-lg">{task.subject}</h3>
-  
-        <div className="text-sm mt-1">
-          <span className="font-medium">Creator: </span>
-          <span>{task.creator?.email || "Unknown"}</span>
-        </div>
-  
-        <div className="mt-3 text-sm">
-          <span className="font-medium">Assignees: </span>
-          <div className="flex flex-wrap gap-2 mt-1">
-            {task.assignees && task.assignees.length > 0 ? (
-              task.assignees.map((user, idx) => (
-                <span
-                  key={idx}
-                  className="bg-blue-200 text-blue-900 text-xs font-medium px-2 py-1 rounded-full"
-                >
-                  {user.email}
-                </span>
-              ))
-            ) : (
-              <span className="italic text-gray-600">None</span>
-            )}
-          </div>
+  return (
+    <div
+      className="bg-[#d9d9d9] rounded-lg p-4 shadow-md hover:bg-blue-900 hover:text-white cursor-pointer"
+      onClick={() => onClick(task)}
+    >
+      <h3 className="font-semibold text-lg">{task.subject}</h3>
+
+      <div className="text-sm mt-1">
+        <span className="font-medium">Creator: </span>
+        <span>{task.creator?.email || "Unknown"}</span>
+      </div>
+
+      <div className="mt-3 text-sm">
+        <span className="font-medium">Assignees: </span>
+        <div className="flex flex-wrap gap-2 mt-1">
+          {task.assignees && task.assignees.length > 0 ? (
+            task.assignees.map((user, idx) => (
+              <span
+                key={idx}
+                className="bg-blue-200 text-blue-900 text-xs font-medium px-2 py-1 rounded-full"
+              >
+                {user.email}
+              </span>
+            ))
+          ) : (
+            <span className="italic text-gray-600">None</span>
+          )}
         </div>
       </div>
-    );
-  };
-  
+    </div>
+  );
+};
+
 
 const Column = ({ title, tasks, onTaskClick, designation }) => {
   const getColumnColor = (columnTitle) => {
@@ -91,7 +91,7 @@ const Column = ({ title, tasks, onTaskClick, designation }) => {
 
 // Board component
 const KanbanBoard = ({ tasks, onTaskClick, onAddClick, designation }) => {
-    // console.log(designation)
+  // console.log(designation)
   const columns = {
     "To Do": tasks.filter((task) => task?.task_status === "To Do"),
     "In Progress": tasks.filter((task) => task?.task_status === "In Progress"),
@@ -100,7 +100,7 @@ const KanbanBoard = ({ tasks, onTaskClick, onAddClick, designation }) => {
   };
 
   return (
-    <div className="flex space-x-4 p-4 pl-10">
+    <div className="flex space-x-4 py-4">
       {Object.entries(columns).map(([section, sectionTasks]) => (
         <Column
           key={section}

@@ -8,6 +8,7 @@ import EditIcon from "../../assets/Others/EditIcon.png";
 import EditPurchaseOrder from "./EditModel/EditPurchaseOrder";
 import Pagination from "../utility/Pagination";
 import Swal from "sweetalert2";
+import Pagination10 from "../utility/Pagination10";
 
 const headers = [
   "document_id",
@@ -28,7 +29,7 @@ const PurchaseOrderList = () => {
   const [showDetails, setShowDetails] = useState(false);
   const [purchaseOrderData, setPurchaseOrderData] = useState([]);
   const title = location.state?.title;
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const { token } = useSelector((state) => state.auth);
   const navigate = useNavigate();
   const [selectedRowData, setSelectedRowData] = useState(null);
@@ -38,7 +39,7 @@ const PurchaseOrderList = () => {
   //  adding pagination logic
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
+  const [pageSize, setPageSize] = useState(10);
   const [paginationLoading, setPaginationLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -86,6 +87,7 @@ const PurchaseOrderList = () => {
       }
     } finally {
       setPaginationLoading(false);
+      setLoading(false);
     }
   };
 
@@ -205,7 +207,7 @@ const PurchaseOrderList = () => {
     ...raw, // Spread existing properties
     details: (
       <span
-        className="bg-blue-900 rounded-md text-white shadow-md font-semibold px-4 hover:bg-blue-950 cursor-pointer"
+        className="bg-blue-700 py-1 rounded-md text-white shadow-md font-semibold px-4 hover:bg-blue-800 transition-all duration-200  cursor-pointer"
         onClick={() => handleView(raw)}
       >
         Details
@@ -257,7 +259,7 @@ const PurchaseOrderList = () => {
     //   </span>
     // )
     Reject: raw.status === "Complete" ? (
-      <span className="text-green-900 font-bold">Already Received</span>
+      <span className="text-green-600 font-bold">Already Received</span>
     ) : raw.status === "Rejected" ? (
       <span className="text-red-900 font-bold">Rejected</span>
     ) : raw.status === "Partially Receive" ? (
@@ -271,7 +273,7 @@ const PurchaseOrderList = () => {
       <span className="text-gray-700 font-bold">Closed</span>
     ) : (
       <span
-        className="bg-red-900 rounded-md text-white shadow-md font-semibold px-4 hover:bg-red-950 cursor-pointer"
+        className="bg-red-700 rounded-md text-white shadow-md font-semibold px-4 p-1 hover:bg-red-500 transition-all duration-200 ease-in-out cursor-pointer"
         onClick={() => handleReject(raw)}
       >
         Reject PO
@@ -279,54 +281,58 @@ const PurchaseOrderList = () => {
     )
   }));
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <BounceLoader color="#1e3a8a" />
+      </div>
+    )
+  }
+
+
   return (
-    <div className="py-2 bg-white rounded-lg relative">
-      {loading ? (
-        <div className="absolute inset-0 flex justify-center items-center mt-64 bg-opacity-50 bg-gray-200 z-10">
-          <BounceLoader size={100} color={"#1e3a8a"} loading={loading} />
-        </div>
-      ) : (
-        <div>
-          {/* <h1 className="text-3xl font-bold text-blue-900 mb-4">{title}</h1> */}
-          <h1 className="text-3xl font-bold text-blue-900 mb-4">Purchase Order List</h1>
+    <div className="p-6 bg-white rounded-lg relative">
 
-          {openEditModal && (
-            <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50 overflow-y-auto">
-              <div className="bg-white p-6 rounded-lg shadow-lg max-h-[90vh] overflow-y-auto w-[100%] max-w-4xl">
-                <EditPurchaseOrder
-                  selectedRowData={selectedRowData}
-                  setOpenEditModal={setOpenEditModal}
-                  fetchPurchaseOrderList={fetchPurchaseOrderList}
-                />
-              </div>
-            </div>
-          )}
+      <div>
+        {/* <h1 className="text-3xl font-bold text-blue-900 mb-4">{title}</h1> */}
+        <h1 className="text-2xl font-bold text-blue-900 mb-4 pb-2 border-b">Purchase Order List</h1>
 
-          <div className="mb-16">
-            {paginationLoading ? (
-              <div className="flex p-5 justify-center items-center space-x-2 mt-4 border border-gray-400 rounded-lg">
-                <BounceLoader size={20} color="#1e3a8a" />
-              </div>
-            ) : (
-              <SmartTable
-                headers={headers}
-                data={updatedRawData}
-                searchTerm={searchTerm}
-                setSearchTerm={setSearchTerm}
+        {openEditModal && (
+          <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50 overflow-y-auto">
+            <div className="bg-white p-6 rounded-lg shadow-lg max-h-[90vh] overflow-y-auto w-[100%] max-w-4xl">
+              <EditPurchaseOrder
+                selectedRowData={selectedRowData}
+                setOpenEditModal={setOpenEditModal}
+                fetchPurchaseOrderList={fetchPurchaseOrderList}
               />
-
-            )}
-
-            <Pagination
-              setPage={setPage}
-              totalPages={totalPages}
-              page={page}
-              setPageSize={setPageSize}
-              pageSize={pageSize}
-            />
+            </div>
           </div>
+        )}
+
+        <div className="">
+
+          <SmartTable
+            headers={headers}
+            data={updatedRawData}
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            loading={paginationLoading}
+            setLoading={setPaginationLoading}
+          />
+
+
+          <Pagination10
+            setPage={setPage}
+            totalPages={totalPages}
+            page={page}
+            setPageSize={setPageSize}
+            pageSize={pageSize}
+            loading={paginationLoading}
+            setLoading={setPaginationLoading}
+          />
         </div>
-      )}
+      </div>
+
     </div>
   );
 };

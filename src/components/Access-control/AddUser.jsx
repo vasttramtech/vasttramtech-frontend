@@ -12,7 +12,7 @@ const AddUser = () => {
   const { token, designation } = useSelector((state) => state.auth);
   const [isLoading, setIsLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const dispatch=useDispatch();
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -78,7 +78,7 @@ const AddUser = () => {
       console.log(err);
       toast.error(
         err.response?.data?.error?.message ||
-          "An error occurred while creating the user"
+        "An error occurred while creating the user"
       );
     } finally {
       setSubmitting(false);
@@ -94,8 +94,8 @@ const AddUser = () => {
   }
 
   return (
-    <div className="py-2 bg-white rounded-lg relative">
-      <h1 className="text-3xl font-bold text-blue-900 mb-4">Create New User</h1>
+    <div className="p-2 bg-white rounded-lg relative">
+      <h1 className="text-2xl font-bold text-blue-900 mb-4">Create New User</h1>
 
       <form onSubmit={handleSubmit}>
         <div className="grid grid-cols-2 gap-6 p-2 mb-16">
@@ -162,16 +162,15 @@ const AddUser = () => {
           </button>
           <button
             type="submit"
-            className={`bg-gray-500 ml-2 px-6 py-2 rounded text-white font-semibold transition-all ease-in-out duration-300 transform ${
-              submitting ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-700"
-            }`}
+            className={`bg-blue-900 ml-2 px-6 py-2 rounded text-white font-semibold transition-all ease-in-out duration-300 transform ${submitting ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-700"
+              }`}
             disabled={submitting}
           >
             {submitting ? (
-              <div className="flex justify-center items-center space-x-2">
+              <span className="flex justify-center items-center space-x-2">
                 <PuffLoader size={20} color="#fff" />
                 <span>Saving...</span>
-              </div>
+              </span>
             ) : (
               "Save"
             )}

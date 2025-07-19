@@ -3,9 +3,9 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
-import SmartTable1 from "../../smartTable/SmartTable1";
 import { BounceLoader } from "react-spinners";
-import Pagination from '../utility/Pagination';
+import SmartTable from "../../smartTable/SmartTable";
+import Pagination10 from "../utility/Pagination10";
 
 const AllStockEntry = () => {
   const { token } = useSelector((state) => state.auth);
@@ -15,7 +15,7 @@ const AllStockEntry = () => {
 
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
+  const [pageSize, setPageSize] = useState(10);
   const [paginationLoading, setPaginationLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -201,9 +201,9 @@ const AllStockEntry = () => {
         color: item?.color?.color_name,
         entry_date: item?.entry_date,
         so_id: item?.so_id,
-        processes: <div className="bg-gray-100 flex flex-col gap-1 rounded-lg p-1">
+        processes: <div className=" flex flex-wrap gap-1 rounded-lg p-1">
           {item?.processes?.map((process) => (
-            <span key={process.id} >{process.processes}</span>
+            <span key={process.id} className="bg-gray-200 rounded-md p-1 text-black" >{process.processes}</span>
           ))}
         </div>,
         qty: item?.qty,
@@ -241,26 +241,30 @@ const AllStockEntry = () => {
 
   //   console.log(stock);
   const headers = ["SFG", "Color", "Entry Date", "SO ID", "Processes", "Qty"];
-  if (loading) return (
-    <div className="flex items-center justify-center h-screen">
-      <BounceLoader size={100} color={"#1e3a8a"} loading={loading} />
-    </div>
-  )
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <BounceLoader color="#1e3a8a" />
+      </div>
+    )
+  }
   return (
-    <div>
-      <h1 className="text-3xl font-bold text-blue-900 mb-6 border-b pb-3">
+    <div className="p-6 bg-white rounded-lg">
+      <h1 className="text-2xl font-bold text-blue-900 mb-4 border-b pb-2">
         Semi Finished Goods Stock Entries
       </h1>
       {/* <SmartTable1 data={stock} headers={headers} /> */}
 
-      <SmartTable1
+      <SmartTable
         headers={headers}
         data={stock}
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
+        loading={loading}
+        setLoading={setLoading}
       />
 
-      <Pagination
+      <Pagination10
         setPage={setPage}
         totalPages={totalPages}
         page={page}

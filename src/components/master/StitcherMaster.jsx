@@ -32,7 +32,7 @@ const StitcherMaster = () => {
 
     const [stitcher, setstitcher] = useState([]);
     const [jobberData, setJobberData] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
     const [updatesubmitting, setUpdateSubmitting] = useState(false);
     const navigate = useNavigate();
@@ -46,7 +46,7 @@ const StitcherMaster = () => {
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [pageSize, setPageSize] = useState(5);
-
+    const [paginationLoading, setPaginationLoading] = useState(false);
 
     const [formData, setFormData] = useState({
         stitcher_name: "",
@@ -81,7 +81,7 @@ const StitcherMaster = () => {
 
     const fetchStitcherData = useCallback(async () => {
         try {
-            setLoading(true);
+            setPaginationLoading(true);
             const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/stitcher-masters`, {
                 params: {
                     "pagination[page]": page,
@@ -120,6 +120,7 @@ const StitcherMaster = () => {
             }
         } finally {
             setLoading(false);
+            setPaginationLoading(false);
         }
     }, [page, token, pageSize, navigate, searchTerm])
 
@@ -146,7 +147,7 @@ const StitcherMaster = () => {
 
     useEffect(() => {
         setPage(1);
-      }, [searchTerm]);
+    }, [searchTerm]);
 
 
 
@@ -282,198 +283,212 @@ const StitcherMaster = () => {
 
     }
 
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <BounceLoader color="#1e3a8a" />
+            </div>
+        )
+    }
+
+
     return (
-        <div className="py-2 bg-white rounded-lg relative">
-            {loading ? (
-                <div className="absolute inset-0 flex justify-center items-center mt-64 bg-opacity-50 bg-gray-200 z-10">
-                    <BounceLoader size={100} color={"#1e3a8a"} loading={loading} />
-                </div>
-            ) : (
-                <div>
-                    {/* <h1 className="text-3xl font-bold text-blue-900 mb-4">{title}</h1> */}
-                    <h1 className="text-3xl font-bold text-blue-900 mb-4">Stitcher Master</h1>
+        <div className="p-6 bg-white rounded-lg relative">
 
-                    {openEditModal && (
-                        <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
-                            <div className="bg-white p-6 rounded-lg shadow-lg w-1/2">
-                                <h2 className="text-xl font-bold mb-4">Edit Stitcher Details</h2>
-                                <form className="grid grid-cols-2 gap-6 p-2 mb-4" onSubmit={handleUpdate}>
-                                    {/* Stitcher Name */}
-                                    <div className="flex flex-col">
-                                        <label className="text-gray-700 font-semibold">Stitcher Name</label>
-                                        <input type="text" className="border border-gray-300 bg-gray-100 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Stitcher Name" name="stitcher_name"
-                                            value={updateFormData.stitcher_name}
-                                            onChange={handleUpdateInputChange} />
-                                    </div>
+            <div>
+                {/* <h1 className="text-3xl font-bold text-blue-900 mb-4">{title}</h1> */}
+                <h1 className="text-2xl font-bold text-blue-900  border-b pb-2  mb-4">Stitcher Master</h1>
 
-                                    {/* Stitcher Address */}
-                                    <div className="flex flex-col">
-                                        <label className="text-gray-700 font-semibold">Stitcher Address</label>
-                                        <input type="text" className="border border-gray-300 bg-gray-100 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Stitcher Address" name="stitcher_address"
-                                            value={updateFormData.stitcher_address}
-                                            onChange={handleUpdateInputChange} />
-                                    </div>
+                {openEditModal && (
 
-                                    {/* Stitcher Code */}
-                                    <div className="flex flex-col">
-                                        <label className="text-gray-700 font-semibold">Stitcher Code</label>
-                                        <input type="text" className="border border-gray-300 bg-gray-100 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Stitcher Code" name="stitcher_code"
-                                            value={updateFormData.stitcher_code}
-                                            onChange={handleUpdateInputChange} />
-                                    </div>
+                    <div className="fixed inset-0 bg-gray-900 backdrop-blur-md bg-opacity-50 flex justify-center items-center z-50">
+                        <div className="bg-white p-6 rounded-lg shadow-lg w-1/2">
+                            <h2 className="text-xl font-bold mb-4">Edit Stitcher Details</h2>
+                            <form className="grid grid-cols-2 gap-6 p-2 mb-4" onSubmit={handleUpdate}>
+                                {/* Stitcher Name */}
+                                <div className="flex flex-col">
+                                    <label className="text-gray-700 font-semibold">Stitcher Name</label>
+                                    <input type="text" className="border border-gray-300 bg-gray-100 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Stitcher Name" name="stitcher_name"
+                                        value={updateFormData.stitcher_name}
+                                        onChange={handleUpdateInputChange} />
+                                </div>
 
-                                    {/* Work Type */}
-                                    <div className="flex flex-col">
-                                        <label className="text-gray-700 font-semibold">Stitcher Type</label>
-                                        <select className="border border-gray-300 bg-gray-100 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500" name="type"
-                                            value={updateFormData.type}
-                                            onChange={handleUpdateInputChange}>
-                                            <option value="" className="text-gray-400">Stitcher Type</option>
-                                            {type.map((type, index) => (
-                                                <option key={index} value={type}>{type}</option>
-                                            ))}
-                                        </select>
-                                    </div>
+                                {/* Stitcher Address */}
+                                <div className="flex flex-col">
+                                    <label className="text-gray-700 font-semibold">Stitcher Address</label>
+                                    <input type="text" className="border border-gray-300 bg-gray-100 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Stitcher Address" name="stitcher_address"
+                                        value={updateFormData.stitcher_address}
+                                        onChange={handleUpdateInputChange} />
+                                </div>
 
-                                    {/* Remarks  */}
-                                    <div className="flex flex-col">
-                                        <label className="text-gray-700 font-semibold">
-                                            Remarks
-                                        </label>
-                                        <textarea
-                                            className="p-2 border bg-gray-100 border-gray-300 rounded-md"
+                                {/* Stitcher Code */}
+                                <div className="flex flex-col">
+                                    <label className="text-gray-700 font-semibold">Stitcher Code</label>
+                                    <input type="text" className="border border-gray-300 bg-gray-100 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Stitcher Code" name="stitcher_code"
+                                        value={updateFormData.stitcher_code}
+                                        onChange={handleUpdateInputChange} />
+                                </div>
 
-                                            placeholder="Enter Remarks here"
-                                            name="remarks"
-                                            id=""
-                                            onChange={handleUpdateInputChange}
-                                            value={updateFormData.remarks}
-                                        />
-                                    </div>
+                                {/* Work Type */}
+                                <div className="flex flex-col">
+                                    <label className="text-gray-700 font-semibold">Stitcher Type</label>
+                                    <select className="border border-gray-300 bg-gray-100 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500" name="type"
+                                        value={updateFormData.type}
+                                        onChange={handleUpdateInputChange}>
+                                        <option value="" className="text-gray-400">Stitcher Type</option>
+                                        {type.map((type, index) => (
+                                            <option key={index} value={type}>{type}</option>
+                                        ))}
+                                    </select>
+                                </div>
 
-                                    {/* Buttons aligned to the right */}
-                                    <div className="col-span-2 flex justify-end mt-4">
-                                        <button type="button" className="bg-gray-200 px-4 py-1 rounded hover:bg-gray-600 hover:text-white transition" onClick={() => setOpenEditModal(false)}>
-                                            Cancel
-                                        </button>
-                                        <button
-                                            type="submit"
-                                            className={`bg-gray-500 ml-2 px-6 py-2 rounded text-white font-semibold transition-all ease-in-out duration-300 transform ${updatesubmitting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-700'
-                                                }`}
-                                            disabled={updatesubmitting}
-                                        >
-                                            {updatesubmitting ? (
-                                                <div className="flex justify-center items-center space-x-2">
-                                                    <PuffLoader size={20} color="#fff" />
-                                                    <span>Updating...</span>
-                                                </div>
-                                            ) : (
-                                                'Update'
-                                            )}
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
+                                {/* Remarks  */}
+                                <div className="flex flex-col">
+                                    <label className="text-gray-700 font-semibold">
+                                        Remarks
+                                    </label>
+                                    <textarea
+                                        className="p-2 border bg-gray-100 border-gray-300 rounded-md"
+
+                                        placeholder="Enter Remarks here"
+                                        name="remarks"
+                                        id=""
+                                        onChange={handleUpdateInputChange}
+                                        value={updateFormData.remarks}
+                                    />
+                                </div>
+
+                                {/* Buttons aligned to the right */}
+                                <div className="col-span-2 flex justify-end mt-4">
+                                    <button type="button" className="bg-gray-200 px-4 py-1 rounded hover:bg-gray-600 hover:text-white transition" onClick={() => setOpenEditModal(false)}>
+                                        Cancel
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        className={`bg-blue-900 ml-2 px-6 py-2 rounded text-white font-semibold transition-all ease-in-out duration-300 transform ${updatesubmitting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blule-700'
+                                            }`}
+                                        disabled={updatesubmitting}
+                                    >
+                                        {updatesubmitting ? (
+                                            <span className="flex justify-center items-center space-x-2">
+                                                <PuffLoader size={20} color="#fff" />
+                                                <span>Updating...</span>
+                                            </span>
+                                        ) : (
+                                            'Update'
+                                        )}
+                                    </button>
+                                </div>
+                            </form>
                         </div>
-                    )}
+                    </div>
+                )}
 
 
-                    <form className="grid grid-cols-2 gap-6 p-5 rounded-lg mb-4 border border-gray-200 shadow-md" onSubmit={handleSubmit}>
-                        {/* Stitcher Name */}
-                        <div className="flex flex-col">
-                            <label className="text-gray-700 font-semibold">Stitcher Name</label>
-                            <input type="text" className="border border-gray-300 bg-gray-100 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Stitcher Name" name="stitcher_name"
-                                value={formData.stitcher_name}
-                                onChange={handleInputChange} />
-                        </div>
+                <form className="grid grid-cols-2 gap-6 p-5 rounded-lg mb-4 border border-gray-200 shadow-md" onSubmit={handleSubmit}>
+                    {/* Stitcher Name */}
+                    <div className="flex flex-col">
+                        <label className="text-gray-700 font-semibold">Stitcher Name</label>
+                        <input type="text" className="border border-gray-300 bg-gray-100 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Stitcher Name" name="stitcher_name"
+                            value={formData.stitcher_name}
+                            onChange={handleInputChange} />
+                    </div>
 
-                        {/* Stitcher Address */}
-                        <div className="flex flex-col">
-                            <label className="text-gray-700 font-semibold">Stitcher Address</label>
-                            <input type="text" className="border border-gray-300 bg-gray-100 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Stitcher Address" name="stitcher_address"
-                                value={formData.stitcher_address}
-                                onChange={handleInputChange} />
-                        </div>
+                    {/* Stitcher Address */}
+                    <div className="flex flex-col">
+                        <label className="text-gray-700 font-semibold">Stitcher Address</label>
+                        <input type="text" className="border border-gray-300 bg-gray-100 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Stitcher Address" name="stitcher_address"
+                            value={formData.stitcher_address}
+                            onChange={handleInputChange} />
+                    </div>
 
-                        {/* Stitcher Code */}
-                        <div className="flex flex-col">
-                            <label className="text-gray-700 font-semibold">Stitcher Code</label>
-                            <input type="text" className="border border-gray-300 bg-gray-100 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Stitcher Code" name="stitcher_code"
-                                value={formData.stitcher_code}
-                                onChange={handleInputChange} />
-                        </div>
+                    {/* Stitcher Code */}
+                    <div className="flex flex-col">
+                        <label className="text-gray-700 font-semibold">Stitcher Code</label>
+                        <input type="text" className="border border-gray-300 bg-gray-100 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Stitcher Code" name="stitcher_code"
+                            value={formData.stitcher_code}
+                            onChange={handleInputChange} />
+                    </div>
 
-                        {/* Work Type */}
-                        <div className="flex flex-col">
-                            <label className="text-gray-700 font-semibold">Stitcher Type</label>
-                            <select className="border border-gray-300 bg-gray-100 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500" name="type"
-                                value={formData.type}
-                                onChange={handleInputChange}>
-                                <option value="" className="text-gray-400">Stitcher Type</option>
-                                {type.map((type, index) => (
-                                    <option key={index} value={type}>{type}</option>
-                                ))}
-                            </select>
-                        </div>
+                    {/* Work Type */}
+                    <div className="flex flex-col">
+                        <label className="text-gray-700 font-semibold">Stitcher Type</label>
+                        <select className="border border-gray-300 bg-gray-100 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500" name="type"
+                            value={formData.type}
+                            onChange={handleInputChange}>
+                            <option value="" className="text-gray-400">Stitcher Type</option>
+                            {type.map((type, index) => (
+                                <option key={index} value={type}>{type}</option>
+                            ))}
+                        </select>
+                    </div>
 
-                        {/* Remarks  */}
-                        <div className="flex flex-col">
-                            <label className="text-gray-700 font-semibold">
-                                Remarks
-                            </label>
-                            <textarea
-                                className="p-2 border bg-gray-100 border-gray-300 rounded-md"
+                    {/* Remarks  */}
+                    <div className="flex flex-col">
+                        <label className="text-gray-700 font-semibold">
+                            Remarks
+                        </label>
+                        <textarea
+                            className="p-2 border bg-gray-100 border-gray-300 rounded-md"
 
-                                placeholder="Enter Remarks here"
-                                name="remarks"
-                                id=""
-                                onChange={handleInputChange}
-                                value={formData.remarks}
-                            />
-                        </div>
+                            placeholder="Enter Remarks here"
+                            name="remarks"
+                            id=""
+                            onChange={handleInputChange}
+                            value={formData.remarks}
+                        />
+                    </div>
 
-                        {/* Buttons aligned to the right */}
-                        <div className="col-span-2 flex justify-end mt-4">
-                            <button
-                                onClick={clearHandler}
-                                type="button" className="bg-gray-200 px-4 py-1 rounded hover:bg-gray-600 hover:text-white transition">
-                                Cancel
-                            </button>
-                            <button
-                                type="submit"
-                                className={`bg-blue-900 ml-2 px-6 py-2 rounded text-white font-semibold transition-all ease-in-out duration-300 transform ${submitting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700'
-                                    }`}
-                                disabled={submitting}
-                            >
-                                {submitting ? (
-                                    <div className="flex justify-center items-center space-x-2">
-                                        <PuffLoader size={20} color="#fff" />
-                                        <span>Saving...</span>
-                                    </div>
-                                ) : (
-                                    'Save'
-                                )}
-                            </button>
-                        </div>
-                    </form>
+                    {/* Buttons aligned to the right */}
+                    <div className="col-span-2 flex justify-end mt-4">
+                        <button
+                            onClick={clearHandler}
+                            type="button" className="bg-gray-200 px-4 py-1 rounded hover:bg-gray-600 hover:text-white transition">
+                            Cancel
+                        </button>
+                        <button
+                            type="submit"
+                            className={`bg-blue-900 ml-2 px-6 py-2 rounded text-white font-semibold transition-all ease-in-out duration-300 transform ${submitting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700'
+                                }`}
+                            disabled={submitting}
+                        >
+                            {submitting ? (
+                                <div className="flex justify-center items-center space-x-2">
+                                    <PuffLoader size={20} color="#fff" />
+                                    <span>Saving...</span>
+                                </div>
+                            ) : (
+                                'Save'
+                            )}
+                        </button>
+                    </div>
+                </form>
 
-                    <div className="mb-16">
-                        {/* <SmartTable headers={headers} data={enhancedData}
+                <div className="mt-10">
+                    {/* <SmartTable headers={headers} data={enhancedData}
                         // onRowClick={handleRowClick} 
                         /> */}
 
-                        <SmartTable
-                            headers={headers}
-                            data={enhancedData}
-                            searchTerm={searchTerm}
-                            setSearchTerm={setSearchTerm}
-                        />
 
-                        <Pagination setPage={setPage} totalPages={totalPages}
-                            page={page} setPageSize={setPageSize} pageSize={pageSize} />
+                    <div className="">
+                        <h3 className="text-2xl font-bold text-blue-900 pb-2 border-b">List Of Stitchers</h3>
                     </div>
+
+                    <SmartTable
+                        headers={headers}
+                        data={enhancedData}
+                        searchTerm={searchTerm}
+                        setSearchTerm={setSearchTerm}
+                        loading={paginationLoading}
+                        setLoading={setPaginationLoading}
+                    />
+
+                    <Pagination setPage={setPage} totalPages={totalPages}
+                        page={page} setPageSize={setPageSize} pageSize={pageSize} />
                 </div>
-            )}
+            </div>
+
+
         </div>
     );
 };

@@ -4,7 +4,7 @@ import { PuffLoader } from "react-spinners";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 
-const RawMaterialGroup = ({ setRawMaterialModel , setRefresh ,refresh }) => {
+const RawMaterialGroup = ({ setRawMaterialModel, setRefresh, refresh }) => {
     const [rawMaterialGroup, setRawMaterialGroup] = useState("");
     const [rawMaterialDescription, setRawMaterialDescription] = useState("");
     const [submitting, setSubmitting] = useState(false);
@@ -90,9 +90,8 @@ const RawMaterialGroup = ({ setRawMaterialModel , setRefresh ,refresh }) => {
                     </button>
                     <button
                         type="submit"
-                        className={`bg-gray-500 ml-2 px-6 py-2 rounded text-white font-semibold transition-all ease-in-out duration-300 transform ${
-                            submitting ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-700"
-                        }`}
+                        className={`bg-blue-900 ml-2 px-6 py-2 rounded text-white font-semibold transition-all ease-in-out duration-300 transform ${submitting ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-700"
+                            }`}
                         disabled={submitting}
                     >
                         {submitting ? (

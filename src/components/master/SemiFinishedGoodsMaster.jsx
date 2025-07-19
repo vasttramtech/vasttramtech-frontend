@@ -15,6 +15,7 @@ import ColorGroup from "./ColorGroup";
 import { BounceLoader, PuffLoader } from "react-spinners";
 import EditSemiFinishedGoodsMaster from "./EditModals/EditSemiFinishedGoodsMaster";
 import Pagination from "../utility/Pagination";
+import { Plus } from "lucide-react";
 
 const headers = ["document_id", "Id", "Semi-Finished Goods Id", "Group", "Semi-Finished Goods Name", "Description", "Unit", "View/Edit", "Pin"];
 
@@ -27,7 +28,7 @@ const SemiFinishedGoodsMaster = () => {
     const [semiGoodsModel, setSemiGoodsModel] = useState(false);
     const [unitModel, setUnitModel] = useState(false);
     const [colorModel, setColorModel] = useState(false);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [selectedRow, setSelectedRow] = useState(null);
     const [semiFinishedGoods, setSemiFinishedGoods] = useState([]);
     const [semiFinishedGoodsData, setSemiFinishedGoodsData] = useState([]);
@@ -107,6 +108,7 @@ const SemiFinishedGoodsMaster = () => {
             }
         } finally {
             setPaginationLoading(false);
+            setLoading(false);
         }
     };
 
@@ -278,108 +280,113 @@ const SemiFinishedGoodsMaster = () => {
         });
     };
 
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <BounceLoader color="#1e3a8a" />
+            </div>
+        )
+    }
+
+
     return (
-        <div className="py-2 bg-white rounded-lg relative">
-            {loading ? (
-                <div className="absolute inset-0 flex justify-center items-center mt-64 bg-opacity-50 bg-gray-200 z-10">
-                    <BounceLoader size={100} color={"#1e3a8a"} loading={loading} />
-                </div>
-            ) : (
-                <div>
-                    {/* <h1 className="text-3xl font-bold text-blue-900 mb-4">{title}</h1> */}
-                    <h1 className="text-3xl font-bold text-blue-900 mb-4">Semi Finished Goods Master</h1>
+        <div className="p-6 bg-white rounded-lg relative">
 
-                    {semiGoodsModel &&
-                        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                            <SemiFinishGoodsGroup setSemiGoodsModel={setSemiGoodsModel} setRefresh={setRefresh} refresh={refresh} />
+            <div>
+                {/* <h1 className="text-3xl font-bold text-blue-900 mb-4">{title}</h1> */}
+                <h1 className="text-2xl border-b pb-2 font-bold text-blue-900 mb-4">Semi Finished Goods Master</h1>
+
+                {semiGoodsModel &&
+                    <div className="fixed inset-0 flex items-center justify-center z-50 backdrop-blur-md bg-black bg-opacity-50">
+                        <SemiFinishGoodsGroup setSemiGoodsModel={setSemiGoodsModel} setRefresh={setRefresh} refresh={refresh} />
+                    </div>
+                }
+
+                {unitModel &&
+                    <div className="fixed inset-0 flex items-center justify-center z-50 backdrop-blur-md bg-black bg-opacity-50">
+                        <UnitGroup setUnitModel={setUnitModel} setRefresh={setRefresh} refresh={refresh} />
+                    </div>
+                }
+
+
+
+
+
+                {openEditModal && (
+                    <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-40 overflow-y-auto backdrop-blur-md">
+                        <div className="bg-white p-6 rounded-lg shadow-lg max-h-[90vh] overflow-y-auto w-[90%] max-w-4xl">
+                            <EditSemiFinishedGoodsMaster
+                                selectedRow={selectedRow}
+                                setOpenEditModal={setOpenEditModal}
+                                semiFinishedGoods={semiFinishedGoods}
+                                setSemiGoodsModel={setSemiGoodsModel}
+                                unit={unit}
+                                setUnitModel={setUnitModel}
+                                // setJobberModal={setJobberModal}
+                                fetchSemiFinishedGoodsData={fetchSemiFinishedGoodsData}
+                                colors={colors}
+                            />
                         </div>
-                    }
+                    </div>
+                )}
 
-                    {unitModel &&
-                        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                            <UnitGroup setUnitModel={setUnitModel} setRefresh={setRefresh} refresh={refresh} />
+                <form className="grid grid-cols-2 gap-6 p-5 rounded-lg mb-4 border border-gray-200 shadow-md" onSubmit={handleSubmit}>
+                    {/* Design Group */}
+                    <div className="flex flex-col">
+                        <label className="text-gray-700 font-semibold">Group</label>
+                        <div className="flex items-center gap-2">
+                            <select name="group" value={formData.group} className="flex-grow border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500" onChange={handleFormChange} >
+                                <option value="" disabled selected>{dataLoading ? "Loading..." : "Select Group"}</option>
+                                {semiFinishedGoods.map((group, index) => (
+                                    <option key={index} value={group?.id
+                                    }>{group?.group_name
+                                        }</option>
+                                ))}
+                            </select>
+                            <button
+                                type="button"
+                                className="flex items-center justify-center w-8 h-8 bg-blue-900 text-white rounded-full text-xl hover:bg-blue-700 transition-all duration-200 ease-in-out"
+                                onClick={() => setSemiGoodsModel(true)}
+                            >
+                                <Plus className="w-4 h-4 font-bold" />
+                            </button>
                         </div>
-                    }
+                    </div>
 
 
 
 
+                    {/* Semi-Finished Goods Name */}
+                    <div className="flex flex-col">
+                        <label className="text-gray-700 font-semibold">Semi-Finished Goods Name</label>
+                        <input type="text" name="semi_finished_goods_name" onChange={handleFormChange} value={formData.semi_finished_goods_name} className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Semi-Finished Goods Name" />
+                    </div>
 
-                    {openEditModal && (
-                        <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50 overflow-y-auto">
-                            <div className="bg-white p-6 rounded-lg shadow-lg max-h-[90vh] overflow-y-auto w-[90%] max-w-4xl">
-                                <EditSemiFinishedGoodsMaster
-                                    selectedRow={selectedRow}
-                                    setOpenEditModal={setOpenEditModal}
-                                    semiFinishedGoods={semiFinishedGoods}
-                                    setSemiGoodsModel={setSemiGoodsModel}
-                                    unit={unit}
-                                    setUnitModel={setUnitModel}
-                                    // setJobberModal={setJobberModal}
-                                    fetchSemiFinishedGoodsData={fetchSemiFinishedGoodsData}
-                                    colors={colors}
-                                />
-                            </div>
+                    {/* Unit */}
+                    <div className="flex flex-col">
+                        <label className="text-gray-700 font-semibold">Unit</label>
+                        <div className="flex items-center gap-2">
+                            <select value={formData.unit} name="unit" className="flex-grow border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500" onChange={(e) => { e.target.classList.add('text-black'); setFormData(prev => ({ ...prev, [e.target.name]: e.target.value })) }}>
+                                <option value="" disabled selected>Unit</option>
+                                {unit.map((unit) => (
+                                    <option key={unit.id} value={unit.id}>
+                                        {unit.
+                                            unit_name}
+                                    </option>
+                                ))}
+                            </select>
+                            <button
+                                type="button"
+                                className="flex items-center justify-center w-8 h-8 bg-blue-900 text-white rounded-full text-xl hover:bg-blue-700 transition"
+                                onClick={() => setUnitModel(true)}
+                            >
+                                <Plus className="w-4 h-4 font-bold" />
+                            </button>
                         </div>
-                    )}
+                    </div>
 
-                    <form className="grid grid-cols-2 gap-6 p-5 rounded-lg mb-4 border border-gray-200 shadow-md" onSubmit={handleSubmit}>
-                        {/* Design Group */}
-                        <div className="flex flex-col">
-                            <label className="text-gray-700 font-semibold">Group</label>
-                            <div className="flex items-center gap-2">
-                                <select name="group" value={formData.group} className="flex-grow border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500" onChange={handleFormChange} >
-                                    <option value="" disabled selected>{dataLoading ? "Loading..." : "Select Group"}</option>
-                                    {semiFinishedGoods.map((group, index) => (
-                                        <option key={index} value={group?.id
-                                        }>{group?.group_name
-                                            }</option>
-                                    ))}
-                                </select>
-                                <button
-                                    type="button"
-                                    className="flex items-center justify-center w-8 h-8 bg-blue-500 text-white rounded-full text-xl hover:bg-blue-700 transition"
-                                    onClick={() => setSemiGoodsModel(true)}
-                                >
-                                    +
-                                </button>
-                            </div>
-                        </div>
-
-
-
-
-                        {/* Semi-Finished Goods Name */}
-                        <div className="flex flex-col">
-                            <label className="text-gray-700 font-semibold">Semi-Finished Goods Name</label>
-                            <input type="text" name="semi_finished_goods_name" onChange={handleFormChange} value={formData.semi_finished_goods_name} className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="semi-Finished Goods Name" />
-                        </div>
-
-                        {/* Unit */}
-                        <div className="flex flex-col">
-                            <label className="text-gray-700 font-semibold">Unit</label>
-                            <div className="flex items-center gap-2">
-                                <select value={formData.unit} name="unit" className="flex-grow border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500" onChange={(e) => { e.target.classList.add('text-black'); setFormData(prev => ({ ...prev, [e.target.name]: e.target.value })) }}>
-                                    <option value="" disabled selected>Unit</option>
-                                    {unit.map((unit) => (
-                                        <option key={unit.id} value={unit.id}>
-                                            {unit.
-                                                unit_name}
-                                        </option>
-                                    ))}
-                                </select>
-                                <button
-                                    type="button"
-                                    className="flex items-center justify-center w-8 h-8 bg-blue-500 text-white rounded-full text-xl hover:bg-blue-700 transition"
-                                    onClick={() => setUnitModel(true)}
-                                >
-                                    +
-                                </button>
-                            </div>
-                        </div>
-
-                        {/* Price per unit */}
-                        {/* <div className="flex flex-col">
+                    {/* Price per unit */}
+                    {/* <div className="flex flex-col">
                             <label className="text-gray-700 font-semibold">Price per unit</label>
                             <input type="number" className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="semi-Finished Goods Name"
                                 name="pricePerUnit"
@@ -388,67 +395,66 @@ const SemiFinishedGoodsMaster = () => {
                             />
                         </div> */}
 
-                        {/* Description - Full width of Semi-Finished Goods Name + Unit */}
-                        <div className="flex flex-col">
-                            <label className="text-gray-700 font-semibold">Description</label>
-                            <textarea name="description" onChange={handleFormChange} value={formData.description} className="border border-gray-300 bg-gray-100 rounded-md p-2 h-40 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full" placeholder="Description"></textarea>
-                        </div>
-
-
-
-
-
-
-
-                        {/* Buttons */}
-                        <div className="col-span-2 flex justify-end mt-4">
-                            <button type="button"
-                                onClick={handleCancel}
-                                className="bg-gray-200 px-4 py-1 rounded hover:bg-gray-600 hover:text-white transition">
-                                Cancel
-                            </button>
-                            <button
-                                type="submit"
-                                className={`bg-blue-900 ml-2 px-6 py-2 rounded text-white font-semibold transition-all ease-in-out duration-300 transform ${submitting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700'
-                                    }`}
-                                disabled={submitting}
-                            >
-                                {submitting ? (
-                                    <div className="flex justify-center items-center space-x-2">
-                                        <PuffLoader size={20} color="#fff" />
-                                        <span>Saving...</span>
-                                    </div>
-                                ) : (
-                                    'Save'
-                                )}
-                            </button>
-                        </div>
-                    </form>
-                    <div className="mb-16">
-                        {paginationLoading ? (
-                            <div className="flex p-5 justify-center items-center space-x-2 mt-4 border border-gray-400 rounded-lg">
-                                <BounceLoader size={20} color="#1e3a8a" />
-                            </div>
-                        ) : (
-                            // <SmartTable headers={headers} data={enhancedData} />
-                            <SmartTable
-                                headers={headers}
-                                data={enhancedData}
-                                searchTerm={searchTerm}
-                                setSearchTerm={setSearchTerm}
-                            />
-                        )}
-
-                        <Pagination
-                            setPage={setPage}
-                            totalPages={totalPages}
-                            page={page}
-                            setPageSize={setPageSize}
-                            pageSize={pageSize}
-                        />
+                    {/* Description - Full width of Semi-Finished Goods Name + Unit */}
+                    <div className="flex flex-col">
+                        <label className="text-gray-700 font-semibold">Description</label>
+                        <textarea name="description" onChange={handleFormChange} value={formData.description} className="border border-gray-300 bg-gray-100 rounded-md p-2 h-40 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full" placeholder="Description"></textarea>
                     </div>
+
+
+
+
+
+
+
+                    {/* Buttons */}
+                    <div className="col-span-2 flex justify-end mt-4">
+                        <button type="button"
+                            onClick={handleCancel}
+                            className="bg-gray-200 px-4 py-1 rounded hover:bg-gray-600 hover:text-white transition">
+                            Cancel
+                        </button>
+                        <button
+                            type="submit"
+                            className={`bg-blue-900 ml-2 px-6 py-2 rounded text-white font-semibold transition-all ease-in-out duration-300 transform ${submitting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700'
+                                }`}
+                            disabled={submitting}
+                        >
+                            {submitting ? (
+                                <div className="flex justify-center items-center space-x-2">
+                                    <PuffLoader size={20} color="#fff" />
+                                    <span>Saving...</span>
+                                </div>
+                            ) : (
+                                'Save'
+                            )}
+                        </button>
+                    </div>
+                </form>
+                <div className="mt-10">
+
+                    <div className="">
+                        <h3 className="text-2xl font-bold text-blue-900 pb-2 border-b">List Of Semi Finished Goods</h3>
+                    </div>
+                    <SmartTable
+                        headers={headers}
+                        data={enhancedData}
+                        searchTerm={searchTerm}
+                        setSearchTerm={setSearchTerm}
+                        loading={paginationLoading}
+                        setLoading={setPaginationLoading}
+                    />
+
+                    <Pagination
+                        setPage={setPage}
+                        totalPages={totalPages}
+                        page={page}
+                        setPageSize={setPageSize}
+                        pageSize={pageSize}
+                    />
                 </div>
-            )}
+            </div>
+
         </div>
     );
 };

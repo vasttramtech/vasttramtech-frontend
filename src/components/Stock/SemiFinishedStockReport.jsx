@@ -23,7 +23,7 @@ const SemiFinishedStockReport = () => {
                 );
                 // console.log(response)
                 if (response.data?.data) {
-                    const data=response.data.data.filter(item=>item.qty>0);
+                    const data = response.data.data.filter(item => item.qty > 0);
                     setSemiFinishedGoods(data);
                 } else {
                     setError("No Semi Finished Goods data found.");
@@ -44,7 +44,7 @@ const SemiFinishedStockReport = () => {
 
     const handlePrint = () => {
         const printContent = document.getElementById("printable-content").innerHTML;
-    
+
         const printWindow = window.open('', '', 'height=800,width=1200');
         printWindow.document.write(`
             <html>
@@ -108,22 +108,24 @@ const SemiFinishedStockReport = () => {
         `);
         printWindow.document.close();
     };
-    
 
-    if (loading) return (
-        <div className="absolute inset-0 flex justify-center items-center bg-opacity-50 bg-gray-200 z-10">
-            <BounceLoader size={100} color={"#1e3a8a"} loading={loading} />
-        </div>
-    );
+
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <BounceLoader color="#1e3a8a" />
+            </div>
+        )
+    }
 
     if (error) return <div className="text-center text-red-500 mt-10">{error}</div>;
 
     return (
         <div className="w-4/5 mx-auto mt-6 p-6 bg-white shadow-lg rounded-2xl border border-gray-200">
             <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-semibold text-gray-800">Semi Finished Goods Stock</h2>
-                <button 
-                    onClick={handlePrint} 
+                <h2 className="text-xl font-bold text-blue-900">Semi Finished Goods Stock</h2>
+                <button
+                    onClick={handlePrint}
                     className="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition">
                     Print
                 </button>
@@ -151,7 +153,7 @@ const SemiFinishedStockReport = () => {
                                 <td className="border border-gray-300 px-4 py-2 text-center">{item?.semi_finished_goods_master?.semi_finished_goods_name || "N/A"}</td>
                                 <td className="border border-gray-300 px-4 py-2 text-center">{item?.color?.color_name || "N/A"}</td>
                                 <td className="border border-gray-300 px-4 py-2 text-center">
-                                    <div className="flex flex-wrap">
+                                    <div className="flex flex-wrap gap-1">
                                         {item.processes && item.processes.map((temp, idx) => (
                                             <div key={idx} className="bg-gray-300 rounded px-2 font-semibold">{temp?.processes}</div>
                                         ))}

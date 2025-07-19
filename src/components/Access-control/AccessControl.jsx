@@ -12,6 +12,7 @@ const AccessControl = () => {
   const navigate = useNavigate();
   const { token, designation } = useSelector((state) => state.auth);
   const { userList, load, error } = useSelector((state) => state.fetchData);
+  const [searchTerm, setSearchTerm] = useState("");
   //   console.log(token)
 
   useEffect(() => {
@@ -105,20 +106,20 @@ const AccessControl = () => {
   const headers = ["ID", "Name", "Email", "Designation", "Actions"];
 
   return (
-    <div className="relative p-6 bg-white rounded-lg shadow-md">
+    <div className="relative p-2 bg-white rounded-lg shadow-md">
       {loading || load ? (
         <div className="absolute inset-0 flex justify-center items-center mt-64 bg-opacity-50 bg-gray-200 z-10">
           <BounceLoader size={100} color={"#1e3a8a"} />
         </div>
       ) : (
         <>
-          <div className="flex justify-between items-center mb-6">
+          <div className="flex justify-between items-center mb-4">
             <h1 className="text-2xl font-bold text-blue-900">
               User Management
             </h1>
             <button
               onClick={() => navigate("/access-control/add-user")}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md shadow-md hover:bg-blue-700 transition flex items-center"
+              className="px-4 py-2 bg-blue-900 text-white rounded-md shadow-md hover:bg-blue-700 transition flex items-center font-semibold text-sm"
             >
               <span className="mr-2">+</span>
               Add User
@@ -129,6 +130,8 @@ const AccessControl = () => {
             headers={headers}
             data={users}
             onRowClick={handleRowClick}
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
           />
         </>
       )}

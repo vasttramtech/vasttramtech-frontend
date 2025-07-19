@@ -2,7 +2,7 @@ import { useState } from "react";
 
 const EditableDelete = ({ headers, data, onDataChange }) => {
   const [editedData, setEditedData] = useState([...data]);
-  const [editingRows, setEditingRows] = useState(new Set()); 
+  const [editingRows, setEditingRows] = useState(new Set());
   // Handle Delete Row
   const handleDelete = (index) => {
     const newData = editedData.filter((_, i) => i !== index);
@@ -36,10 +36,11 @@ const EditableDelete = ({ headers, data, onDataChange }) => {
   };
 
   return (
-    <div className="p-2 w-[90vw]">
+    <div className="p-2">
       {/* Table Container */}
-      <div className="rounded-xl overflow-x-auto">
-        <div className="max-h-[400px] overflow-y-auto">
+      <div className="rounded-xl px-2">
+        <div className="max-h-[400px] overflow-x-auto
+         ">
           <table className="w-full border-collapse border border-gray-300">
             {/* Table Header */}
             <thead>
@@ -62,58 +63,58 @@ const EditableDelete = ({ headers, data, onDataChange }) => {
             <tbody>
               {editedData.length > 0
                 ? editedData.map((item, rowIndex) => (
-                    <tr
-                      key={rowIndex}
-                      className="cursor-pointer hover:bg-gray-100 transition"
-                    >
-                      {Object.keys(item).map((key, colIndex) => (
-                        <td
-                          key={colIndex}
-                          className="px-4 py-2 text-center border border-gray-300"
-                        >
-                          {editingRows.has(rowIndex) ? (
-                            <input
-                              type="text"
-                              value={item[key]}
-                              onChange={(e) =>
-                                handleInputChange(rowIndex, key, e.target.value)
-                              }
-                              className="border border-gray-300 px-2 py-1 rounded w-full"
-                            />
-                          ) : (
-                            item[key]
-                          )}
-                        </td>
-                      ))}
-
-                      {/* Action Buttons */}
-                      <td className="px-4 py-2 text-center border border-gray-300">
-                        <span className="flex gap-2 justify-center">
-                          {editingRows.has(rowIndex) ? (
-                            <button
-                              className="px-2 py-1 bg-green-500 text-white rounded"
-                              onClick={handleUpdate}
-                            >
-                              Save
-                            </button>
-                          ) : (
-                            <button
-                              className="px-2 py-1 bg-yellow-500 text-white rounded"
-                              onClick={(e) => {e.preventDefault();toggleEdit(rowIndex)}}
-                            >
-                              Edit
-                            </button>
-                          )}
-                          <button
-                            className="px-2 py-1 bg-red-500 text-white rounded"
-                            onClick={(e) => {e.preventDefault();handleDelete(rowIndex)}}
-                          >
-                            Delete
-                          </button>
-                        </span>
+                  <tr
+                    key={rowIndex}
+                    className="cursor-pointer hover:bg-gray-100 transition"
+                  >
+                    {Object.keys(item).map((key, colIndex) => (
+                      <td
+                        key={colIndex}
+                        className="px-4 py-2 text-center border border-gray-300"
+                      >
+                        {editingRows.has(rowIndex) ? (
+                          <input
+                            type="text"
+                            value={item[key]}
+                            onChange={(e) =>
+                              handleInputChange(rowIndex, key, e.target.value)
+                            }
+                            className="border border-gray-300 px-2 py-1 rounded w-full"
+                          />
+                        ) : (
+                          item[key]
+                        )}
                       </td>
-                    </tr>
-                  ))
+                    ))}
+
+                    {/* Action Buttons */}
+                    <td className="px-4 py-2 text-center border border-gray-300">
+                      <span className="flex gap-2 justify-center">
+                        {editingRows.has(rowIndex) ? (
+                          <button
+                            className="px-2 py-1 bg-green-500 text-white rounded"
+                            onClick={handleUpdate}
+                          >
+                            Save
+                          </button>
+                        ) : (
+                          <button
+                            className="px-2 py-1 bg-yellow-500 text-white rounded"
+                            onClick={(e) => { e.preventDefault(); toggleEdit(rowIndex) }}
+                          >
+                            Edit
+                          </button>
+                        )}
+                        <button
+                          className="px-2 py-1 bg-red-500 text-white rounded"
+                          onClick={(e) => { e.preventDefault(); handleDelete(rowIndex) }}
+                        >
+                          Delete
+                        </button>
+                      </span>
+                    </td>
+                  </tr>
+                ))
                 : null}
             </tbody>
           </table>

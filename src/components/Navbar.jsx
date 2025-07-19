@@ -22,31 +22,37 @@ const Navbar = () => {
   };
 
   return (
-    <div className="flex justify-between items-center px-0 py-0 space-x-6 rounded-b-lg">
-      {/* Left Side - Vasttram Title */}
-      <h2 className="text-5xl font-extrabold text-blue-500 mb-0 font-serif tracking-wide">Vasttram</h2>
+    <div className="flex justify-between items-center px-6 py-3 bg-white shadow-sm rounded-b-lg">
+      {/* Left - Brand */}
+      <h2 className="text-3xl font-bold text-blue-500 font-serif tracking-wide">
+        Vasttram
+      </h2>
 
-      {/* Right Side - Account Options */}
-      <div className="flex items-center space-x-6 pr-4">
-        <div className="flex flex-col items-start space-y-1 cursor-pointer transition hover:text-blue-600">
-          <p className="text-base font-medium text-gray-800">Hi, {name}</p>
-          <p className="text-xs text-gray-500 self-center">{designation}</p>
+      {/* Right - User Section */}
+      <div className="flex items-center gap-5">
+        <div className="flex flex-col items-end text-right leading-tight">
+          <span className="text-sm font-medium text-gray-800">Hi, {name}</span>
+          <span className="text-xs text-gray-500">{designation}</span>
         </div>
 
+        {/* Profile Icon */}
         <img
           src={User}
-          className="w-8 h-8 object-cover rounded-full border-2 border-gray-300 shadow-sm cursor-pointer"
           alt="Profile"
+          className="w-9 h-9 rounded-full border border-gray-300 shadow-sm object-cover cursor-pointer transition hover:scale-105"
         />
-        {/* Logout Button */}
+
+        {/* Logout Icon */}
         <img
           src={Logout}
-          className="w-5 opacity-90 hover:opacity-100 transition cursor-pointer"
           alt="Logout"
+          title="Logout"
           onClick={handleLogout}
+          className="w-5 h-5 opacity-80 hover:opacity-100 transition cursor-pointer"
         />
       </div>
     </div>
+
   );
 };
 

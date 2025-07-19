@@ -5,6 +5,8 @@ import { PuffLoader, BounceLoader } from "react-spinners";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import AddKarigar from "../AddKarigar";
+import { MdCancel } from "react-icons/md";
+import { Plus } from "lucide-react";
 
 
 const EditSemiFinishedGoodsMaster = ({ selectedRow, setOpenEditModal, semiFinishedGoods, setSemiGoodsModel, unit, setUnitModel, fetchSemiFinishedGoodsData, colors }) => {
@@ -31,7 +33,7 @@ const EditSemiFinishedGoodsMaster = ({ selectedRow, setOpenEditModal, semiFinish
     };
 
 
- 
+
 
 
     useEffect(() => {
@@ -55,11 +57,11 @@ const EditSemiFinishedGoodsMaster = ({ selectedRow, setOpenEditModal, semiFinish
                         semi_finished_goods_name: data?.semi_finished_goods_name || "",
                         unit: data?.unit?.id || "",
                         description: data?.description || "",
-                      
+
                     };
 
                     setFormData(updatedFormData);
-                   
+
                 } else {
                     setError("No design data found.");
                 }
@@ -83,7 +85,7 @@ const EditSemiFinishedGoodsMaster = ({ selectedRow, setOpenEditModal, semiFinish
     const handleUpdate = async (e) => {
         e.preventDefault();
         setSubmitting(true);
-       
+
 
         const postData = {
             data: {
@@ -127,17 +129,17 @@ const EditSemiFinishedGoodsMaster = ({ selectedRow, setOpenEditModal, semiFinish
     // console.log("jobber: ", jobber)
 
     return (
-        <div className="bg-white p-6 rounded-lg shadow-lg w-full">
-            <div className="flex justify-between">
-                <h1>Edit Semi Finished Goods Master</h1>
-                <button onClick={() => setOpenEditModal(false)} className="text-gray-500 hover:text-red-700">
-                    ✖
+        <div className="  rounded-lg w-full z-30">
+            <div className="flex justify-between mb-4 border-b pb-2">
+                <h1 className="text-lg font-bold text-blue-900">Edit Semi Finished Goods Master</h1>
+                <button onClick={() => setOpenEditModal(false)} className="text-red-500 hover:text-red-700 hover:scale-105 duration-200 ease-in-out transition-all">
+                    <MdCancel className=" h-8 w-8" />
                 </button>
             </div>
 
-      
 
-            <form className="grid grid-cols-2 gap-6 p-2 mb-16" onSubmit={handleUpdate}>
+
+            <form className="grid grid-cols-2 gap-6 " onSubmit={handleUpdate}>
                 {/* Design Group */}
                 <div className="flex flex-col">
                     <label className="text-gray-700 font-semibold">Group</label>
@@ -152,15 +154,16 @@ const EditSemiFinishedGoodsMaster = ({ selectedRow, setOpenEditModal, semiFinish
                         </select>
                         <button
                             type="button"
-                            className="flex items-center justify-center w-8 h-8 bg-blue-500 text-white rounded-full text-xl hover:bg-blue-700 transition"
+                            className="flex items-center justify-center w-8 h-8 bg-blue-900 text-white rounded-full text-xl hover:bg-blue-700 transition"
                             onClick={() => setSemiGoodsModel(true)}
                         >
-                            +
+                            <Plus className="w-4 h-4" />
+
                         </button>
                     </div>
                 </div>
 
-           
+
 
 
                 {/* Semi-Finished Goods Name */}
@@ -184,15 +187,16 @@ const EditSemiFinishedGoodsMaster = ({ selectedRow, setOpenEditModal, semiFinish
                         </select>
                         <button
                             type="button"
-                            className="flex items-center justify-center w-8 h-8 bg-blue-500 text-white rounded-full text-xl hover:bg-blue-700 transition"
+                            className="flex items-center justify-center w-8 h-8 bg-blue-900 text-white rounded-full text-xl hover:bg-blue-700 transition"
                             onClick={() => setUnitModel(true)}
                         >
-                            +
+                            <Plus className="w-4 h-4" />
+
                         </button>
                     </div>
                 </div>
 
-              
+
 
                 {/* Description - Full width of Semi-Finished Goods Name + Unit */}
                 <div className="flex flex-col col-span-2">
@@ -209,7 +213,7 @@ const EditSemiFinishedGoodsMaster = ({ selectedRow, setOpenEditModal, semiFinish
                     </button>
                     <button
                         type="submit"
-                        className={`bg-gray-500 ml-2 px-6 py-2 rounded text-white font-semibold transition-all ease-in-out duration-300 transform ${submitting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-700'
+                        className={`bg-blue-900 ml-2 px-6 py-2 rounded text-white font-semibold transition-all ease-in-out duration-300 transform ${submitting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700'
                             }`}
                         disabled={submitting}
                     >
