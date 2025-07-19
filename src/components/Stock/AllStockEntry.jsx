@@ -160,7 +160,7 @@ const AllStockEntry = () => {
 
   const fetchStock = async () => {
     try {
-      setLoading(true);
+      setPaginationLoading(true);
 
       const params = {
         "pagination[page]": page,
@@ -201,7 +201,7 @@ const AllStockEntry = () => {
         color: item?.color?.color_name,
         entry_date: item?.entry_date,
         so_id: item?.so_id,
-        processes: <div className=" flex flex-wrap gap-1 rounded-lg p-1">
+        processes: <div className=" flex flex-wrap gap-1 justify-center rounded-lg p-1">
           {item?.processes?.map((process) => (
             <span key={process.id} className="bg-gray-200 rounded-md p-1 text-black" >{process.processes}</span>
           ))}
@@ -216,6 +216,7 @@ const AllStockEntry = () => {
         error?.response?.data?.error?.message || "Failed to fetch SFG stock."
       );
     } finally {
+      setPaginationLoading(false);
       setLoading(false);
     }
   };
@@ -260,8 +261,8 @@ const AllStockEntry = () => {
         data={stock}
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
-        loading={loading}
-        setLoading={setLoading}
+        loading={paginationLoading}
+        setLoading={setPaginationLoading}
       />
 
       <Pagination10

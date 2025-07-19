@@ -1,4 +1,4 @@
-import React, {  useState } from "react";
+import React, { useState } from "react";
 import AddBOMSection from "./AddBOMSection";
 import SFGDataTable from "../../master/component/SFGDataTable";
 import { UploadIcon } from "lucide-react";
@@ -43,12 +43,13 @@ const BOMSection = ({
   };
 
   return (
-    <div>
-      <div className="fixed top-11 w-[80vw] max-h-[90vh] overflow-y-auto z-10 bg-gray-200 border border-gray-300 rounded-xl p-4">
+    <div className="fixed inset-0 animate-fade-in bg-gray-900 backdrop-blur-md bg-opacity-50 flex justify-center items-center z-50">
+
+      <div className="fixed top-11 w-[80vw] max-h-[90vh] overflow-y-scroll overflow-x-hidden z-10 bg-gray-200 border border-gray-300 rounded-xl p-4">
         <div className="flex justify-between my-1 items-center">
-          <h3 className="text-2xl font-bold">Add Bom</h3>
+          <h3 className="text-2xl text-blue-900 font-bold">Add Bom</h3>
           <p
-            className="text-xl px-2 border bg-red-600 rounded text-white hover:bg-red-500 cursor-pointer"
+            className="text-xl px-2 border bg-red-700  text-white rounded-full duration-200 ease-in-out transition-all hover:bg-red-500 cursor-pointer"
             onClick={() => {
               setShowAddBomModal(!showAddBomModal);
               setFinalSFGData([]);
@@ -89,7 +90,7 @@ const BOMSection = ({
             onClick={handleAddBOm}
           >
 
-            Add This BOMs <span><UploadIcon/></span>
+            Add This BOMs <span><UploadIcon /></span>
           </button>
         </div>
       </div>

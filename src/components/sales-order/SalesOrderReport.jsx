@@ -9,6 +9,7 @@ import { BounceLoader } from "react-spinners";
 import { useNavigate } from "react-router-dom";
 import Pagination from "../utility/Pagination";
 import { useSelector } from "react-redux";
+import Pagination10 from "../utility/Pagination10";
 const SalesOrderReport = () => {
   const [salesDatas, setSalesData] = useState([]);
   const [headers] = useState([
@@ -399,16 +400,17 @@ const SalesOrderReport = () => {
     return new Date(date).toLocaleDateString(undefined, options);
   };
 
-  if (loading)
-    return (
-      <div className="absolute inset-0 flex justify-center items-center mt-64 bg-opacity-50 bg-gray-200 z-10">
-        <BounceLoader size={100} color={"#1e3a8a"} loading={loading} />
-      </div>
-    );
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <BounceLoader color="#1e3a8a" />
+      </div>
+    )
+  }
   return (
-    <div>
-      <h1 className="text-3xl font-bold text-blue-900 mb-4">
+    <div className="rounded-lg bg-white p-6">
+      <h1 className="text-2xl font-bold text-blue-900 mb-4 pb-2 border-b">
         Sales Order Report
       </h1>
       {DisplayEditModal && (
@@ -424,32 +426,24 @@ const SalesOrderReport = () => {
           </div>
         </div>
       )}
-      <>
-        {paginationLoading ? (
-          <div className="flex p-5 justify-center items-center space-x-2 mt-4 border border-gray-400 rounded-lg">
-            <BounceLoader size={20} color="#1e3a8a" />
-          </div>
-        ) : updateData && (
-          <>
-            {/* <SmartTable headers={headers} data={updateData} /> */}
-            <SmartTable
-              headers={headers}
-              data={updateData}
-              searchTerm={searchTerm}
-              setSearchTerm={setSearchTerm}
-            />
+
+      <SmartTable
+        headers={headers}
+        data={updateData}
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        loading={paginationLoading}
+        setLoading={setPaginationLoading}
+      />
 
 
-            <Pagination
-              setPage={setPage}
-              totalPages={totalPages}
-              page={page}
-              setPageSize={setPageSize}
-              pageSize={pageSize}
-            />
-          </>
-        )}
-      </>
+      <Pagination10
+        setPage={setPage}
+        totalPages={totalPages}
+        page={page}
+        setPageSize={setPageSize}
+        pageSize={pageSize}
+      />
     </div>
   );
 };

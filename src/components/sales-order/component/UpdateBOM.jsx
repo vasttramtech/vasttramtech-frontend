@@ -7,6 +7,7 @@ import SelectionTable from "../../../smartTable/SelectionTable";
 import SelectedJobbersTable from "./SelectedJobbersTable";
 import SelectedRawMaterialsTable from "./SelectedRawMaterialsTable";
 import { GrUpdate } from "react-icons/gr";
+import { MdCancel } from "react-icons/md";
 
 const rawmaterialHeader = [
   "Item Name",
@@ -175,62 +176,62 @@ const UpdateBOM = ({
   // };
 
   // Raw Material Selection Functions
- 
-    const sfgDataHandler = (event) => {
-  event.preventDefault();
-  const { name, value } = event.target;
 
-  // Convert numeric fields
-  const numericValue = name === "sfg_qty" ? parseFloat(value) || 0 : value;
+  const sfgDataHandler = (event) => {
+    event.preventDefault();
+    const { name, value } = event.target;
 
-  if (name === "sfg_group") {
-    setSfgData({
-      ...SfgData,
-      [name]: value,
-      sfg_material: "",
-      sfg_color1: "",
-      sfg_qty: 0,
-      sfg_description: "",
-    });
-  } else if (name === "sfg_material") {
-    setSfgData({
-      ...SfgData,
-      [name]: value,
-      sfg_color1: "",
-      sfg_qty: 0,
-    });
-  } else if (name === "sfg_color") {
-    setSfgData({
-      ...SfgData,
-      [name]: value,
-      sfg_qty: 0,
-    });
-  } else if (name === "sfg_qty") {
-    const newQty = parseFloat(value) || 0;
+    // Convert numeric fields
+    const numericValue = name === "sfg_qty" ? parseFloat(value) || 0 : value;
 
-    // Calculate ratio-based updated RM list
-    const updatedRM = finalSelectedRawMaterials.map((rm) => {
-      // Assume we store the initial ratio when first added
-      const initialRatio = rm.Qty / (SfgData.sfg_qty || 1); // fallback for 0
+    if (name === "sfg_group") {
+      setSfgData({
+        ...SfgData,
+        [name]: value,
+        sfg_material: "",
+        sfg_color1: "",
+        sfg_qty: 0,
+        sfg_description: "",
+      });
+    } else if (name === "sfg_material") {
+      setSfgData({
+        ...SfgData,
+        [name]: value,
+        sfg_color1: "",
+        sfg_qty: 0,
+      });
+    } else if (name === "sfg_color") {
+      setSfgData({
+        ...SfgData,
+        [name]: value,
+        sfg_qty: 0,
+      });
+    } else if (name === "sfg_qty") {
+      const newQty = parseFloat(value) || 0;
 
-      const updatedQty = initialRatio * newQty;
-      const updatedTotal = updatedQty * rm.price_per_unit;
+      // Calculate ratio-based updated RM list
+      const updatedRM = finalSelectedRawMaterials.map((rm) => {
+        // Assume we store the initial ratio when first added
+        const initialRatio = rm.Qty / (SfgData.sfg_qty || 1); // fallback for 0
 
-      return {
-        ...rm,
-        Qty: parseFloat(updatedQty.toFixed(2)),
-        Total: parseFloat(updatedTotal.toFixed(2)),
-      };
-    });
+        const updatedQty = initialRatio * newQty;
+        const updatedTotal = updatedQty * rm.price_per_unit;
 
-    // Update both SfgData and raw materials
-    setSfgData({ ...SfgData, sfg_qty: newQty });
-    setFinalSelectedRawMaterials(updatedRM);
-  } else {
-    setSfgData({ ...SfgData, [name]: value });
-  }
-};
- 
+        return {
+          ...rm,
+          Qty: parseFloat(updatedQty.toFixed(2)),
+          Total: parseFloat(updatedTotal.toFixed(2)),
+        };
+      });
+
+      // Update both SfgData and raw materials
+      setSfgData({ ...SfgData, sfg_qty: newQty });
+      setFinalSelectedRawMaterials(updatedRM);
+    } else {
+      setSfgData({ ...SfgData, [name]: value });
+    }
+  };
+
   function handleSaveRawMaterialSelection() {
     try {
       const selectedIds = new Set(
@@ -266,10 +267,10 @@ const UpdateBOM = ({
       finalSelectedRawMaterials.map((row) =>
         row.id === id
           ? {
-              ...row,
-              Qty: newQty,
-              Total: newQty * (row.price_per_unit || 0),
-            }
+            ...row,
+            Qty: newQty,
+            Total: newQty * (row.price_per_unit || 0),
+          }
           : row
       )
     );
@@ -321,9 +322,9 @@ const UpdateBOM = ({
       finalSelectedJobbers.map((row) =>
         row.id === id
           ? {
-              ...row,
-              Rate: newRate,
-            }
+            ...row,
+            Rate: newRate,
+          }
           : row
       )
     );
@@ -334,9 +335,9 @@ const UpdateBOM = ({
       finalSelectedJobbers.map((row) =>
         row.id === id
           ? {
-              ...row,
-              jobber_description: value,
-            }
+            ...row,
+            jobber_description: value,
+          }
           : row
       )
     );
@@ -573,17 +574,17 @@ const UpdateBOM = ({
     <div>
       {/* Raw Material Selection Modal */}
       {displayRawMaterialModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50">
+        <div className="fixed inset-0 bg-gray-900 backdrop-blur-md bg-opacity-50 flex justify-center items-center z-50 animate-fade-in">
           <div className="relative w-[90vw] bg-gray-200 border shadow-2xl p-4 rounded-lg">
             <button
-              className="absolute top-2 right-2 text-gray-700 hover:text-red-500 text-2xl font-bold"
+              className="absolute top-2 right-2 text-red-700 hover:text-red-500 hover:scale-105 transition-all ease-in-out duration-200 text-2xl font-bold"
               onClick={() => setDisplayRawMaterialModal(false)}
             >
-              ✖
+              <MdCancel className="w-8 h-8" />
             </button>
 
-            <div className="mt-8">
-              <h2 className="text-xl font-bold mb-4 text-center">
+            <div className="">
+              <h2 className="text-xl font-bold text-blue-900 pb-2 border-b border-gray-300 mb-4 text-center">
                 Select Raw Materials
               </h2>
               <SelectionTable
@@ -599,7 +600,7 @@ const UpdateBOM = ({
             <div className="flex justify-center items-center mt-4">
               <button
                 type="button"
-                className="bg-gray-400 px-4 py-1 rounded hover:bg-gray-300"
+                className="bg-blue-900 px-4 py-1 rounded hover:bg-blue-700 text-white"
                 onClick={handleSaveRawMaterialSelection}
               >
                 Add
@@ -611,17 +612,17 @@ const UpdateBOM = ({
 
       {/* Jobber Selection Modal */}
       {displayJobberModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50">
+        <div className="fixed animate-fade-in inset-0 bg-gray-900 backdrop-blur-md bg-opacity-50 flex justify-center items-center z-50">
           <div className="relative w-[90vw] bg-gray-200 border shadow-2xl p-4 rounded-lg">
             <button
-              className="absolute top-2 right-2 text-gray-700 hover:text-red-500 text-2xl font-bold"
+              className="absolute top-2 right-2 text-red-700 hover:text-red-500 hover:scale-105 transition-all ease-in-out duration-200 text-2xl font-bold"
               onClick={() => setDisplayJobberModal(false)}
             >
-              ✖
+              <MdCancel className="w-8 h-8" />
             </button>
 
-            <div className="mt-8">
-              <h2 className="text-xl font-bold mb-4 text-center">
+            <div className=" ">
+              <h2 className="text-blue-900 pb-2 border-b border-gray-300 text-xl font-bold mb-4 text-center">
                 Select Jobbers
               </h2>
               <SelectionTable
@@ -637,7 +638,7 @@ const UpdateBOM = ({
             <div className="flex justify-center items-center mt-4">
               <button
                 type="button"
-                className="bg-gray-400 px-4 py-1 rounded hover:bg-gray-300"
+                className="bg-blue-900 px-4 py-1 rounded hover:bg-blue-700 text-white"
                 onClick={handleSaveJobberSelection}
               >
                 Add
@@ -647,10 +648,6 @@ const UpdateBOM = ({
         </div>
       )}
 
-      <div className="flex items-center gap-2">
-        <p className="text-xl font-semibold">Semi Finished Goods Master </p>
-     
-      </div>
 
       {sfgLoader ? (
         <div className="flex h-[90vh] justify-center items-center border border-gray-300 shadow-xl p-5 rounded-xl">
@@ -658,7 +655,7 @@ const UpdateBOM = ({
         </div>
       ) : (
         <>
-          <div className="mt-2 grid grid-cols-2 gap-6 p-5 border bg-white border-gray-300 shadow-sm rounded-xl">
+          <div className="mt-2 grid grid-cols-2 gap-6 bg-white  rounded-xl">
             {/* SFG Group */}
             <div className="flex flex-col">
               <FormLabel title={"SFG Group"} />
@@ -724,7 +721,7 @@ const UpdateBOM = ({
                   colors.length > 0 &&
                   colors.map((item, idx) => (
                     <option key={idx} value={item.id}>
-                     {item.color_id} - {item.color_name}
+                      {item.color_id} - {item.color_name}
                     </option>
                   ))}
               </select>
@@ -740,7 +737,7 @@ const UpdateBOM = ({
                 name="sfg_qty"
                 onChange={sfgDataHandler}
                 value={SfgData.sfg_qty}
-                readOnly={SavedSfgData.fromStock === true} 
+                readOnly={SavedSfgData.fromStock === true}
               />
             </div>
 
@@ -780,11 +777,11 @@ const UpdateBOM = ({
             </div>
 
             {/* Raw Materials Section */}
-            <div className="w-full col-span-2 bg-gray-300 p-2 rounded-md">
+            <div className="w-full col-span-2 border border-gray-300 bg-blue-100 shadow-lg p-2 rounded-md">
               {finalSelectedRawMaterials &&
                 finalSelectedRawMaterials.length > 0 && (
-                  <div className="col-span-2 flex flex-col justify-center items-center mb-4">
-                    <h3 className="text-lg font-semibold mb-2">
+                  <div className="col-span-2 flex flex-col mb-4">
+                    <h3 className="text-lg font-bold text-blue-900 mb-2">
                       Selected Raw Materials
                     </h3>
                     <SelectedRawMaterialsTable
@@ -795,12 +792,12 @@ const UpdateBOM = ({
                     />
                   </div>
                 )}
-                
+
 
               {/* Jobbers Section */}
               {finalSelectedJobbers && finalSelectedJobbers.length > 0 && (
-                <div className="col-span-2 flex flex-col justify-center items-center">
-                  <h3 className="text-lg font-semibold mb-2">
+                <div className="col-span-2 flex flex-col mb-4">
+                  <h3 className="text-lg font-bold text-blue-900 mb-2">
                     Selected Jobbers
                   </h3>
                   <SelectedJobbersTable
@@ -817,29 +814,29 @@ const UpdateBOM = ({
 
           <div className="flex justify-between items-center px-10">
 
-          {/* Total Cost */}
-          <div className="flex flex-col w-1/3 mt-2">
-            <label className="text-blue-700 font-semibold">Total Cost</label>
-            <input
-              value={SfgData.sfg_total_cost}
-              className="p-2 border bg-gray-100 border-gray-300 rounded-md"
-              type="text"
-              placeholder="0.0"
-              name="sfg_total_cost"
-              disabled
-            />
+            {/* Total Cost */}
+            <div className="flex flex-col w-1/3 mt-2">
+              <label className="text-blue-700 font-semibold">Total Cost</label>
+              <input
+                value={SfgData.sfg_total_cost}
+                className="p-2 border bg-gray-100 border-gray-300 rounded-md"
+                type="text"
+                placeholder="0.0"
+                name="sfg_total_cost"
+                disabled
+              />
+            </div>
+
+            <button
+              type="button"
+              className="bg-blue-900 hover:bg-blue-800 flex items-center gap-2 px-4 py-3  text-center rounded-md text-white font-semibold text-sm"
+              onClick={(event) => updateSFGdata(event)}
+            >
+              Update <GrUpdate className="text-sm" />
+            </button>
+
           </div>
 
-             <button
-          type="button"
-          className="bg-blue-900 hover:bg-blue-800 flex items-center gap-2 px-4 py-3  text-center rounded-md text-white font-semibold text-sm"
-          onClick={(event) => updateSFGdata(event)}
-        >
-          Update <GrUpdate className="text-sm" />
-        </button>
-
-          </div>
-        
         </>
       )}
     </div>

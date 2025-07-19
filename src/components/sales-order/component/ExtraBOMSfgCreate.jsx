@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { BounceLoader, PuffLoader } from "react-spinners";
 import SmartTable2 from "../../../smartTable/SmartTable2";
 import { toast } from "react-toastify";
+import { MdCancel } from "react-icons/md";
 
 const SelectSOTable = ({
   NoOfColumns,
@@ -50,12 +51,12 @@ const SelectSOTable = ({
           Processes:
             processes?.length > 0 ? (
               <div
-                className="border rounded px-2 py-1 w-full flex flex-col gap-2"
+                className=" bg-blue-50 rounded px-2 py-1 w-full flex flex-col gap-2"
                 defaultValue="placeholder"
               >
-            
+
                 {processes.map((process, index) => (
-                  <span key={index} className=" font-semibold text-green-700 border-b border-gray-200">
+                  <span key={index} className=" font-semibold text-green-700 border-b border-gray-300">
                     {process}
                   </span>
                 ))}
@@ -90,19 +91,19 @@ const SelectSOTable = ({
   }, [data, selectedSFG, searchTerm]);
 
   return (
-    <div className="p-2 w-full">
+    <div className=" w-full">
       {/* Search & Filter Section */}
-      <div className="flex justify-between items-center space-x-4 mb-4">
-        <h3 className="text-xl font-semibold">Select SFG</h3>
+      <div className="flex justify-between items-center space-x-4 mb-4 pb-2 border-b border-gray-300">
+        <h3 className="text-xl font-bold text-blue-900">Select SFG</h3>
       </div>
 
       {/* Table Section */}
       <SmartTable2 data={tableData} headers={updatedHeader} />
 
-      <div className="mt-4 text-center">
+      <div className="mt-2 text-center">
         <button
           onClick={onAdd}
-          className="px-6 py-2 bg-blue-600 text-white rounded-full"
+          className="px-6 py-2 bg-blue-900 hover:bg-blue-700 transition-all ease-in-out duration-200 text-white rounded-full"
         >
           Add
         </button>
@@ -235,7 +236,7 @@ const SelectSOTableJobber = ({
       <div className="mt-4 text-center">
         <button
           onClick={handleAddSelectedJobbers}
-          className="px-6 py-2 bg-blue-600 text-white rounded-full"
+          className="px-6 py-2 bg-blue-900 hover:bg-blue-700 transition-all ease-in-out duration-200 text-white rounded-full"
         >
           Add Selected Jobbers
         </button>
@@ -400,17 +401,17 @@ const ExtraBOMSfgCreate = ({
             qty: selectedSFG.addQty,
             total_price: Number(
               Number(selectedSFG.addQty * finalselectedSFG.price_per_unit) +
-                Number(jobberCost)
+              Number(jobberCost)
             ),
             jobber_master_sfg:
               selectJobbers.length > 0
                 ? selectJobbers.map((jobber) => ({
-                    jobber_master: jobber.jobberId,
-                    jobber_rate: jobber.rate,
-                    jobber_description: jobber.note,
-                    jobber_work_type: jobber.workType,
-                    completed: "Incomplete",
-                  }))
+                  jobber_master: jobber.jobberId,
+                  jobber_rate: jobber.rate,
+                  jobber_description: jobber.note,
+                  jobber_work_type: jobber.workType,
+                  completed: "Incomplete",
+                }))
                 : [],
             stock_status: true,
             fromStock: true,
@@ -428,7 +429,7 @@ const ExtraBOMSfgCreate = ({
     const data = {
       data: {
         id: finalselectedSFG.id,
-        redact_qty: (selectedSFG.addQty)*(SalessorderQty),
+        redact_qty: (selectedSFG.addQty) * (SalessorderQty),
       },
     };
 
@@ -451,7 +452,7 @@ const ExtraBOMSfgCreate = ({
         qty: Number(selectedSFG.addQty),
         total_price: Number(
           Number(selectedSFG.addQty * finalselectedSFG.price_per_unit) +
-            Number(jobberCost)
+          Number(jobberCost)
         ),
         sfg_description: "",
         raw_material_bom: [],
@@ -498,48 +499,35 @@ const ExtraBOMSfgCreate = ({
   };
 
   return (
-    <div>
+    <div className="">
       {loading ? (
         <div className="absolute inset-0 flex justify-center items-center bg-opacity-70 bg-white z-10 rounded-2xl">
           <BounceLoader size={80} color="#1e3a8a" loading={loading} />
         </div>
       ) : (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full p-8 relative animate-slide-in">
+        <div className="fixed animate-fade-in inset-0 z-40 flex items-center justify-center max-h-screen bg-opacity-50 backdrop-blur-md overflow-y-auto bg-gray-900">
+          <div className=" rounded-2xl shadow-2xl bg-white max-w-4xl w-full p-8 relative h-4/5 overflow-y-auto animate-slide-in">
             {/* Close Button */}
             <button
               onClick={onClose}
-              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 transition duration-200"
+              className="absolute right-10 text-red-500 hover:text-red-700 transition-all duration-200"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={2}
-                stroke="currentColor"
-                className="w-6 h-6"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
+              <MdCancel className="w-8 h-8" />
             </button>
 
-            <h2 className="text-3xl font-bold text-gray-800 mb-6 border-b pb-4">
+            <h2 className="text-2xl font-bold text-blue-900 mb-4 border-b pb-2">
               Add SFG from Stock
             </h2>
 
             {/* Table visibility toggling */}
             {displayModalSfg && (
-              <div className="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-60">
+              <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50 animate-fade-in">
                 <div className="relative w-[90vw] bg-gray-200 border shadow-2xl p-4 rounded-lg">
                   <button
-                    className="absolute top-2 right-2 text-gray-700 hover:text-red-500 text-2xl font-bold"
+                    className="absolute top-2 right-2 text-red-700 hover:text-red-500 hover:scale-105 transition-all ease-in-out  text-2xl font-bold"
                     onClick={() => setDisplayModalSfg(false)}
                   >
-                    ✖
+                    <MdCancel className="w-8 h-8" />
                   </button>
 
                   <SelectSOTable
@@ -576,43 +564,42 @@ const ExtraBOMSfgCreate = ({
               </div>
             ) : (
               // Display selected SFG details here
-              <div className="space-y-4 mt-8">
-                <h3 className="text-xl font-semibold text-gray-800">
+              <div className="space-y-2 mt-2">
+                <h3 className=" font-semibold text-gray-800">
                   Selected SFG:
                 </h3>
-                <div className="overflow-x-auto bg-gray-50 shadow-lg rounded-lg">
-                  <table className="min-w-full table-auto">
+                <div className="overflow-x-auto bg-white shadow-xl rounded-2xl ring-1 ring-gray-200">
+                  <table className="min-w-full table-auto rounded-2xl">
                     <thead>
-                      <tr className="bg-gray-200 text-gray-600 text-sm font-medium">
-                        <th className="px-6 py-3 text-left">Item Name</th>
-                        <th className="px-6 py-3 text-left">Color</th>
-                        <th className="px-6 py-3 text-left">Available Stock</th>
-                        <th className="px-6 py-3 text-left">Quantity</th>
-                        <th className="px-6 py-3 text-left">Processes</th>
+                      <tr className="bg-blue-100 text-gray-900 text-base font-bold ">
+                        <th className="px-6 py-4 text-left rounded-tl-2xl">Item Name</th>
+                        <th className="px-6 py-4 text-left">Color</th>
+                        <th className="px-6 py-4 text-left">Available Stock</th>
+                        <th className="px-6 py-4 text-left">Quantity</th>
+                        <th className="px-6 py-4 text-left rounded-tr-2xl">Processes</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr className="border-t border-gray-200">
-                        <td className="px-6 py-4 text-gray-800">
+                      <tr className="border-t border-gray-100 hover:bg-gray-50 transition-colors duration-200">
+                        <td className="px-6 py-4 text-gray-800 font-medium">
                           {selectedSFG["Item Name"]}
                         </td>
-                        <td className="px-6 py-4 text-gray-800">
+                        <td className="px-6 py-4 text-gray-700">
                           {selectedSFG.Color}
                         </td>
-                        <td className="px-6 py-4 text-gray-800">
+                        <td className="px-6 py-4 text-gray-700 font-semibold">
                           {selectedSFG.AvailableStock}
                         </td>
-                        <td className="px-6 py-4 text-gray-800">
+                        <td className="px-6 py-4 text-gray-700 font-semibold">
                           {selectedSFG.addQty}
                         </td>
                         <td className="px-6 py-4 text-gray-800">
-                          <div
-                            className="w-full border rounded flex flex-col gap-2 px-2 py-1 bg-gray-100 text-gray-700"
-                            defaultValue="placeholder"
-                          >
-                           
+                          <div className="flex flex-wrap gap-2">
                             {selectedSFG.processes.map((process, index) => (
-                              <span key={index} className=" font-semibold text-green-700" >
+                              <span
+                                key={index}
+                                className="inline-flex items-center px-3 py-1 rounded-full bg-green-100 text-green-800 text-sm font-semibold shadow-sm border border-green-200"
+                              >
                                 {process}
                               </span>
                             ))}
@@ -622,6 +609,7 @@ const ExtraBOMSfgCreate = ({
                     </tbody>
                   </table>
                 </div>
+
               </div>
             )}
 
@@ -640,12 +628,15 @@ const ExtraBOMSfgCreate = ({
               <div className="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-60">
                 <div className="relative w-[90vw] bg-gray-200 border shadow-2xl p-4 rounded-lg">
                   <button
-                    className="absolute top-2 right-2 text-gray-700 hover:text-red-500 text-2xl font-bold"
+                    className="absolute right-5 text-red-700 hover:text-red-500 hover:scale-105 transition-all ease-in-out  text-2xl font-bold"
                     onClick={() => setDisplayModalJobber(false)}
                   >
-                    ✖
+                    <MdCancel className="w-8 h-8" />
                   </button>
 
+                  <h2 className="text-xl text-blue-900 pb-2 border-b border-gray-300 font-bold mb-4">
+                    Select Jobbers
+                  </h2>
                   <SelectSOTableJobber
                     NoOfColumns={headersForTableJobber.length}
                     data={jobber}
@@ -659,35 +650,36 @@ const ExtraBOMSfgCreate = ({
             )}
 
             {selectJobbers.length > 0 && (
-              <div className="mt-6 p-4 bg-gray-100 rounded-lg shadow-md">
-                <h2 className="text-lg font-semibold mb-4">Selected Jobbers</h2>
-                <table className="w-full text-left border-collapse">
-                  <thead>
-                    <tr>
-                      <th className="border-b py-2 px-4">Jobber Name</th>
-                      <th className="border-b py-2 px-4">Work Type</th>
-                      <th className="border-b py-2 px-4">GSTIN</th>
-                      <th className="border-b py-2 px-4">Rate</th>
-                      <th className="border-b py-2 px-4">Note</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {selectJobbers.map((jobber, index) => (
-                      <tr key={jobber.jobberId} className="hover:bg-gray-200">
-                        <td className="border-b py-2 px-4">
-                          {jobber.JobberName}
-                        </td>
-                        <td className="border-b py-2 px-4">
-                          {jobber.workType}
-                        </td>
-                        <td className="border-b py-2 px-4">{jobber.gstin}</td>
-                        <td className="border-b py-2 px-4">{jobber.rate}</td>
-                        <td className="border-b py-2 px-4">{jobber.note}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+              <div className="overflow-auto">
+                <h2 className="font-semibold mb-4 text-gray-800">Selected Jobbers:</h2>
+                <div className="overflow-x-auto my-4 bg-white shadow-lg rounded-2xl ring-1 ring-gray-200">
+                  <div className="max-h-72 overflow-y-auto"> {/* Adjust max-h as needed */}
+                    <table className="min-w-full">
+                      <thead className="sticky top-0 bg-blue-100">
+                        <tr className="text-gray-900 font-bold">
+                          <th className="border-b py-2 px-4">Jobber Name</th>
+                          <th className="border-b py-2 px-4">Work Type</th>
+                          <th className="border-b py-2 px-4">GSTIN</th>
+                          <th className="border-b py-2 px-4">Rate</th>
+                          <th className="border-b py-2 px-4">Note</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {selectJobbers.map((jobber, index) => (
+                          <tr key={jobber.jobberId} className="hover:bg-gray-200">
+                            <td className="border-b py-2 px-4">{jobber.JobberName}</td>
+                            <td className="border-b py-2 px-4">{jobber.workType}</td>
+                            <td className="border-b py-2 px-4">{jobber.gstin}</td>
+                            <td className="border-b py-2 px-4">{jobber.rate}</td>
+                            <td className="border-b py-2 px-4">{jobber.note}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
               </div>
+
             )}
 
             <div className="mt-8 flex justify-end gap-4">
@@ -704,18 +696,17 @@ const ExtraBOMSfgCreate = ({
                                 Add Selected SFG
                             </button> */}
               <button
-                className={`p-3 bg-green-500 rounded-md transition-all duration-100 ease-in-out ${
-                  submitting
-                    ? "opacity-50 cursor-not-allowed"
-                    : "hover:bg-green-600 hover:scale-105"
-                }`}
+                className={`p-3  text-white font-semibold bg-green-500 rounded-md transition-all duration-200 ease-in-out  ${submitting
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:bg-green-600 hover:scale-105"
+                  }`}
                 disabled={submitting}
                 onClick={handleAddSelectedSFG}
               >
                 {submitting ? (
                   <div className="flex justify-center items-center gap-2">
                     <PuffLoader size={20} color="#fff" />
-                    <span>Adding Selected SFG...</span>
+                    <span className="">Adding Selected SFG...</span>
                   </div>
                 ) : (
                   "Add Selected SFG"

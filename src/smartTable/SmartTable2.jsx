@@ -43,11 +43,11 @@ const SmartTable2 = ({ headers, data, onRowClick }) => {
                                 filteredData.map((item, rowIndex) => (
                                     <tr
                                         key={rowIndex}
-                                        className="cursor-pointer hover:bg-gray-100 transition"
+                                        className="cursor-pointer hover:bg-blue-100 transition"
                                         onClick={() => onRowClick && onRowClick(item)}
                                     >
                                         {Object.values(item).map((value, colIndex) => (
-                                            <td key={colIndex} className="px-4 py-2 text-base text-center">
+                                            <td key={colIndex} className="px-4 border-t py-2 text-base text-center">
                                                 {value}
                                             </td>
                                         ))}

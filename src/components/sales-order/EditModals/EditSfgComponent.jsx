@@ -27,7 +27,7 @@ const EditSfgComponent = ({
   }, [dataDesign, allSemiFinishedGoods, allSavedSemiFinishedGoods, index]);
 
   return (
-    <div className="z-10 shadow-lg rounded-md p-4 bg-gray-200 overflow-y-auto">
+    <div className="z-10 overflow-y-auto">
       <UpdateBOM
         token={token}
         sfgmGroup={sfgmGroup}
