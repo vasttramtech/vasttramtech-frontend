@@ -38,7 +38,7 @@ export default function ConvertIDSfgDataTable({
 
   return (
     <>
-      <div className="bg-white rounded-lg shadow overflow-hidden">
+      <div className="bg-white bg rounded-lg shadow overflow-hidden">
         <div className="px-6 py-4 bg-blue-600 border-b border-blue-200">
           <h3 className="text-lg font-semibold text-white flex items-center">
             <Package className="mr-2" size={20} />
@@ -110,14 +110,14 @@ export default function ConvertIDSfgDataTable({
                   {sfg.stock_status === true
                     ? <span className="bg-green-400 rounded-lg px-1 py-1">Deducted</span>
                     : sfg.stock_status === false
-                    ? <span className="bg-red-400 rounded-lg px-1 py-1">Not Deducted</span>
-                    : <span className="bg-gray-400 rounded-lg px-1 py-1">N/A</span>}
+                      ? <span className="bg-red-400 rounded-lg px-1 py-1">Not Deducted</span>
+                      : <span className="bg-gray-400 rounded-lg px-1 py-1">N/A</span>}
                 </td>
 
                 <td className="px-4 py-3 text-sm">
                   <div className="bg-blue-50 p-2 rounded text-sm border border-gray-400 flex flex-col items-start justify-center">
                     {sfg.jobber_master_sfg &&
-                    sfg.jobber_master_sfg.length > 0 ? (
+                      sfg.jobber_master_sfg.length > 0 ? (
                       sfg.jobber_master_sfg
                         .slice(0, 2)
                         .map((jobber, jobberIndex) => (
@@ -162,7 +162,7 @@ export default function ConvertIDSfgDataTable({
 
       {/* Modal */}
       {showModal && selectedSfg && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-gray-900 backdrop-blur-md bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg max-w-6xl max-h-[90vh] overflow-y-auto m-4 w-full">
             {/* Modal Header */}
             <div className="px-6 py-4 bg-blue-600 text-white flex justify-between items-center">
@@ -232,8 +232,8 @@ export default function ConvertIDSfgDataTable({
                       {selectedSfg?.stock_status === undefined
                         ? "N/A"
                         : selectedSfg.stock_status === true
-                        ? "Deducted"
-                        : "Not Deducted"}
+                          ? "Deducted"
+                          : "Not Deducted"}
                     </p>
                   </div>
                   <div className="md:col-span-2">
@@ -365,11 +365,10 @@ export default function ConvertIDSfgDataTable({
                                 <td className="px-4 py-3">
                                   {jobber.completed !== undefined && (
                                     <span
-                                      className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded-full ${
-                                        jobber.completed === "Complete"
-                                          ? "bg-green-100 text-green-800"
-                                          : "bg-yellow-100 text-yellow-800"
-                                      }`}
+                                      className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded-full ${jobber.completed === "Complete"
+                                        ? "bg-green-100 text-green-800"
+                                        : "bg-yellow-100 text-yellow-800"
+                                        }`}
                                     >
                                       {jobber?.completed}
                                     </span>

@@ -8,6 +8,7 @@ import SelectedJobbersTable from "../component/SelectedJobbersTable"
 import SelectedRawMaterialsTable from "../component/SelectedRawMaterialsTable";
 import { Plus } from "lucide-react";
 import Select from "react-select"
+import { MdCancel } from "react-icons/md";
 
 const rawmaterialHeader = [
   "Item Name",
@@ -452,17 +453,17 @@ const SFGBomSection = ({
     <div className="w-[77vw]">
       {/* Raw Material Selection Modal */}
       {displayRawMaterialModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50 ml-56">
+        <div className="fixed inset-0 animate-fade-in bg-gray-900 backdrop-blur-md bg-opacity-80 flex justify-center items-center z-50 ">
           <div className="relative w-[70vw] bg-gray-100 border shadow-2xl p-4 rounded-lg">
             <button
-              className="absolute top-2 right-2 text-gray-700 hover:text-red-500 text-2xl font-bold"
+              className="absolute top-2 right-2 text-red-700 hover:text-red-500 duration-200 ease-in-out transition-all text-2xl font-bold"
               onClick={() => setDisplayRawMaterialModal(false)}
             >
-              ✖
+              <MdCancel className="w-8 h-8" />
             </button>
 
-            <div className="mt-4">
-              <h2 className="text-xl font-bold mb-4 text-center">
+            <div className="">
+              <h2 className="text-xl font-bold mb-4 text-blue-900 border-b border-b-gray-300 pb-2 text-center">
                 Select Raw Materials
               </h2>
               <SelectionTable
@@ -478,7 +479,7 @@ const SFGBomSection = ({
             <div className="flex justify-center items-center mt-4">
               <button
                 type="button"
-                className="bg-gray-200 border border-gray-400 px-4 py-1 rounded hover:bg-gray-300"
+                className="bg-blue-900 border border-gray-400 px-4 py-1 rounded hover:bg-blue-700 text-white"
                 onClick={handleSaveRawMaterialSelection}
               >
                 Add
@@ -490,17 +491,17 @@ const SFGBomSection = ({
 
       {/* Jobber Selection Modal */}
       {displayJobberModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50 ml-56">
+        <div className="fixed animate-fade-in inset-0 bg-gray-900 backdrop-blur-md bg-opacity-50 flex justify-center items-center z-50 ">
           <div className="relative w-[80vw] bg-gray-100 border shadow-2xl p-4 rounded-lg">
             <button
-              className="absolute top-2 right-2 text-gray-700 hover:text-red-500 text-2xl font-bold"
+              className="absolute top-2 right-2 text-red-700 hover:text-red-500 duration-200 ease-in-out transition-all text-2xl font-bold"
               onClick={() => setDisplayJobberModal(false)}
             >
-              ✖
+              <MdCancel className="w-8 h-8" />
             </button>
 
-            <div className="mt-8">
-              <h2 className="text-xl font-bold mb-4 text-center">
+            <div className="">
+              <h2 className="text-xl text-blue-900 pb-2 border-b border-b-gray-300 font-bold mb-4 text-center">
                 Select Jobbers
               </h2>
               <SelectionTable
@@ -516,7 +517,7 @@ const SFGBomSection = ({
             <div className="flex justify-center items-center mt-4">
               <button
                 type="button"
-                className="bg-gray-200 border border-gray-400 px-4 py-1 rounded hover:bg-gray-300"
+                className="bg-blue-900 border border-gray-400 px-4 py-1 rounded hover:bg-blue-700 text-white duration-200 ease-in-out transition-all"
                 onClick={handleSaveJobberSelection}
               >
                 Add
@@ -694,7 +695,7 @@ const SFGBomSection = ({
             </div>
           )}
           {/* Total Cost */}
-          <div className="flex flex-col">
+          <div className="flex flex-col w-1/2">
             <label className="text-gray-700 font-semibold">Total Cost</label>
             <input
               value={SfgData.sfg_total_cost}
