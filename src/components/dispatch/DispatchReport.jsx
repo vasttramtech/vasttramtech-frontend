@@ -5,6 +5,8 @@ import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Pagination from '../utility/Pagination';
+import Pagination10 from '../utility/Pagination10';
+import SmartTable from '../../smartTable/SmartTable';
 
 
 
@@ -43,7 +45,7 @@ const DispatchReport = () => {
   //  adding pagination logic
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
+  const [pageSize, setPageSize] = useState(10);
   const [paginationLoading, setPaginationLoading] = useState(false);
 
   // Using useRef to get the table element reference
@@ -114,7 +116,7 @@ const DispatchReport = () => {
   /// we have to replace this api with the dispatch entry one
   const fetchDispatchData = async () => {
     try {
-      setLoading(true);
+      setPaginationLoading(true);
       let params = {
         "pagination[page]": page,
         "pagination[pageSize]": pageSize,
@@ -199,6 +201,7 @@ const DispatchReport = () => {
       }
     } finally {
       setLoading(false);
+      setPaginationLoading(false);
     }
   }
 
@@ -253,51 +256,51 @@ const DispatchReport = () => {
 
   }));
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <BounceLoader color="#1e3a8a" />
+      </div>
+    )
+  }
+
 
   return (
-    <div className="py-2 bg-white rounded-lg relative">
-      {loading ? (
-        <div className="absolute inset-0 flex justify-center items-center mt-64 bg-opacity-50 bg-gray-200 z-10">
-          <BounceLoader size={100} color={"#1e3a8a"} loading={loading} />
-        </div>
-      ) : (
-        <div>
-          <h1 className="text-3xl font-bold text-blue-900 mb-4">{title}</h1>
-          <div className="my-8" ref={printableTableRef}>
+    <div className="p-6 bg-white rounded-lg relative">
 
-            {paginationLoading ? (
-              <div className="flex p-5 justify-center items-center space-x-2 mt-4 border border-gray-400 rounded-lg">
-                <BounceLoader size={20} color="#1e3a8a" />
-              </div>
-            ) : (
-              <>
-                {/* <SmartTable1 headers={headers} data={updateData} /> */}
-                {/* <SmartTable1 headers={headersForTable} data={enhancedData} /> */}
+      <div>
+        <h1 className="text-2xl font-bold text-blue-900 mb-4 pb-2 border-b">{title}</h1>
+        <div className="" ref={printableTableRef}>
 
-                <SmartTable1
-                  headers={headersForTable}
-                  data={enhancedData}
-                  searchTerm={searchTerm}
-                  setSearchTerm={setSearchTerm}
-                />
+          <SmartTable
+            headers={headersForTable}
+            data={enhancedData}
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            loading={paginationLoading}
+            setLoading={setPaginationLoading}
+          />
 
-                <Pagination
-                  setPage={setPage}
-                  totalPages={totalPages}
-                  page={page}
-                  setPageSize={setPageSize}
-                  pageSize={pageSize}
-                />
-              </>
-            )}
+
+
+          <div className='flex items-center justify-between px-5'>
+            <button onClick={handlePrint} className="mt-4 p-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+              Print Table
+            </button>
+            <Pagination10
+              setPage={setPage}
+              totalPages={totalPages}
+              page={page}
+              setPageSize={setPageSize}
+              pageSize={pageSize}
+            />
           </div>
 
 
+        </div>
 
-          <button onClick={handlePrint} className="mt-4 p-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-            Print Table
-          </button>
-        </div>)}
+
+      </div>
     </div>
   )
 }

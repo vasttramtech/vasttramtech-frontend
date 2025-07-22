@@ -626,7 +626,7 @@ const BillOfSales = () => {
 
                         <div className='flex justify-center items-center relative' ref={popupRef}>
 
-                            <div className='w-full border border-gray-300 py-2 shadow-sm flex items-center justify-center rounded-lg gap-2'>
+                            <div className='w-full border border-blue-300 py-2 shadow-sm flex items-center justify-center rounded-lg gap-2'>
                                 <p className='text-gray-500 text-md'>Choose Sales Order:</p>
                                 <button
                                     className='p-3 bg-blue-900 hover:bg-blue-700 text-white rounded-lg transition-all ease-in-out duration-200 hover:scale-105'

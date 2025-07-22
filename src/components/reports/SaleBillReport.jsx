@@ -7,6 +7,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import Pagination from '../utility/Pagination';
 import ReportTable from '../../smartTable/ReportTable';
 import ExportToExcel from '../utility/ExportToExcel';
+import SmartTable from '../../smartTable/SmartTable';
+import Pagination10 from '../utility/Pagination10';
 
 
 
@@ -44,7 +46,7 @@ const SaleBillReport = () => {
     //  adding pagination logic
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
-    const [pageSize, setPageSize] = useState(5);
+    const [pageSize, setPageSize] = useState(10);
     const [paginationLoading, setPaginationLoading] = useState(false);
 
     // date filter states
@@ -53,6 +55,7 @@ const SaleBillReport = () => {
 
     //search filter states
     const [searchTerm, setSearchTerm] = useState('');
+    const [clearTrigger, setClearTrigger] = useState(false);
 
 
     function formatDate(dateString) {
@@ -138,7 +141,7 @@ const SaleBillReport = () => {
         }, 1000);
 
         return () => clearTimeout(delayDebounce);
-    }, [searchTerm, page, pageSize]);
+    }, [searchTerm, page, pageSize, clearTrigger]);
 
     useEffect(() => {
         setPage(1);
@@ -159,56 +162,62 @@ const SaleBillReport = () => {
     const dateWiseDataFetch = () => {
         fetchBillOfSales();
     }
-
+    const dateWiseDataClear = () => {
+        setFromDate(null);
+        setToDate(null);
+        setClearTrigger(true);
+    }
+    if (loading) {
+        return (
+            <div className='flex justify-center items-center h-screen'>
+                <BounceLoader color={"#1e3a8a"} />
+            </div>
+        )
+    }
     return (
-        <div className="py-2 bg-white rounded-lg relative">
-            {loading ? (
-                <div className="absolute inset-0 flex justify-center items-center mt-64 bg-opacity-50 bg-gray-200 z-10">
-                    <BounceLoader size={100} color={"#1e3a8a"} loading={loading} />
-                </div>
-            ) : (
-                <div>
-                    <h1 className="text-3xl font-bold text-blue-900 mb-4">{title}</h1>
-                    <div className="my-8" >
+        <div className="p-6 bg-white rounded-lg relative">
+
+            <div>
+                <h1 className="text-2xl font-bold text-blue-900 mb-4 pb-2 border-b">{title}</h1>
+                <div className="" >
 
 
-                        {paginationLoading ? (
-                            <div className="flex p-5 justify-center items-center space-x-2 mt-4 border border-gray-400 rounded-lg">
-                                <BounceLoader size={20} color="#1e3a8a" />
-                            </div>
-                        ) : (
-                            <>
-                                {/* <ReportTable headers={headersForTable} data={enhancedData} fromDate={fromDate} setFromDate={setFromDate} toDate={toDate} setToDate={setToDate} api={fetchBillOfSales}/> */}
-                                <SmartTable1 headers={headersForTable} data={enhancedData} api={fetchBillOfSales} searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
-                                <div className='px-5 flex justify-between items-center'>
-                                    <ExportToExcel data={billData} reportName={"Sale Bill Report"} />
+                    {/* <ReportTable headers={headersForTable} data={enhancedData} fromDate={fromDate} setFromDate={setFromDate} toDate={toDate} setToDate={setToDate} api={fetchBillOfSales}/> */}
+                    <SmartTable headers={headersForTable} loading={paginationLoading} setLoading={setPaginationLoading} data={enhancedData} api={fetchBillOfSales} searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
-                                    <div className='flex gap-3 items-center'>
-                                        <input type="date" className='border border-gray-400 py-1 px-2 rounded-sm' value={fromDate} onChange={(e) => setFromDate(e.target.value)} />
-                                        <input type="date" className="border border-gray-400 py-1 px-2 rounded-sm" value={toDate} onChange={(e) => setToDate(e.target.value)} />
-                                        <button
-                                            type='button'
-                                            onClick={dateWiseDataFetch}
-                                            className='px-4 py-2 bg-blue-600 text-white rounded-md shadow-md hover:bg-blue-700 transition'
-                                        >Filter</button>
-                                    </div>
+                    <div className='px-5 flex justify-between items-center'>
+                        <ExportToExcel data={billData} reportName={"Sale Bill Report"} />
 
-                                    <Pagination
-                                        setPage={setPage}
-                                        totalPages={totalPages}
-                                        page={page}
-                                        setPageSize={setPageSize}
-                                        pageSize={pageSize}
-                                    />
-                                </div>
-                            </>
-                        )}
+                        <div className='flex gap-3 items-center'>
+                            <input type="date" className='border border-gray-400 py-1 px-2 rounded-sm' value={fromDate} onChange={(e) => setFromDate(e.target.value)} />
+                            <input type="date" className="border border-gray-400 py-1 px-2 rounded-sm" value={toDate} onChange={(e) => setToDate(e.target.value)} />
+                            <button
+                                type='button'
+                                onClick={dateWiseDataFetch}
+                                className='px-4 py-2 bg-blue-600 text-white rounded-md shadow-md hover:bg-blue-700 transition-all duration-200 ease-in-out'
+                            >Filter</button>
+                            <button
+                                type='button'
+                                onClick={dateWiseDataClear}
+                                className='px-4 py-2 bg-red-600 text-white rounded-md shadow-md hover:bg-red-700 transition-all duration-200 ease-in-out'
+                            >Clear</button>
+                        </div>
+
+                        <Pagination10
+                            setPage={setPage}
+                            totalPages={totalPages}
+                            page={page}
+                            setPageSize={setPageSize}
+                            pageSize={pageSize}
+                        />
                     </div>
 
+                </div>
 
 
-                </div>)}
+
+            </div>
         </div>
     )
 }

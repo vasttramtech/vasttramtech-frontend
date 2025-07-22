@@ -154,7 +154,7 @@ function App() {
           email: userData.email,
           token: token,
           designation: userData?.designation,
-          id : userData?.id,
+          id: userData?.id,
         })
       );
 
@@ -168,7 +168,7 @@ function App() {
       console.error("Error verifying token:", error);
       navigate("/login");
     } finally {
-      setIsLoading(false); // End the loading state once verification is complete
+      setIsLoading(false);
     }
   };
 
@@ -222,8 +222,11 @@ function App() {
 
   if (isLoading) {
     return (
-      <div className="absolute inset-0 flex justify-center items-center mt-64 bg-opacity-50 bg-gray-200 z-10">
-        <BounceLoader size={100} color={"#1e3a8a"} />
+      <div className=" flex flex-col justify-center items-center h-screen">
+        <div className="  w-[150px] flex items-center justify-center  border-b-blue-900">
+          <BounceLoader color="#1e3a8a" />
+        </div>
+        <h2 className="text-2xl font-semibold animate-pulse text-blue-900">Vasttram</h2>
       </div>
     ); // Show a loading screen or spinner while verifying token
   }

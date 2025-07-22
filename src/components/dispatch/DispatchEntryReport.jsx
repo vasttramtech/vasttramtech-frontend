@@ -1,55 +1,10 @@
-// import axios from 'axios';
-// import React, { use, useEffect, useState } from 'react'
-// import { useSelector } from 'react-redux';
-// import { useParams } from 'react-router-dom'
-// import { toast } from 'react-toastify';
-
-// const DispatchEntryReport = () => {
-//     const {id} = useParams();
-//     const {token, designation} = useSelector((state) => state.auth);
-//     const [loading, setLoading] = useState(false);
-
-//     const fetchData =async () => {
-//         try {
-//             setLoading(true);
-//             const res =await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/dispatch-entry/details/${id}`, {}, {
-//                 headers: {
-//                     Authorization: `Bearer ${token}`,
-//                 },
-//             });
-//             console.log(res?.data);
-
-//             // toast.success("Data fetched successfully!", { position: "top-right" });
-//         } catch (error) {
-//             toast.error("Failed to fetch data. Please try again.", { position: "top-right" });
-//             console.error("Error fetching data:", error);
-//         }
-//         finally {
-//             setLoading(false);
-//         }
-//     }
-
-//     useEffect(() => {
-//         fetchData();
-//     }, []);
-
-//     console.log(id);
-//   return (
-//     <div>
-
-//     </div>
-//   )
-// }
-
-// export default DispatchEntryReport
-
-
-
 
 import axios from 'axios';
+import { ChevronLeft } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
+import { BounceLoader } from 'react-spinners';
 import { toast } from 'react-toastify';
 
 const DispatchEntryReport = () => {
@@ -82,9 +37,12 @@ const DispatchEntryReport = () => {
   }, []);
 
   if (loading) {
-    return <div className="text-center text-gray-600 py-10">Loading...</div>;
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <BounceLoader color="#1e3a8a" />
+      </div>
+    )
   }
-
   if (!dispatchData) {
     return <div className="text-center text-red-600 py-10">No data available</div>;
   }
@@ -108,7 +66,8 @@ const DispatchEntryReport = () => {
   const orderInfo = internal_sales_order_entry || sales_oder_entry;
   const orderItems = orderInfo?.order_items || {};
 
-  return (
+  return (<>
+    <p className='text-blue-600 cursor-pointer font-semibold px-3 py-1 flex items-center' onClick={() => window.history.back()}>  <ChevronLeft /> Back</p>
     <div className="max-w-6xl mx-auto bg-white shadow-xl rounded-lg p-8 font-sans">
       <header className="mb-8 border-b pb-4">
         <h1 className="text-3xl font-bold text-blue-700 text-center">Dispatch Invoice</h1>
@@ -306,6 +265,7 @@ const DispatchEntryReport = () => {
       )}
 
     </div>
+  </>
   );
 };
 

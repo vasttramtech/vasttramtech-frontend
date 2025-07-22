@@ -472,177 +472,176 @@ const DispatchEntry = () => {
     }
 
     console.log(formData)
-
+    if (loading || load) {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <BounceLoader color="#1e3a8a" />
+            </div>
+        )
+    }
     return (
         <div>
-            {loading || load ? (
-                <div className="absolute inset-0 flex justify-center items-center mt-64 bg-opacity-50 bg-gray-200 z-10">
-                    <BounceLoader size={100} color={"#1e3a8a"} loading={loading} />
-                </div>
-            ) : (
+            <div className='p-6 rounded-lg relative bg-white'>
+                <h1 className="text-2xl pb-2 border-b  font-bold text-blue-900 mb-4">{title}</h1>
+                <div className='p-5'>
+                    <form action="">
+
+                        <div className=' flex items-center justify-center gap-4'>
 
 
-                <div>
-                    <h1 className="text-3xl font-bold text-blue-900 mb-4">{title}</h1>
-                    <div className=' border-gray-200 border p-5 rounded-xl shadow-xl'>
-                        <form action="">
+                            <div className='relative w-full py-2 flex items-center justify-center gap-3 border border-blue-700 '>
+                                <label htmlFor="chooseSalesOrder">From SO Id:</label>
+                                <button
+                                    id='chooseSalesOrder'
+                                    type='button'
+                                    onClick={() => setDisplayModal(true)}
+                                    className='p-2 bg-blue-900 rounded-md text-white hover:bg-blue-700 duration-200 transition-all ease-in-out'>
+                                    Choose Sales Order
+                                </button>
+                                {displayModal && (
+                                    <div className="absolute top-12 left-96 mt-2  bg-white border border-gray-200 shadow-lg rounded-md p-3 z-20 w-72">
 
-                            <div className=' flex items-center justify-center gap-4'>
+                                        <div className="flex justify-end">
+                                            <button
+                                                className=" text-gray-700 hover:text-red-500 text-sm font-bold"
+                                                onClick={() => setDisplayModal(false)}
+                                            >
+                                                ✖
+                                            </button>
+                                        </div>
 
+                                        <button
+                                            type="button"
+                                            className="w-full px-4 py-2 text-left rounded hover:bg-blue-100 transition"
+                                            onClick={() => {
+                                                handleSalesOrderType('vasttram');
+                                                setDisplayModal(false);
+                                            }
+                                            }
+                                        >
+                                            Vasttram Sales Order
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="w-full px-4 py-2 text-left rounded hover:bg-blue-100 transition"
+                                            onClick={() => {
+                                                handleSalesOrderType('customer');
+                                                setDisplayModal(false);
+                                            }}
+                                        >
+                                            Customer Sales Order
+                                        </button>
+                                    </div>
+                                )}
 
-                                <div className='relative flex items-center justify-center gap-4'>
-                                    <label htmlFor="chooseSalesOrder">From SO Id:</label>
-                                    <button
-                                        id='chooseSalesOrder'
-                                        type='button'
-                                        onClick={() => setDisplayModal(true)}
-                                        className='p-2 bg-blue-500 rounded-md text-white hover:bg-blue-600 hover:scale-105'>
-                                        Choose Sales Order
-                                    </button>
-                                    {displayModal && (
-                                        <div className="absolute top-full mt-2 left-0 bg-white border border-gray-200 shadow-lg rounded-md p-3 z-20 w-72">
+                                {selectedSOModal && (
+                                    <div className="fixed inset-0 bg-gray-900 bg-opacity-50 backdrop-blur-md flex justify-center items-center z-50">
+                                        <div className="relative w-[90vw] bg-gray-200 border shadow-2xl p-4 rounded-lg">
 
-                                            <div className="flex justify-end">
-                                                <button
-                                                    className=" text-gray-700 hover:text-red-500 text-sm font-bold"
-                                                    onClick={() => setDisplayModal(false)}
+                                            <div className="flex justify-between items-center pb-2 border-b border-b-gray-300">
+                                                <h3 className="text-2xl font-bold text-blue-900">Choose Sales Order</h3>
+
+                                                <p
+                                                    className="text-xl px-2 border bg-red-600 rounded-full text-white hover:bg-red-500 cursor-pointer"
+                                                    onClick={() => {
+                                                        setSelectedSOModal(false);
+                                                    }}
                                                 >
-                                                    ✖
-                                                </button>
+                                                    X
+                                                </p>
                                             </div>
 
-                                            <button
-                                                type="button"
-                                                className="w-full px-4 py-2 text-left rounded hover:bg-blue-100 transition"
-                                                onClick={() => {
-                                                    handleSalesOrderType('vasttram');
-                                                    setDisplayModal(false);
-                                                }
-                                                }
-                                            >
-                                                Vasttram Sales Order
-                                            </button>
-                                            <button
-                                                type="button"
-                                                className="w-full px-4 py-2 text-left rounded hover:bg-blue-100 transition"
-                                                onClick={() => {
-                                                    handleSalesOrderType('customer');
-                                                    setDisplayModal(false);
-                                                }}
-                                            >
-                                                Customer Sales Order
-                                            </button>
-                                        </div>
-                                    )}
-
-                                    {selectedSOModal && (
-                                        <div className="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50">
-                                            <div className="relative w-[90vw] bg-gray-200 border shadow-2xl p-4 rounded-lg">
-
-                                                <div className="flex justify-between items-center">
-                                                    <h3 className="text-2xl font-semibold">Choose Sales Order</h3>
-
-                                                    <p
-                                                        className="text-xl px-2 border bg-red-600 rounded-full text-white hover:bg-red-500 cursor-pointer"
-                                                        onClick={() => {
-                                                            setSelectedSOModal(false);
-                                                        }}
-                                                    >
-                                                        X
-                                                    </p>
-                                                </div>
-
-                                                <div className="mt-1">
-                                                    <SelectSOTable
-                                                        NoOfColumns={headersForTable.length}
-                                                        data={salesOrderList}
-                                                        headers={headersForTable}
-                                                        setSelectedRow={setSelectedRows}
-                                                        selectedRow={selectedRow}
-                                                        setSelectedSO={setSelectedSO}
-                                                        setSelectedSOId={setSelectedSOId}
-                                                        setFormData={setFormData}
-                                                        setOrderItem={setOrderItem}
-                                                        setLoading={setLoading}
-                                                        setBom={setBom}
-                                                        type={type}
-                                                        setSalesOrder={setSalesOrder}
-                                                        setSOViewModal={setSOViewModal}
-                                                        setSelectedSOModal={setSelectedSOModal}
-                                                        setAllBomIds={setAllBomIds}
-                                                        allBomIds={allBomIds}
-                                                        allreadyProcessedQtyOfBOM={allreadyProcessedQtyOfBOM}
-                                                        setAllreadyProcessedQtyOfBOM={setAllreadyProcessedQtyOfBOM}
-                                                        allreadyProcessedOrderItems={allreadyProcessedOrderItems}
-                                                        setAllreadyProcessedOrderItems={setAllreadyProcessedOrderItems}
-                                                        setReturnItemsModal={setReturnItemsModal}
-                                                        setReturnItems={setReturnItems}
-                                                        setDispatchType={setDispatchType}
-                                                        setIdOfSO={setIdOfSO}
-                                                    />
-                                                </div>
+                                            <div className="mt-1">
+                                                <SelectSOTable
+                                                    NoOfColumns={headersForTable.length}
+                                                    data={salesOrderList}
+                                                    headers={headersForTable}
+                                                    setSelectedRow={setSelectedRows}
+                                                    selectedRow={selectedRow}
+                                                    setSelectedSO={setSelectedSO}
+                                                    setSelectedSOId={setSelectedSOId}
+                                                    setFormData={setFormData}
+                                                    setOrderItem={setOrderItem}
+                                                    setLoading={setLoading}
+                                                    setBom={setBom}
+                                                    type={type}
+                                                    setSalesOrder={setSalesOrder}
+                                                    setSOViewModal={setSOViewModal}
+                                                    setSelectedSOModal={setSelectedSOModal}
+                                                    setAllBomIds={setAllBomIds}
+                                                    allBomIds={allBomIds}
+                                                    allreadyProcessedQtyOfBOM={allreadyProcessedQtyOfBOM}
+                                                    setAllreadyProcessedQtyOfBOM={setAllreadyProcessedQtyOfBOM}
+                                                    allreadyProcessedOrderItems={allreadyProcessedOrderItems}
+                                                    setAllreadyProcessedOrderItems={setAllreadyProcessedOrderItems}
+                                                    setReturnItemsModal={setReturnItemsModal}
+                                                    setReturnItems={setReturnItems}
+                                                    setDispatchType={setDispatchType}
+                                                    setIdOfSO={setIdOfSO}
+                                                />
                                             </div>
                                         </div>
-                                    )}
-                                </div>
-
+                                    </div>
+                                )}
                             </div>
 
-                            {returnItemsModal && (
-                                <div className="modal-content p-4 bg-white shadow rounded">
-                                    <h2 className="text-lg font-bold mb-4">Return Items</h2>
-                                    {Array.isArray(returnItems) && returnItems.length > 0 ? (
-                                        <table className="table-auto w-full border">
-                                            <thead>
-                                                <tr className="bg-gray-100">
-                                                    <th className="border px-4 py-2">Key</th>
-                                                    <th className="border px-4 py-2">Colour</th>
-                                                    <th className="border px-4 py-2">Khaka</th>
-                                                    <th className="border px-4 py-2">Measurement</th>
-                                                    <th className="border px-4 py-2">Others</th>
-                                                    <th className="border px-4 py-2">Work</th>
-                                                    <th className="border px-4 py-2">Sale Qty</th>
-                                                    <th className="border px-4 py-2">Alter Qty</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {returnItems.map((item, index) => (
-                                                    <tr key={index}>
-                                                        <td className="border px-4 py-2 text-center">{item.key}</td>
-                                                        <td className="border px-4 py-2 text-center">{item.value?.colour}</td>
-                                                        <td className="border px-4 py-2 text-center">{item.value?.khaka}</td>
-                                                        <td className="border px-4 py-2 text-center">{item.value?.measurement}</td>
-                                                        <td className="border px-4 py-2 text-center">{item.value?.others}</td>
-                                                        <td className="border px-4 py-2 text-center">{item.value?.work}</td>
-                                                        <td className="border px-4 py-2 text-center">{item.saleQty}</td>
-                                                        <td className="border px-4 py-2 text-center">{item.alterQty}</td>
-                                                    </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
-                                    ) : (
-                                        <p>No return items available.</p>
-                                    )}
-                                </div>
-                            )}
+                        </div>
 
-                            <div className=' grid grid-cols-2 gap-6 mt-5'>
-                                <div>
-                                    <label htmlFor="so_id">So Id:</label>
-                                    <input
-                                        type="text"
-                                        id="so_id"
-                                        placeholder="Enter So Id"
-                                        value={formData.so_id}
-                                        name='so_id'
-                                        className='p-2 border border-gray-400 bg-gray-100 rounded-md w-full'
-                                        onChange={formDataHandler}
-                                        disabled
-                                        required
-                                    />
-                                </div>
-                                {/* Customer */}
-                                {/* <div>
+                        {returnItemsModal && (
+                            <div className="modal-content p-4 bg-white shadow rounded">
+                                <h2 className="text-lg font-bold mb-4">Return Items</h2>
+                                {Array.isArray(returnItems) && returnItems.length > 0 ? (
+                                    <table className="table-auto w-full border">
+                                        <thead>
+                                            <tr className="bg-gray-100">
+                                                <th className="border px-4 py-2">Key</th>
+                                                <th className="border px-4 py-2">Colour</th>
+                                                <th className="border px-4 py-2">Khaka</th>
+                                                <th className="border px-4 py-2">Measurement</th>
+                                                <th className="border px-4 py-2">Others</th>
+                                                <th className="border px-4 py-2">Work</th>
+                                                <th className="border px-4 py-2">Sale Qty</th>
+                                                <th className="border px-4 py-2">Alter Qty</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {returnItems.map((item, index) => (
+                                                <tr key={index}>
+                                                    <td className="border px-4 py-2 text-center">{item.key}</td>
+                                                    <td className="border px-4 py-2 text-center">{item.value?.colour}</td>
+                                                    <td className="border px-4 py-2 text-center">{item.value?.khaka}</td>
+                                                    <td className="border px-4 py-2 text-center">{item.value?.measurement}</td>
+                                                    <td className="border px-4 py-2 text-center">{item.value?.others}</td>
+                                                    <td className="border px-4 py-2 text-center">{item.value?.work}</td>
+                                                    <td className="border px-4 py-2 text-center">{item.saleQty}</td>
+                                                    <td className="border px-4 py-2 text-center">{item.alterQty}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                ) : (
+                                    <p>No return items available.</p>
+                                )}
+                            </div>
+                        )}
+
+                        <div className=' grid grid-cols-2 gap-6 mt-5'>
+                            <div>
+                                <label htmlFor="so_id">So Id:</label>
+                                <input
+                                    type="text"
+                                    id="so_id"
+                                    placeholder="Enter So Id"
+                                    value={formData.so_id}
+                                    name='so_id'
+                                    className='p-2 border border-gray-400 bg-gray-100 rounded-md w-full'
+                                    onChange={formDataHandler}
+                                    disabled
+                                    required
+                                />
+                            </div>
+                            {/* Customer */}
+                            {/* <div>
                                     <label htmlFor="customer">Customer:</label>
                                     <input
                                         type="text"
@@ -679,149 +678,148 @@ const DispatchEntry = () => {
                                     </select>
                                 </div> */}
 
-                                {dispatchType !== "Return" ? (
-                                    <div>
-                                        <label htmlFor="customer">Customer:</label>
-                                        <input
-                                            type="text"
-                                            id="customer"
-                                            placeholder="Enter Customer Name"
-                                            value={formData.customer}
-                                            className="p-2 border border-gray-400 bg-gray-100 rounded-md w-full"
-                                            name="customer"
-                                            onChange={formDataHandler}
-                                            required
-                                            disabled
-                                        />
-                                    </div>
-                                ) : (
-                                    <div className="flex flex-col">
-                                        <FormLabel title={"Customer"} />
-                                        <select
-                                            value={formData.customer}
-                                            name="customer"
-                                            onChange={formDataHandler}
-                                            className="border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                        >
-                                            <option value="" disabled>
-                                                Select Customer
-                                            </option>
-                                            {availableCustomers &&
-                                                Array.isArray(availableCustomers) &&
-                                                availableCustomers.length > 0 &&
-                                                availableCustomers.map((item, index) => (
-                                                    <option key={item?.id} value={item?.id}>
-                                                        {item?.company_name}
-                                                    </option>
-                                                ))}
-                                        </select>
-                                    </div>
-                                )}
-
-
-                                {/* Design Name */}
+                            {dispatchType !== "Return" ? (
                                 <div>
-                                    <label htmlFor="design_name">Design Name:</label>
+                                    <label htmlFor="customer">Customer:</label>
                                     <input
                                         type="text"
-                                        id="design_name"
-                                        placeholder="Enter Design Name"
-                                        className='p-2 border border-gray-400 bg-gray-100 rounded-md w-full'
-                                        value={formData.design_name}
-                                        name='design_name'
+                                        id="customer"
+                                        placeholder="Enter Customer Name"
+                                        value={formData.customer}
+                                        className="p-2 border border-gray-400 bg-gray-100 rounded-md w-full"
+                                        name="customer"
                                         onChange={formDataHandler}
                                         required
                                         disabled
                                     />
                                 </div>
-                                {/* Quantity */}
-                                <div>
-                                    <label htmlFor="so_qty"> SO Qty:</label>
-                                    <input
-                                        type="text"
-                                        id="so_qty"
-                                        placeholder="Enter SO Qty"
-                                        value={formData.so_qty}
-                                        name='so_qty'
-                                        className='p-2 border border-gray-400 bg-gray-100 rounded-md w-full'
+                            ) : (
+                                <div className="flex flex-col">
+                                    <FormLabel title={"Customer"} />
+                                    <select
+                                        value={formData.customer}
+                                        name="customer"
                                         onChange={formDataHandler}
-                                        required
-                                        disabled
-                                    />
+                                        className="border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    >
+                                        <option value="" disabled>
+                                            Select Customer
+                                        </option>
+                                        {availableCustomers &&
+                                            Array.isArray(availableCustomers) &&
+                                            availableCustomers.length > 0 &&
+                                            availableCustomers.map((item, index) => (
+                                                <option key={item?.id} value={item?.id}>
+                                                    {item?.company_name}
+                                                </option>
+                                            ))}
+                                    </select>
                                 </div>
-                                {/* CN no */}
-                                <div>
-                                    <label htmlFor="cn_no"> CN No:</label>
-                                    <input
-                                        type="text"
-                                        id="cn_no"
-                                        placeholder="Enter CN No"
-                                        value={formData.cn_no}
-                                        name='cn_no'
-                                        className='p-2 border border-gray-400 rounded-md w-full'
-                                        onChange={formDataHandler}
-                                        required
-                                    />
-                                </div>
+                            )}
 
-                                {/*  date */}
-                                <div>
-                                    <label htmlFor="invoice_date">Invoice Date:</label>
-                                    <input
-                                        type="date"
-                                        id="invoice_date"
-                                        name="invoice_date"
-                                        value={formData.invoice_date}
-                                        onChange={formDataHandler}
-                                        required
-                                        className='p-2 border border-gray-400 rounded-md w-full'
-                                    />
-                                </div>
-                                {/* // remarks and stitch remarks  */}
-                                <div className='w-full'>
-                                    <label htmlFor="remarks">Remarks:</label>
-                                    <textarea
-                                        name="remarks"
-                                        value={formData.remarks}
-                                        onChange={formDataHandler}
-                                        className='p-4 border border-gray-400 rounded-md w-full'
-                                        id="" />
-                                </div>
 
-                                {/*  invoice no */}
-                                <div>
-                                    <label htmlFor="invoice_no">Invoice No:</label>
-                                    <input
-                                        type="text"
-                                        id="invoice_no"
-                                        name="invoice_no"
-                                        value={formData.invoice_no}
-                                        onChange={formDataHandler}
-                                        required
-                                        className='p-2 border border-gray-400 rounded-md w-full'
-                                    />
-                                </div>
-
+                            {/* Design Name */}
+                            <div>
+                                <label htmlFor="design_name">Design Name:</label>
+                                <input
+                                    type="text"
+                                    id="design_name"
+                                    placeholder="Enter Design Name"
+                                    className='p-2 border border-gray-400 bg-gray-100 rounded-md w-full'
+                                    value={formData.design_name}
+                                    name='design_name'
+                                    onChange={formDataHandler}
+                                    required
+                                    disabled
+                                />
+                            </div>
+                            {/* Quantity */}
+                            <div>
+                                <label htmlFor="so_qty"> SO Qty:</label>
+                                <input
+                                    type="text"
+                                    id="so_qty"
+                                    placeholder="Enter SO Qty"
+                                    value={formData.so_qty}
+                                    name='so_qty'
+                                    className='p-2 border border-gray-400 bg-gray-100 rounded-md w-full'
+                                    onChange={formDataHandler}
+                                    required
+                                    disabled
+                                />
+                            </div>
+                            {/* CN no */}
+                            <div>
+                                <label htmlFor="cn_no"> CN No:</label>
+                                <input
+                                    type="text"
+                                    id="cn_no"
+                                    placeholder="Enter CN No"
+                                    value={formData.cn_no}
+                                    name='cn_no'
+                                    className='p-2 border border-gray-400 rounded-md w-full'
+                                    onChange={formDataHandler}
+                                    required
+                                />
                             </div>
 
-
-
-
-                            <div className=' flex justify-center items-center m-5 gap-2 text-white'>
-                                <button
-                                    type='submit'
-                                    onClick={saveHandler}
-                                    className='p-3 bg-green-500 rounded-md hover:bg-green-600 hover:scale-105 transition-all duration-100 ease-in-out'> Save </button>
-
-                                <button
-                                    onClick={clearButtonHandler}
-                                    className='p-3 bg-yellow-500 rounded-md hover:bg-yellow-600 hover:scale-105 transition-all duration-100 ease-in-out'> Clear </button>
-
+                            {/*  date */}
+                            <div>
+                                <label htmlFor="invoice_date">Invoice Date:</label>
+                                <input
+                                    type="date"
+                                    id="invoice_date"
+                                    name="invoice_date"
+                                    value={formData.invoice_date}
+                                    onChange={formDataHandler}
+                                    required
+                                    className='p-2 border border-gray-400 rounded-md w-full'
+                                />
                             </div>
-                        </form>
-                    </div>
+                            {/* // remarks and stitch remarks  */}
+                            <div className='w-full'>
+                                <label htmlFor="remarks">Remarks:</label>
+                                <textarea
+                                    name="remarks"
+                                    value={formData.remarks}
+                                    onChange={formDataHandler}
+                                    className='p-4 border border-gray-400 rounded-md w-full'
+                                    id="" />
+                            </div>
+
+                            {/*  invoice no */}
+                            <div>
+                                <label htmlFor="invoice_no">Invoice No:</label>
+                                <input
+                                    type="text"
+                                    id="invoice_no"
+                                    name="invoice_no"
+                                    value={formData.invoice_no}
+                                    onChange={formDataHandler}
+                                    required
+                                    className='p-2 border border-gray-400 rounded-md w-full'
+                                />
+                            </div>
+
+                        </div>
+
+
+
+
+                        <div className=' flex justify-center items-center m-5 gap-2 text-white'>
+                            <button
+                                type='submit'
+                                onClick={saveHandler}
+                                className='p-3 bg-green-500 rounded-md hover:bg-green-600 hover:scale-105 transition-all duration-100 ease-in-out'> Save </button>
+
+                            <button
+                                onClick={clearButtonHandler}
+                                className='p-3 bg-yellow-500 rounded-md hover:bg-yellow-600 hover:scale-105 transition-all duration-100 ease-in-out'> Clear </button>
+
+                        </div>
+                    </form>
                 </div>
-            )}
+            </div>
         </div>
 
     )

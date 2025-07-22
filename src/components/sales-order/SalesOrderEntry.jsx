@@ -890,7 +890,7 @@ const SalesOrderEntry = () => {
 
   console.log("formData: ", formData);
 
-  if ((load && !error) || fetchingData || loading){
+  if ((load && !error) || fetchingData || loading) {
 
     return (
       <div className="flex justify-center items-center h-screen">

@@ -16,6 +16,7 @@ import { BounceLoader, PuffLoader } from "react-spinners";
 import EditSemiFinishedGoodsMaster from "./EditModals/EditSemiFinishedGoodsMaster";
 import Pagination from "../utility/Pagination";
 import { Plus } from "lucide-react";
+import MasterTable from "../../smartTable/MasterTable";
 
 const headers = ["document_id", "Id", "Semi-Finished Goods Id", "Group", "Semi-Finished Goods Name", "Description", "Unit", "View/Edit"];
 
@@ -79,6 +80,7 @@ const SemiFinishedGoodsMaster = () => {
                         "filters[$or][2][semi_finished_goods_name][$containsi]": searchTerm,
                         "filters[$or][3][description][$containsi]": searchTerm,
                         "filters[$or][4][unit][unit_name][$containsi]": searchTerm,
+                        "filters[$or][5][id][$containsi]": searchTerm,
                     }),
 
                 },
@@ -436,7 +438,7 @@ const SemiFinishedGoodsMaster = () => {
                     <div className="">
                         <h3 className="text-2xl font-bold text-blue-900 pb-2 border-b">List Of Semi Finished Goods</h3>
                     </div>
-                    <SmartTable
+                    <MasterTable
                         headers={headers}
                         data={enhancedData}
                         searchTerm={searchTerm}

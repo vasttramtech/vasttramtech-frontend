@@ -11,6 +11,7 @@ import { fetchJobberMasters } from "../../state/jobberMastersSlice";
 import EditIcon from "../../assets/Others/EditIcon.png";
 import ViewIcon from "../../assets/Others/ViewIcon.png";
 import Pagination from "../utility/Pagination";
+import MasterTable from "../../smartTable/MasterTable";
 
 
 const headers = ["document_id", "Stitcher id", "Stitcher Name", "Stitcher Type", "Stitcher Code", "Stitcher Address", "Remarks", "Edit"];
@@ -93,6 +94,7 @@ const StitcherMaster = () => {
                         "filters[$or][2][stitcher_code][$containsi]": searchTerm,
                         "filters[$or][3][address][$containsi]": searchTerm,
                         "filters[$or][4][remarks][$containsi]": searchTerm,
+                        "filters[$or][5][id][$containsi]": searchTerm,
                     }),
                 },
                 headers: {
@@ -474,7 +476,7 @@ const StitcherMaster = () => {
                         <h3 className="text-2xl font-bold text-blue-900 pb-2 border-b">List Of Stitchers</h3>
                     </div>
 
-                    <SmartTable
+                    <MasterTable
                         headers={headers}
                         data={enhancedData}
                         searchTerm={searchTerm}

@@ -40,6 +40,7 @@ const AccessControl = () => {
       actions: renderActionButtons(user.id),
     }));
 
+
     setUsers(formattedData);
   }, [token, designation, navigate, userList, load, error]);
 
@@ -98,6 +99,18 @@ const AccessControl = () => {
     );
   };
 
+  const filteredUsers = !searchTerm.trim()
+    ? users
+    : users.filter((row) =>
+      // Search in all fields except 'actions'
+      Object.entries(row)
+        .filter(([key]) => key !== "actions")
+        .map(([, value]) => value)
+        .join(" ")
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase())
+    );
+
   const handleRowClick = (item) => {
     navigate(`/access-control/user/view/${item.id}`);
   };
@@ -108,7 +121,7 @@ const AccessControl = () => {
   return (
     <div className="relative p-2 bg-white rounded-lg shadow-md">
       {loading || load ? (
-        <div className="absolute inset-0 flex justify-center items-center mt-64 bg-opacity-50 bg-gray-200 z-10">
+        <div className="fixed flex justify-center items-center h-screen">
           <BounceLoader size={100} color={"#1e3a8a"} />
         </div>
       ) : (
@@ -128,7 +141,7 @@ const AccessControl = () => {
 
           <SmartTable
             headers={headers}
-            data={users}
+            data={filteredUsers}
             onRowClick={handleRowClick}
             searchTerm={searchTerm}
             setSearchTerm={setSearchTerm}

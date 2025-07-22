@@ -6,6 +6,8 @@ import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Pagination from '../utility/Pagination';
+import SmartTable from '../../smartTable/SmartTable';
+import Pagination10 from '../utility/Pagination10';
 
 
 
@@ -52,7 +54,7 @@ const StitchReport = () => {
   /// we have to replace this api with the dispatch entry one
   const fetchStitchData = async () => {
     try {
-      setLoading(true);
+      setPaginationLoading(true);
       const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/stitching-entries?populate[sales_order_entry][populate]=customer&populate[stitcher]=*&populate[processor][fields][0]=name&populate[order_Items]=*&populate[bom][populate]=sfg&populate[internal_sales_order_entry][populate]=*&sort=id:desc`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -112,6 +114,7 @@ const StitchReport = () => {
         navigate("/login");
       }
     } finally {
+      setPaginationLoading(false);
       setLoading(false);
     }
   }
@@ -210,53 +213,51 @@ const StitchReport = () => {
   }
 
 
-
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <BounceLoader color="#1e3a8a" />
+      </div>
+    )
+  }
 
 
   return (
-    <div className="py-2 bg-white rounded-lg relative">
-      {loading ? (
-        <div className="absolute inset-0 flex justify-center items-center mt-64 bg-opacity-50 bg-gray-200 z-10">
-          <BounceLoader size={100} color={"#1e3a8a"} loading={loading} />
-        </div>
-      ) : (
-        <div>
-          <h1 className="text-3xl font-bold text-blue-900 mb-4">{title}</h1>
-          <div className="my-8" ref={printableTableRef}>
+    <div className="p-6 bg-white rounded-lg relative" style={{ boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)" }}>
 
-            {paginationLoading ? (
-              <div className="flex p-5 justify-center items-center space-x-2 mt-4 border border-gray-400 rounded-lg">
-                <BounceLoader size={20} color="#1e3a8a" />
-              </div>
-            ) : (
-              <>
-                {/* <SmartTable1 headers={headers} data={updateData} /> */}
-                {/* <SmartTable1 headers={headersForTable} data={stitchData} /> */}
-                <SmartTable1
-                  headers={headersForTable}
-                  data={stitchData}
-                  searchTerm={searchTerm}
-                  setSearchTerm={setSearchTerm}
-                />
+      <div>
+        <h1 className="text-2xl font-bold text-blue-900 mb-4 pb-2 border-b">{title}</h1>
+        <div className="" ref={printableTableRef}>
 
 
-                <Pagination
-                  setPage={setPage}
-                  totalPages={totalPages}
-                  page={page}
-                  setPageSize={setPageSize}
-                  pageSize={pageSize}
-                />
-              </>
-            )}
+          {/* <SmartTable1 headers={headers} data={updateData} /> */}
+          {/* <SmartTable1 headers={headersForTable} data={stitchData} /> */}
+          <SmartTable
+            headers={headersForTable}
+            data={stitchData}
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            loading={paginationLoading}
+            setLoading={setPaginationLoading}
+          />
+
+          <div className='flex justify-between items-center px-5'>
+
+            <button onClick={handlePrint} className="mt-4 p-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+              Print Table
+            </button>
+            <Pagination10
+              setPage={setPage}
+              totalPages={totalPages}
+              page={page}
+              setPageSize={setPageSize}
+              pageSize={pageSize}
+            />
+
           </div>
+        </div>
 
-
-
-          <button onClick={handlePrint} className="mt-4 p-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-            Print Table
-          </button>
-        </div>)}
+      </div>
     </div>
   )
 }

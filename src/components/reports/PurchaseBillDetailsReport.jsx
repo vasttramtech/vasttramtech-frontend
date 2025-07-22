@@ -10,6 +10,7 @@ import ReportTable from '../../smartTable/ReportTable';
 import ExportToExcel from '../utility/ExportToExcel';
 import TableWithoutSearch from '../../smartTable/TableWithoutSearch';
 import Search from "../../assets/Others/Search.png";
+import Pagination10 from '../utility/Pagination10';
 
 
 
@@ -171,98 +172,92 @@ const PurchaseBillDetailsReport = () => {
         setClearTrigger(true);
     }
 
+    if (loading) {
+        return (
+            <div className='flex justify-center items-center h-screen'>
+                <BounceLoader color={"#1e3a8a"} />
+            </div>
+        )
+    }
+
     return (
-        <div className="py-2 bg-white rounded-lg relative">
-            {loading ? (
-                <div className="absolute inset-0 flex justify-center items-center mt-64 bg-opacity-50 bg-gray-200 z-10">
-                    <BounceLoader size={100} color={"#1e3a8a"} loading={loading} />
-                </div>
-            ) : (
-                <div>
-                    <h1 className="text-3xl font-bold text-blue-900 mb-4">{title}</h1>
-                    <div className="my-8" >
+        <div className="p-6 bg-white rounded-lg relative">
+
+            <div>
+                <h1 className="text-2xl pb-2 border-b font-bold text-blue-900 mb-4">{title}</h1>
+                <div className="" >
 
 
-                        {paginationLoading ? (
-                            <div className="flex p-5 justify-center items-center space-x-2 mt-4 border border-gray-400 rounded-lg">
-                                <BounceLoader size={20} color="#1e3a8a" />
+
+                    <div className='flex justify-between items-center  px-5'>
+
+                        <div className="flex items-center">
+                            <input
+                                type="text"
+                                placeholder="Auto Search..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="px-3 py-2 border rounded-lg border-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                            />
+                        </div>
+
+                        <div className="flex gap-4 mb-4">
+                            <div>
+                                <label className="block text-sm text-gray-700">From Date:</label>
+                                <input
+                                    type="date"
+                                    value={fromDate || ""}
+                                    onChange={(e) => setFromDate(e.target.value)}
+                                    className="border border-gray-300 rounded px-2 py-1"
+                                />
                             </div>
-                        ) : (
-                            <>
-                                <div className='flex justify-between items-center w-[90%]'>
+                            <div>
+                                <label className="block text-sm text-gray-700">To Date:</label>
+                                <input
+                                    type="date"
+                                    value={toDate || ""}
+                                    onChange={(e) => setToDate(e.target.value)}
+                                    className="border border-gray-300 rounded px-2 py-1"
+                                />
+                            </div>
+                            <button
+                                type='button'
+                                onClick={() => {
+                                    fetchBillOfSales();
+                                    setPage(1);
+                                }}
+                                className="self-end bg-blue-600 text-white text-lg px-4 py-1 rounded hover:bg-blue-700"
+                            >
+                                Filter
+                            </button>
+                            <button
+                                type='button'
+                                onClick={clearHandler}
+                                className="self-end bg-red-600 text-white text-lg px-4 py-1 rounded hover:bg-red-700"
+                            >
+                                Clear
+                            </button>
+                        </div>
 
-                                    <div className="flex items-center">
-                                        <input
-                                            type="text"
-                                            placeholder="Auto Search..."
-                                            value={searchTerm}
-                                            onChange={(e) => setSearchTerm(e.target.value)}
-                                            className="px-3 py-2 border rounded-lg border-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                                        />
-                                    </div>
-
-                                    <div className="flex gap-4 mb-4">
-                                        <div>
-                                            <label className="block text-sm text-gray-700">From Date:</label>
-                                            <input
-                                                type="date"
-                                                value={fromDate || ""}
-                                                onChange={(e) => setFromDate(e.target.value)}
-                                                className="border border-gray-300 rounded px-2 py-1"
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-sm text-gray-700">To Date:</label>
-                                            <input
-                                                type="date"
-                                                value={toDate || ""}
-                                                onChange={(e) => setToDate(e.target.value)}
-                                                className="border border-gray-300 rounded px-2 py-1"
-                                            />
-                                        </div>
-                                        <button
-                                            type='button'
-                                            onClick={() => {
-                                                fetchBillOfSales();
-                                                setPage(1);
-                                            }}
-                                            className="self-end bg-blue-600 text-white text-lg px-4 py-1 rounded hover:bg-blue-700"
-                                        >
-                                            Filter
-                                        </button>
-                                        <button
-                                            type='button'
-                                            onClick={clearHandler}
-                                            className="self-end bg-red-600 text-white text-lg px-4 py-1 rounded hover:bg-red-700"
-                                        >
-                                            Clear
-                                        </button>
-                                    </div>
-
-                                </div>
-
-                                <TableWithoutSearch headers={headersForTable} data={enhancedData} />
-
-                                <div className='px-5 flex justify-between items-center'>
-                                    <ExportToExcel data={purchaseData} reportName={"Sale Bill Report"} />
-
-                                    <Pagination
-                                        setPage={setPage}
-                                        totalPages={totalPages}
-                                        page={page}
-                                        setPageSize={setPageSize}
-                                        pageSize={pageSize}
-                                    />
-                                </div>
-                            </>
-                        )}
                     </div>
 
+                    <TableWithoutSearch headers={headersForTable} data={enhancedData} loading={paginationLoading} setLoading={setPaginationLoading} />
 
+                    <div className='px-5 flex justify-between items-center'>
+                        <ExportToExcel data={purchaseData} reportName={"Sale Bill Report"} />
 
-                </div>)
-            }
-        </div >
+                        <Pagination10
+                            setPage={setPage}
+                            totalPages={totalPages}
+                            page={page}
+                            setPageSize={setPageSize}
+                            pageSize={pageSize}
+                        />
+                    </div>
+
+                </div>
+            </div>
+        </div>
     )
 }
 

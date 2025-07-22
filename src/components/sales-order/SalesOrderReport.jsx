@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import Pagination from "../utility/Pagination";
 import { useSelector } from "react-redux";
 import Pagination10 from "../utility/Pagination10";
+import MasterTable from "../../smartTable/MasterTable";
 const SalesOrderReport = () => {
   const [salesDatas, setSalesData] = useState([]);
   const [headers] = useState([
@@ -427,7 +428,7 @@ const SalesOrderReport = () => {
         </div>
       )}
 
-      <SmartTable
+      <MasterTable
         headers={headers}
         data={updateData}
         searchTerm={searchTerm}
