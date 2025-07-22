@@ -120,7 +120,12 @@ const RawMaterialMaster = () => {
             ];
 
             const [res1, res2, res3, res4] = await Promise.all(
-                endpoints.map((url) => axios.get(url, { headers }))
+                endpoints.map((url) => axios.get(url, {
+                    params: {
+                        "pagination[page]": 1,
+                        "pagination[pageSize]": 10000,
+                    }, headers
+                }))
             );
 
             setMaterialGroup(Array.isArray(res1.data.data) ? res1.data.data : []);

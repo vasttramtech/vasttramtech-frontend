@@ -9,6 +9,10 @@ export const fetchDataFromAPI = async (url, token) => {
     const response = await axios.get(
       `${process.env.REACT_APP_BACKEND_URL}${url}`,
       {
+        params: {
+          "pagination[page]": 1,
+          "pagination[pageSize]": 10000,
+        },
         headers: { Authorization: `Bearer ${token}` },
       }
     );

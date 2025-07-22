@@ -661,8 +661,10 @@ const StitchingEntry = () => {
             let url = '';
             let params = {
                 "filters[order_status][$in]": ["In Process", "Process Due", "readyToStitch", "In Stitching"],
+                "populate": "*",
+                "pagination[page]": 1,
+                "pagination[pageSize]": 10000,
                 "sort": "id:desc",
-                "populate": "*"
             };
 
             if (type === "vasttram") {
@@ -1202,6 +1204,7 @@ const StitchingEntry = () => {
                                 name="processor"
                                 value={formData.processor}
                                 onChange={formDataChangeHandler}
+                                disabled
                             >
                                 <option value="" className="text-gray-400">Select Processor</option>
                                 {
