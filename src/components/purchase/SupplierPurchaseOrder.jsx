@@ -25,6 +25,7 @@ const SupplierPurchaseOrder = () => {
 
   const [selectionData, setSelectionData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [rawMaterialLoading, setRawMaterialLoading] = useState(false);
   const [displayModal, setDisplayModal] = useState(false);
   const { token } = useSelector((state) => state.auth);
   const navigate = useNavigate();
@@ -146,14 +147,22 @@ const SupplierPurchaseOrder = () => {
 
   const fetchDropdownData = async () => {
     try {
-      setLoading(true);
+      setRawMaterialLoading(true);
       const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/raw-material-masters?populate=*`, {
+        params: {
+          "pagination[page]": 1,
+          "pagination[pageSize]": 10000,
+        },
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
       const response1 = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/supplier-masters?populate=*`, {
+        params: {
+          "pagination[page]": 1,
+          "pagination[pageSize]": 10000,
+        },
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -187,7 +196,7 @@ const SupplierPurchaseOrder = () => {
         navigate("/login");
       }
     } finally {
-      setLoading(false);
+      setRawMaterialLoading(false);
     }
   };
   const handleFormChange = (e) => {
@@ -283,8 +292,6 @@ const SupplierPurchaseOrder = () => {
               {/* Close Button */}
 
               <div>
-
-
                 <button
                   className="absolute top-2 right-2 text-red-700 hover:text-red-500 hover:scale-105 duration-200 transition-all ease-in-out text-2xl font-bold"
                   onClick={() => setDisplayModal(false)}
@@ -296,26 +303,37 @@ const SupplierPurchaseOrder = () => {
               <h2 className="text-2xl font-bold mb-4 text-center">
                 Select Raw Material
               </h2>
+              {
+                rawMaterialLoading ? (
+                  <div className="flex justify-center items-center z-10">
+                    <BounceLoader size={100} color={"#1e3a8a"} loading={rawMaterialLoading} />
+                  </div>
+                ) : (
 
-              <SelectionTable
-                NoOfColumns={selctionHeader.length}
-                data={selectionData}
-                headers={selctionHeader}
-                setSelectedRow={setSelectedRow}
-                setOfSelectedIndex={setOfSelectedIndex}
-                setSetOfSelectedIndex={setSetOfSelectedIndex}
-              />
+                  <>
 
-              {/* Add Button */}
-              <div className="flex justify-center items-center mt-4">
-                <button
-                  type="button"
-                  className="bg-blue-900 px-4 py-1 rounded hover:bg-blue-700 duration-200 ease-in-out transition-all  text-white"
-                  onClick={handleSaveSelection}
-                >
-                  Add
-                </button>
-              </div>
+                    <SelectionTable
+                      NoOfColumns={selctionHeader.length}
+                      data={selectionData}
+                      headers={selctionHeader}
+                      setSelectedRow={setSelectedRow}
+                      setOfSelectedIndex={setOfSelectedIndex}
+                      setSetOfSelectedIndex={setSetOfSelectedIndex}
+                    />
+
+
+                    <div className="flex justify-center items-center mt-4">
+                      <button
+                        type="button"
+                        className="bg-blue-900 px-4 py-1 rounded hover:bg-blue-700 duration-200 ease-in-out transition-all  text-white"
+                        onClick={handleSaveSelection}
+                      >
+                        Add
+                      </button>
+                    </div>
+                  </>
+                )}
+
             </div>
           </div>
         )}
