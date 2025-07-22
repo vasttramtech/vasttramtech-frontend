@@ -102,7 +102,14 @@ const SelectSOTable = ({
 
       <div className="mt-2 text-center">
         <button
-          onClick={onAdd}
+          // onClick={onAdd}
+          onClick={() => {
+            if (!selectedSFG || !selectedSFG.addQty || selectedSFG.addQty <= 0) {
+              toast.error("Please enter quantity");
+              return;
+            }
+            onAdd(); // Only call if validation passes
+          }}
           className="px-6 py-2 bg-blue-900 hover:bg-blue-700 transition-all ease-in-out duration-200 text-white rounded-full"
         >
           Add
@@ -222,7 +229,7 @@ const SelectSOTableJobber = ({
     );
 
     if (hasMissingRate) {
-      alert("Please enter the jobber Rate for all selected jobbers.");
+      toast.error("Please enter the jobber Rate for all selected jobbers.");
       return;
     }
 
@@ -381,6 +388,11 @@ const ExtraBOMSfgCreate = ({
       setSubmitting(false);
       return;
     }
+    if (selectJobbers.length === 0) {
+      toast.error("Please select the jobber.");
+      setSubmitting(false);
+      return;
+    }
     const api_point =
       type === "internal-sales-order-entries"
         ? "internal-sales-order-entries"
@@ -469,9 +481,17 @@ const ExtraBOMSfgCreate = ({
         sfg_stock_id: finalselectedSFG.id,
       };
 
+      const extra_bomSfg_fromStock_added = postData.data.extra_bomSfg_fromStock.map((item) => ({
+        ...item,
+        raw_material_bom: [],
+      }));
+
+      console.log("extra_bomSfg_fromStock: ", postData.data.extra_bomSfg_fromStock);
+      console.log("allSemiFinishedGoods: ", allSemiFinishedGoods);
+
       setAllSemiFinishedGoods((prev) => [
         ...prev,
-        ...postData.data.extra_bomSfg_fromStock,
+        ...extra_bomSfg_fromStock_added,
       ]);
 
       setsfglist((prev) => [

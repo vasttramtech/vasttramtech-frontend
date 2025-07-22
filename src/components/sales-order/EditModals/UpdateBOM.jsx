@@ -46,7 +46,13 @@ const UpdateBOM = ({
   const [availableSFGBasedOnMaterial, setAvailableSFGBasedOnMaterial] =
     useState([]);
   const [availableSFGBasedOnColor, setAvailableSFGBasedOnColor] = useState();
-  //   console.log(SavedSfgData);
+  // console.log("FinalSFGData: ", FinalSFGData)
+  // console.log("AllSemiFinishedGoods: ", AllSemiFinishedGoods);
+  // console.log("SavedSfgData", SavedSfgData);
+  console.log("AllSavedSemiFinishedGoods", AllSavedSemiFinishedGoods);
+  console.log("setAllSavedSemiFinishedGoods", setAllSavedSemiFinishedGoods);
+  console.log("AllSemiFinishedGoods", AllSemiFinishedGoods);
+  console.log("setAllSemiFinishedGoods", setAllSemiFinishedGoods);
 
   // Raw Material States
   const [rawMaterialSetOfSelectedIndex, setRawMaterialSetOfSelectedIndex] =
@@ -313,6 +319,8 @@ const UpdateBOM = ({
     setRawMaterialTotalCost(totalCost);
   };
 
+  // console.log("finalSelectedRawMaterials11111111: ", finalSelectedRawMaterials)
+
   function handleSaveJobberSelection() {
     try {
       const selectedIds = new Set(finalSelectedJobbers.map((row) => row.id));
@@ -433,7 +441,7 @@ const UpdateBOM = ({
     fetchColorData();
   }, []);
 
-
+  // console.log("SfgData: ",SfgData);
   const updateSFGdata = (event) => {
     if (event) event.preventDefault();
 
@@ -448,9 +456,11 @@ const UpdateBOM = ({
       return;
     }
 
-    console.log(AllSemiFinishedGoods[index]);
+    // console.log(AllSemiFinishedGoods[index]);
+    console.log("SfgData: ",SfgData);
 
     const newSfgEntry = {
+      bom_id : AllSavedSemiFinishedGoods?.find((item , i) => i === index)?.bom_id,
       semi_finished_goods: Number(availableSFGBasedOnMaterial[0].id),
       qty: Number(SfgData.sfg_qty),
       total_price: Number(SfgData.sfg_total_cost),
@@ -471,7 +481,8 @@ const UpdateBOM = ({
       processes: FinalSFGData?.processes || [],
     };
 
-    console.log("New SFG Entry", newSfgEntry);
+    // console.log("New SFG Entry", newSfgEntry);
+    // console.log("finalSelectedRawMaterials123: ", finalSelectedRawMaterials)
     setFinalSFGData(newSfgEntry);
     setAllSemiFinishedGoods((prev) =>
       prev.map((item, ind) => (ind === index ? newSfgEntry : item))
@@ -504,17 +515,16 @@ const UpdateBOM = ({
       color: color_name || "",
     };
 
-    console.log("Payload to be saved:", payload);
+    // console.log("Payload to be saved:", payload);
     setSavedSfgData(payload);
     setAllSavedSemiFinishedGoods((prev) =>
       prev.map((item, ind) =>
         ind === index ? JSON.parse(JSON.stringify({ ...item, ...payload })) : item
       )
     );
-    console.log("Updated SavedSfgData:", AllSavedSemiFinishedGoods);
+    // console.log("Updated SavedSfgData:", AllSavedSemiFinishedGoods);
 
     // Clear selected items after adding SFG
-    setFinalSelectedRawMaterials([]);
     setFinalSelectedJobbers([]);
     setJobberSetOfSelectedIndex(new Set());
     setRawMaterialSetOfSelectedIndex(new Set());
@@ -532,7 +542,7 @@ const UpdateBOM = ({
 
     setSfgData({
       sfg_group: "",
-      sfg_material_name : "",
+      sfg_material_name: "",
       sfg_material: "",
       sfg_color1: "",
       sfg_qty: 0,
@@ -594,7 +604,7 @@ const UpdateBOM = ({
     finalSelectedRawMaterials,
   ]);
 
-  console.log(finalSelectedRawMaterials);
+  // console.log(finalSelectedRawMaterials);
 
   //  useEffect(() => {
   //   const newSfgQty = SfgData.sfg_qty;

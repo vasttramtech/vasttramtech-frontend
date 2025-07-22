@@ -25,7 +25,7 @@ const SalesOrderReport = () => {
     "Qty",
     "Status",
     "Order Stock",
-    "Edit",
+    // "Edit",
     "View",
     // "Add SFG/Raw Material",
   ]);
@@ -49,28 +49,28 @@ const SalesOrderReport = () => {
     setUpdatedData(
       salesDatas.map((item, index) => ({
         ...item,
-        edit:
-          (item?.status === "In Process" || item?.status === "Process Due") ? (
-            <img
-              src={EditIcon}
-              alt="Edit"
-              className="w-4"
-              onClick={() => {
-                // console.log(1)
-                if (!item?.id) {
-                  alert("Not valid data");
-                  return;
-                }
-                const type =
-                  item?.customerType === "Vasttram Admin"
-                    ? "internal"
-                    : "external";
-                navigate(`/sales-order-report/edit/${type}/${item?.id}`);
-              }}
-            />
-          ) : (
-            <img src={EditIcon} alt="Edit" className="w-4 opacity-50" />
-          ),
+        // edit:
+        //   (item?.status === "In Process" || item?.status === "Process Due") ? (
+        //     <img
+        //       src={EditIcon}
+        //       alt="Edit"
+        //       className="w-4"
+        //       onClick={() => {
+        //         // console.log(1)
+        //         if (!item?.id) {
+        //           alert("Not valid data");
+        //           return;
+        //         }
+        //         const type =
+        //           item?.customerType === "Vasttram Admin"
+        //             ? "internal"
+        //             : "external";
+        //         navigate(`/sales-order-report/edit/${type}/${item?.id}`);
+        //       }}
+        //     />
+        //   ) : (
+        //     <img src={EditIcon} alt="Edit" className="w-4 opacity-50" />
+        //   ),
         view: (
           <div className="flex justify-center items-center space-x-2">
             <button
