@@ -432,6 +432,10 @@ const BillOfPurchase = () => {
         axios.get(
           billOfSalesUrl,
           {
+            params: {
+              "pagination[page]": 1,
+              "pagination[pageSize]": 10000,
+            },
             headers: {
               Authorization: `Bearer ${token}`,
             },
