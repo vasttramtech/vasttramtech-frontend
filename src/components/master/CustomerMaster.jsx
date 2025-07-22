@@ -14,6 +14,7 @@ import { toast } from "react-toastify";
 import EditCustomerMaster from "./EditModals/EditCustomerMaster";
 import Pagination from "../utility/Pagination";
 import { fetchCustomers } from "../../state/fetchDataSlice";
+import MasterTable from "../../smartTable/MasterTable";
 
 const statesOfIndia = [
   "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh",
@@ -897,7 +898,7 @@ const CustomerMaster = () => {
           <div className="">
             <h3 className="text-2xl font-bold text-blue-900 pb-2 border-b">List Of Customers</h3>
           </div>
-          <SmartTable
+          <MasterTable
             headers={headers}
             data={enhancedData}
             searchTerm={searchTerm}

@@ -11,6 +11,7 @@ import { fetchJobberMasters } from "../../state/jobberMastersSlice";
 import EditIcon from "../../assets/Others/EditIcon.png";
 import ViewIcon from "../../assets/Others/ViewIcon.png";
 import Pagination from "../utility/Pagination";
+import MasterTable from "../../smartTable/MasterTable";
 
 
 const headers = ["document_id", "Jobber id", "Jobber Name", "Jobber Pan", "Jobber GSTIN", "Jobber Address", "Jobber Code", "State Name", "Days", "Work Type", "Edit"];
@@ -336,7 +337,7 @@ const JobberMaster = () => {
     }
 
     return (
-        <div className="p-6 bg-white rounded-2xl relative">
+        <div className="p-6  bg-white rounded-2xl relative">
 
             <div>
                 <h1 className="text-2xl font-bold text-blue-900 mb-4 border-b pb-2">Jobber Master</h1>
@@ -558,7 +559,7 @@ const JobberMaster = () => {
                         <h3 className="text-2xl font-bold text-blue-900 pb-2 border-b">List Of Jobbers</h3>
                     </div>
 
-                    <SmartTable
+                    <MasterTable
                         headers={headers}
                         data={enhancedData}
                         searchTerm={searchTerm}

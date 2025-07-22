@@ -691,7 +691,7 @@ const Sidebar = () => {
                 </div>
 
                 {/* Accordion Children */}
-                {isAccordionOpen && (
+                {/* {isAccordionOpen && (
                   <div className="ml-9 mt-1 space-y-1">
                     {item.children.map((option, i) => {
                       const isActive = currentPath === option.path;
@@ -710,7 +710,33 @@ const Sidebar = () => {
                       );
                     })}
                   </div>
-                )}
+                )} */}
+                {/* Accordion Children */}
+                <div
+                  className={`
+    ml-9 mt-1 space-y-1
+    overflow-hidden transition-all duration-300
+    ${isAccordionOpen ? "max-h-64 opacity-100 visible" : "max-h-0 opacity-0 invisible"}
+  `}
+                >
+                  {item.children.map((option, i) => {
+                    const isActive = currentPath === option.path;
+                    return (
+                      <div
+                        key={i}
+                        className={`text-sm px-3 py-1 rounded cursor-pointer transition hover:bg-blue-800 
+        ${isActive ? "bg-blue-700 font-semibold" : ""}`}
+                        onClick={() => {
+                          navigate(option.path, { state: { title: option.label } });
+                          setIsOpen(false);
+                        }}
+                      >
+                        {option.label}
+                      </div>
+                    );
+                  })}
+                </div>
+
               </div>
             );
           })}

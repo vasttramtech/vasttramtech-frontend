@@ -13,6 +13,7 @@ import { toast } from 'react-toastify';
 import Select from 'react-select';
 import { Download, ListRestart } from 'lucide-react';
 import TableWithoutSearch from '../../smartTable/TableWithoutSearch';
+import Pagination10 from '../utility/Pagination10';
 
 const headersForTable = [
     "SO Id",
@@ -64,6 +65,9 @@ const DyerWiseSalePurchaseReport = () => {
     const [selectedJobber, setSelectedJobber] = useState({ label: "", value: "" });
     const [selectedWorkType, setSelectedWorkType] = useState({ label: "", value: "" });
 
+    // triggers
+    const [clearTrigger, setClearTrigger] = useState(false);
+    const [fetchTrigger, setFetchTrigger] = useState(false);
 
     useEffect(() => {
         // Get today's date
@@ -84,12 +88,19 @@ const DyerWiseSalePurchaseReport = () => {
         setToDate(formatDate(today));
     }
 
+    const formateDate = (date) => {
+
+        const day = new Date(date).getDay();
+        const month = new Date(date).getMonth();
+        const year = new Date(date).getFullYear();
+        return `${day}/${month + 1}/${year}`
+    }
 
 
     const fetchReportData = async () => {
         try {
             setPaginationLoading(true);
-            let url = `${process.env.REACT_APP_BACKEND_URL}/api/jobber-wise-report?designation=${designation}&userId=${id}&page=${page}&pageSize=${pageSize}`
+            let url = `${process.env.REACT_APP_BACKEND_URL}/api/jobber-wise-report?designation=${designation}&userId=${id}`
 
             //console.log("Selected Items", selectedJobber, selectedWorkType, fromDate, toDate)
             if (selectedJobber.value !== "") {
@@ -113,7 +124,7 @@ const DyerWiseSalePurchaseReport = () => {
             });
 
             const data = Array.isArray(response.data.data) ? response.data.data : [];
-            console.log("response: ", data)
+            console.log("response: ", response)
             setTotalPages(response.data.meta.pageCount);
             //  there have to be three status (completed, partially completed, sended)
             const mappedData = data?.map((item) => {
@@ -126,14 +137,14 @@ const DyerWiseSalePurchaseReport = () => {
                     colour: item?.color?.color_name,
                     item: item?.item?.semi_finished_goods_name,
                     work_type: item?.jobber?.work_type,
-                    sale_date: item?.sale_date || "-",
+                    sale_date: formateDate(item?.sale_date) || "-",
                     // clear: item?.clear || "-",   
                     // clear_date: item?.clear_date|| "-",
-                    ex_date: item?.ex_date,
+                    ex_date: formateDate(item?.ex_date),
                     // pur_date: item?.pur_date,
                     sale_qty: item?.qty,
                     pur_qty: item?.receive_qty,
-                    balance_qty: (item?.qty - item?.receive_qty),
+                    balance_qty: Math.abs(item?.qty - item?.receive_qty),
                     status: (item?.qty - item?.receive_qty) === 0 ? "Completed" : "Partially Received",
                 };
             })
@@ -183,12 +194,12 @@ const DyerWiseSalePurchaseReport = () => {
     useEffect(() => {
         fetchReportData();
         fetchJobber();
-    }, [page, pageSize]);
+    }, [page, pageSize, clearTrigger, fetchTrigger]);
 
     useEffect(() => {
         // Reset page to 1 whenever any filter changes
         setPage(1);
-    }, [selectedJobber, selectedWorkType, fromDate, toDate]);
+    }, [clearTrigger, fetchTrigger]);
 
 
 
@@ -196,17 +207,16 @@ const DyerWiseSalePurchaseReport = () => {
         setSelectedJobber({ label: "", value: "" });
         setSelectedWorkType({ label: "", value: "" });
         setTimings();
+        setClearTrigger(!clearTrigger);
         setPage(1);
-        fetchReportData()
 
     }
 
 
-
     if (loading) {
         return (
-            <div className="absolute inset-0 flex justify-center items-center mt-64 bg-opacity-50 bg-gray-200 z-10">
-                <BounceLoader size={100} color={"#1e3a8a"} loading={loading} />
+            <div className="flex justify-center items-center h-screen">
+                <BounceLoader color="#1e3a8a" />
             </div>
         )
     }
@@ -215,110 +225,105 @@ const DyerWiseSalePurchaseReport = () => {
 
     return (
         <div>
-            <div className="py-2 bg-white rounded-lg relative">
-                {loading ? (
-                    <div className="absolute inset-0 flex justify-center items-center mt-64 bg-opacity-50 bg-gray-200 z-10">
-                        <BounceLoader size={100} color={"#1e3a8a"} loading={loading} />
-                    </div>
-                ) : (
-                    <div>
-                        <h1 className="text-3xl font-bold text-blue-900 mb-4">{title}</h1>
-                        <div className="my-8" >
-                            <div className='border border-gray-300 rounded-xl shadow-md shadow-gray-400 p-5'>
+            <div className="p-6 bg-white rounded-lg relative">
 
-                                <div className='text-red-500 text-sm text-center mb-5'>(Please select any one from Jobber and Work Type)</div>
+                <div>
+                    <h1 className="text-2xl font-bold text-blue-900 mb-4 pb-2 border-b">{title}</h1>
+                    <div className="my-8" >
+                        <div className='border border-gray-300 rounded-xl shadow-sm shadow-gray-400 p-5'>
 
-                                <div className='grid grid-cols-2 gap-4 '>
-                                    <div>
-                                        <label id=''>Fetch Jobber Wise Report</label>
-                                        <Select
-                                            placeholder={fetchJobberLoader ? "Loading..." : "Select Jobber"}
-                                            options={jobber}
-                                            onChange={(selectedOption) => {
-                                                setSelectedJobber(selectedOption);
-                                            }}
-                                            isDisabled={selectedWorkType.value !== ""}
-                                            value={selectedJobber}
-                                        />
-                                    </div>
-                                    <div>
-                                        <label id=''>Fetch Work Type Wise Report</label>
-                                        <Select
-                                            placeholder={fetchJobberLoader ? "Loading..." : "Select Work Type"}
-                                            options={workType}
-                                            isDisabled={selectedJobber.value !== ""}
-                                            onChange={(e) => {
-                                                setSelectedWorkType(e);
-                                            }}
-                                            value={selectedWorkType}
-                                        />
-                                    </div>
+                            <div className='text-red-500 text-sm text-center mb-5'>(Please select any one from Jobber and Work Type)</div>
 
-                                    <div className='flex  flex-col'>
-                                        <label id='fromDate'>From Date</label>
-                                        <input
-                                            type="date"
-                                            className='px-3 py-2 border border-gray-300 rounded-md'
-                                            name='fromDate'
-                                            value={fromDate}
-                                            onChange={(e) => setFromDate(e.target.value)}
-                                        />
-                                    </div>
-                                    <div className='flex  flex-col'>
-                                        <label id='toDate'>From Date</label>
-                                        <input
-                                            type="date"
-                                            className='px-3 py-2 border border-gray-300 rounded-md'
-                                            name='toDate'
-                                            value={toDate}
-                                            onChange={(e) => setToDate(e.target.value)}
-                                        />
-                                    </div>
-
+                            <div className='grid grid-cols-2 gap-4 '>
+                                <div>
+                                    <label id=''>Fetch Jobber Wise Report</label>
+                                    <Select
+                                        placeholder={fetchJobberLoader ? "Loading..." : "Select Jobber"}
+                                        options={jobber}
+                                        onChange={(selectedOption) => {
+                                            setSelectedJobber(selectedOption);
+                                        }}
+                                        isDisabled={selectedWorkType.value !== ""}
+                                        value={selectedJobber}
+                                    />
                                 </div>
-                                <div className='flex justify-center mt-8 gap-5'>
-                                    <button
-                                        onClick={fetchReportData}
-                                        className='bg-blue-500 text-white px-5 py-2 rounded hover:bg-blue-700 transition flex items-center gap-2'>Fetch Report <Download /></button>
+                                <div>
+                                    <label id=''>Fetch Work Type Wise Report</label>
+                                    <Select
+                                        placeholder={fetchJobberLoader ? "Loading..." : "Select Work Type"}
+                                        options={workType}
+                                        isDisabled={selectedJobber.value !== ""}
+                                        onChange={(e) => {
+                                            setSelectedWorkType(e);
+                                        }}
+                                        value={selectedWorkType}
+                                    />
+                                </div>
 
-                                    <button
-                                        onClick={clearFilter}
-                                        className='bg-red-500 text-white flex items-center gap-2 px-5 py-2 rounded hover:bg-red-700 transition'>Clear Filter <ListRestart /> </button>
+                                <div className='flex  flex-col'>
+                                    <label id='fromDate'>From Date</label>
+                                    <input
+                                        type="date"
+                                        className='px-3 py-2 border border-gray-300 rounded-md'
+                                        name='fromDate'
+                                        value={fromDate}
+                                        onChange={(e) => setFromDate(e.target.value)}
+                                    />
+                                </div>
+                                <div className='flex  flex-col'>
+                                    <label id='toDate'>From Date</label>
+                                    <input
+                                        type="date"
+                                        className='px-3 py-2 border border-gray-300 rounded-md'
+                                        name='toDate'
+                                        value={toDate}
+                                        onChange={(e) => setToDate(e.target.value)}
+                                    />
                                 </div>
 
                             </div>
+                            <div className='flex justify-center mt-8 gap-5'>
+                                <button
+                                    type='button'
+                                    onClick={() => setFetchTrigger(!fetchTrigger)}
+                                    className='bg-blue-900 text-white px-5 py-2 rounded hover:bg-blue-700 transition-all ease-in-out duration-200 flex items-center gap-2'>Fetch Report <Download /></button>
 
-                            <div className='mt-8'>
-                                <h3 className='font-bold  text-2xl'>Dyer/Jobber Wise Report</h3>
-
-                                {paginationLoading ? (
-                                    <div className="flex p-5 justify-center items-center space-x-2 mt-4 border border-gray-400 rounded-lg">
-                                        <BounceLoader size={20} color="#1e3a8a" />
-                                    </div>
-                                ) : (
-                                    <>
-
-                                        <TableWithoutSearch headers={headersForTable} data={reportData} />
-                                        <div className='px-5 flex justify-between items-center'>
-                                            <ExportToExcel data={reportData} reportName={"Sale Bill Report"} />
-
-
-                                            <Pagination
-                                                setPage={setPage}
-                                                totalPages={totalPages}
-                                                page={page}
-                                                setPageSize={setPageSize}
-                                                pageSize={pageSize}
-                                            />
-                                        </div>
-                                    </>
-                                )}
+                                <button
+                                    type='button'
+                                    onClick={clearFilter}
+                                    className='bg-red-700 text-white flex items-center gap-2 px-5 py-2 rounded hover:bg-red-500 transition-all ease-in-out duration-200'>Clear Filter <ListRestart /> </button>
                             </div>
+
                         </div>
 
+                        <div className='mt-8'>
+                            <h3 className='font-bold  text-2xl pb-2 border-b mb-4 text-blue-900'>Dyer/Jobber Wise Report</h3>
+
+                            <TableWithoutSearch
+                                headers={headersForTable}
+                                data={reportData}
+                                loading={paginationLoading}
+                                setLoading={setPaginationLoading}
+                            />
+                            <div className='px-5 flex justify-between items-center'>
+                                <ExportToExcel data={reportData} reportName={"Sale Bill Report"} />
 
 
-                    </div>)}
+                                <Pagination10
+                                    setPage={setPage}
+                                    totalPages={totalPages}
+                                    page={page}
+                                    setPageSize={setPageSize}
+                                    pageSize={pageSize}
+                                />
+                            </div>
+
+                        </div>
+                    </div>
+
+
+
+                </div>
             </div>
 
         </div>

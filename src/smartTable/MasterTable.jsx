@@ -4,9 +4,9 @@ import filter from "../assets/Others/Filter.png";
 import Search from "../assets/Others/Search.png";
 import TableSkeleton from "./TableSkeleton";
 
-const SmartTable = ({ headers, data, onRowClick, searchTerm, setSearchTerm, loading, setLoading }) => {
+const MasterTable = ({ headers, data, onRowClick, searchTerm, setSearchTerm, loading, setLoading }) => {
     const navigate = useNavigate();
-    const visibleHeaders = headers;
+    const visibleHeaders = headers.slice(1);
 
     return (
         <div className="w-full p-4 bg-white rounded-xl shadow-sm">
@@ -64,6 +64,7 @@ const SmartTable = ({ headers, data, onRowClick, searchTerm, setSearchTerm, load
                                                 onClick={() => onRowClick && onRowClick(item)}
                                             >
                                                 {Object.values(item)
+                                                    .slice(1)
                                                     .map((value, colIndex) => (
                                                         <td
                                                             key={colIndex}
@@ -97,5 +98,5 @@ const SmartTable = ({ headers, data, onRowClick, searchTerm, setSearchTerm, load
     );
 };
 
-export default SmartTable;
+export default MasterTable;
 

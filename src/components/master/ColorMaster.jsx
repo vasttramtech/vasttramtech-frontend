@@ -12,6 +12,7 @@ import EditIcon from "../../assets/Others/EditIcon.png";
 import EditColorMaster from "./EditModals/EditColorMaster";
 import Pagination from "../utility/Pagination";
 import { fetchColor } from "../../state/fetchDataSlice";
+import MasterTable from "../../smartTable/MasterTable";
 
 
 const headers = ["document_id", "Color Id", "Color Name", "Edit"];
@@ -200,7 +201,7 @@ const ColorMaster = () => {
                 <h1 className="text-2xl font-bold border-b pb-2 text-blue-900 mb-4">{title}</h1>
 
                 {openEditModal && (
-                    <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50 overflow-y-auto">
+                    <div className="fixed inset-0 bg-gray-900 bg-opacity-50 backdrop-blur-md flex justify-center items-center z-50 overflow-y-auto">
                         <div className="bg-white p-6 rounded-lg shadow-lg max-h-[90vh] overflow-y-auto w-[90%] max-w-4xl">
                             <EditColorMaster
                                 selectedRow={selectedRow}
@@ -264,7 +265,7 @@ const ColorMaster = () => {
                     <div className="">
                         <h3 className="text-2xl font-bold text-blue-900 pb-2 border-b">List Of Colors</h3>
                     </div>
-                    <SmartTable
+                    <MasterTable
                         headers={headers}
                         data={enhancedData}
                         searchTerm={searchTerm}

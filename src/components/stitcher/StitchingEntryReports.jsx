@@ -7,6 +7,8 @@ import axios from "axios";
 import ViewIcon from "../../assets/Others/ViewIcon.png";
 import { BounceLoader, PuffLoader } from "react-spinners";
 import Pagination from '../utility/Pagination';
+import SmartTable from "../../smartTable/SmartTable";
+import Pagination10 from "../utility/Pagination10";
 
 
 const handlePrint = () => {
@@ -41,7 +43,7 @@ const StitchingEntryReports = () => {
 
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
+  const [pageSize, setPageSize] = useState(10);
   const [paginationLoading, setPaginationLoading] = useState(false);
   const printableTableRef = useRef();
   const [searchTerm, setSearchTerm] = useState("");
@@ -183,7 +185,8 @@ const StitchingEntryReports = () => {
 
   const fetchBillOfPurchase = async () => {
     try {
-      setLoading(true);
+
+      setPaginationLoading(true);
 
       let params = {
         "pagination[page]": page,
@@ -251,6 +254,7 @@ const StitchingEntryReports = () => {
         navigate("/login");
       }
     } finally {
+      setPaginationLoading(false);
       setLoading(false);
     }
   };
@@ -277,7 +281,7 @@ const StitchingEntryReports = () => {
     Actions: (
       <div className="flex justify-center items-center space-x-2">
         <button onClick={() => handleView(item)}>
-          <img src={ViewIcon} alt="View" className="mr-4 w-4" />
+          <img src={ViewIcon} alt="View" className="mr-4 w-5" />
         </button>
       </div >
     )
@@ -288,50 +292,50 @@ const StitchingEntryReports = () => {
     // console.log("item: ", rowData);
   };
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <BounceLoader color="#1e3a8a" />
+      </div>
+    )
+  }
+
   return (
-    <div className="py-2 bg-white rounded-lg relative">
-      {loading ? (
-        <div className="absolute inset-0 flex justify-center items-center mt-64 bg-opacity-50 bg-gray-200 z-10">
-          <BounceLoader size={100} color={"#1e3a8a"} loading={loading} />
-        </div>
-      ) : (
-        <div>
-          <h1 className="text-3xl font-bold text-blue-900 mb-4">Stitcher Entry Reports</h1>
-          <div className="my-8" ref={printableTableRef}>
+    <div className="p-6 min-h-screen bg-white rounded-lg relative">
 
-            {paginationLoading ? (
-              <div className="flex p-5 justify-center items-center space-x-2 mt-4 border border-gray-400 rounded-lg">
-                <BounceLoader size={20} color="#1e3a8a" />
-              </div>
-            ) : (
-              <>
-                {/* <SmartTable1 headers={headers} data={updateData} /> */}
-                {/* <SmartTable1 headers={headers} data={enhancedData} /> */}
+      <div>
+        <h1 className="text-2xl pb-2 border-b font-bold text-blue-900 mb-4">Stitcher Entry Reports</h1>
+        <div className="" ref={printableTableRef}>
 
-                <SmartTable1
-                  headers={headers}
-                  data={enhancedData}
-                  searchTerm={searchTerm}
-                  setSearchTerm={setSearchTerm}
-                />
 
-                <Pagination
-                  setPage={setPage}
-                  totalPages={totalPages}
-                  page={page}
-                  setPageSize={setPageSize}
-                  pageSize={pageSize}
-                />
-              </>
-            )}
+          <SmartTable
+            headers={headers}
+            data={enhancedData}
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            loading={paginationLoading}
+            setLoading={setPaginationLoading}
+          />
+
+          <div className="flex items-center justify-between px-5">
+            <button onClick={handlePrint} className=" p-2 bg-blue-900 text-white rounded hover:bg-blue-700 duration-200 ease-in-out transition-all">
+              Print Table
+            </button>
+            <Pagination10
+              setPage={setPage}
+              totalPages={totalPages}
+              page={page}
+              setPageSize={setPageSize}
+              pageSize={pageSize}
+            />
           </div>
 
+        </div>
 
 
-          <button onClick={handlePrint} className="mt-4 p-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-            Print Table
-          </button>
-        </div>)}
+
+
+      </div>
     </div>
   );
 };

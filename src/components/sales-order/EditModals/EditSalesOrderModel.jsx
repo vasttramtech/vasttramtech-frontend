@@ -12,6 +12,7 @@ import BOMSection from "./BOMSection";
 import DesignDetails from "./DesignDetails";
 import ExtraBOMSfg from "./ExtraBOMSfg";
 import ExtraBOMSfgCreate from "../component/ExtraBOMSfgCreate";
+import { ChevronLeft } from "lucide-react";
 
 const EditSalesOrderModel = () => {
   const { token } = useSelector((state) => state.auth);
@@ -1003,846 +1004,849 @@ const EditSalesOrderModel = () => {
     );
 
   return (
-    <div className="bg-white p-6 rounded-lg">
-      <h1 className="text-2xl font-bold text-blue-900 mb-4 pb-2 border-b">
-        Edit Sales Order Entry
-      </h1>
-      {showEditSfgModal && (
-        <div className="fixed inset-0 animate-fade-in bg-gray-900 backdrop-blur-md bg-opacity-50 flex justify-center items-center z-50">
+    <>
+      <p className="text-blue-700 flex items-center cursor-pointer px-2" onClick={() => window.history.back()}> <ChevronLeft /> Back</p>
+      <div className="bg-white p-6 rounded-lg">
+        <h1 className="text-2xl font-bold text-blue-900 mb-4 pb-2 border-b">
+          Edit Sales Order Entry
+        </h1>
+        {showEditSfgModal && (
+          <div className="fixed inset-0 animate-fade-in bg-gray-900 backdrop-blur-md bg-opacity-50 flex justify-center items-center z-50">
 
-          <div className=" w-[80vw] h-[90vh] bg-white z-40  rounded-xl p-6 overflow-y-auto  top-2">
-            <div className="flex justify-between items-center overflow-y-auto mb-4 pb-2 border-b border-b-gray-300">
-              <h3 className="text-xl font-bold text-blue-900 ">Update Semi Finished Goods</h3>
+            <div className=" w-[80vw] h-[90vh] bg-white z-40  rounded-xl p-6 overflow-y-auto  top-2">
+              <div className="flex justify-between items-center overflow-y-auto mb-4 pb-2 border-b border-b-gray-300">
+                <h3 className="text-xl font-bold text-blue-900 ">Update Semi Finished Goods</h3>
+                <p
+                  className="text-xl px-2 border bg-red-700 rounded-full text-white hover:bg-red-500 cursor-pointer duration-200 transition-all ease-in-out"
+                  onClick={() => {
+                    setShowEditSfgModal(!showEditSfgModal);
+                  }}
+                >
+                  X
+                </p>
+              </div>
+              <EditSfgComponent
+                index={selectedSFGindex}
+                token={token}
+                allJobber={jobberList}
+                allRawMaterial={RawMaterialList}
+                sfgmGroup={availableSfgmGroups}
+                dataDesign={designData}
+                allSemiFinishedGoods={allSemiFinishedGoods}
+                allSavedSemiFinishedGoods={allSavedSemiFinishedGoods}
+                setAllSavedSemiFinishedGoods={setAllSavedSemiFinishedGoods}
+                setAllSemiFinishedGoods={setAllSemiFinishedGoods}
+                sfglist={sfglist}
+                setShowEditSfgModal={setShowEditSfgModal}
+                BillOfSaleStatus={BillOfSaleStatus}
+              />
+            </div>
+          </div>
+        )}
+        {showDesignTable && (
+          <div className="fixed w-[90vw] z-10 bg-gray-200 rounded-xl px-2">
+            <div className="flex justify-between my-1 items-center">
+              <h3 className="text-xl">Select Design</h3>
               <p
-                className="text-xl px-2 border bg-red-700 rounded-full text-white hover:bg-red-500 cursor-pointer duration-200 transition-all ease-in-out"
+                className="text-xl px-2 border bg-red-600 rounded text-white hover:bg-red-500 cursor-pointer"
                 onClick={() => {
-                  setShowEditSfgModal(!showEditSfgModal);
+                  setShowDesignTable(!showDesignTable);
                 }}
               >
                 X
               </p>
             </div>
-            <EditSfgComponent
-              index={selectedSFGindex}
-              token={token}
-              allJobber={jobberList}
-              allRawMaterial={RawMaterialList}
-              sfgmGroup={availableSfgmGroups}
-              dataDesign={designData}
-              allSemiFinishedGoods={allSemiFinishedGoods}
-              allSavedSemiFinishedGoods={allSavedSemiFinishedGoods}
-              setAllSavedSemiFinishedGoods={setAllSavedSemiFinishedGoods}
-              setAllSemiFinishedGoods={setAllSemiFinishedGoods}
-              sfglist={sfglist}
-              setShowEditSfgModal={setShowEditSfgModal}
-              BillOfSaleStatus={BillOfSaleStatus}
+            <SingleAddTable
+              data={formattedDesignMasters}
+              setSelectedData={setSelectedData}
+              setSelectedRow={setSelectedRow}
+              NoOfColumns={NoOfColumns}
+              headers={headersForDesignTable}
             />
           </div>
-        </div>
-      )}
-      {showDesignTable && (
-        <div className="fixed w-[90vw] z-10 bg-gray-200 rounded-xl px-2">
-          <div className="flex justify-between my-1 items-center">
-            <h3 className="text-xl">Select Design</h3>
-            <p
-              className="text-xl px-2 border bg-red-600 rounded text-white hover:bg-red-500 cursor-pointer"
-              onClick={() => {
-                setShowDesignTable(!showDesignTable);
-              }}
-            >
-              X
-            </p>
-          </div>
-          <SingleAddTable
-            data={formattedDesignMasters}
-            setSelectedData={setSelectedData}
-            setSelectedRow={setSelectedRow}
-            NoOfColumns={NoOfColumns}
-            headers={headersForDesignTable}
-          />
-        </div>
-      )}
+        )}
 
-      {showConvertIdTable && (
-        <div className="fixed w-[80vw] z-10 bg-gray-200 rounded-xl px-2">
-          <div className="flex justify-between my-1 items-center">
-            <h3 className="text-xl">Select Convert ID</h3>
-            <p
-              className="text-xl px-2 border bg-red-600 rounded text-white hover:bg-red-500 cursor-pointer"
-              onClick={() => {
-                setShowConvertIdTable(!showConvertIdTable);
-              }}
-            >
-              X
-            </p>
-          </div>
-          <SingleAddTable
-            data={convertIdDatas}
-            setSelectedData={setSelectedConvertIdData}
-            setSelectedRow={setSelectedConvertIdRow}
-            NoOfColumns={headersforConvertId.length}
-            headers={headersforConvertId}
-          />
-        </div>
-      )}
-
-      {/* Add other BOM in current one  */}
-      {showAddBomModal && (
-        <BOMSection
-          showAddBomModal={showAddBomModal}
-          setShowAddBomModal={setShowAddBomModal}
-          token={token}
-          allJobber={jobberList}
-          allRawMaterial={RawMaterialList}
-          sfgmGroup={availableSfgmGroups}
-          dataDesign={designData}
-          allSemiFinishedGoods={allSemiFinishedGoods}
-          allSavedSemiFinishedGoods={allSavedSemiFinishedGoods}
-          setAllSavedSemiFinishedGoods={setAllSavedSemiFinishedGoods}
-          setAllSemiFinishedGoods={setAllSemiFinishedGoods}
-          sfglist={sfglist}
-          setsfglist={setsfglist}
-        />
-      )}
-
-      {addSfgModal && (
-        <ExtraBOMSfgCreate
-          onClose={() => setAddSfgModal(false)}
-          so_id={formData?.so_id}
-          setSOViewModal={setSOViewModal}
-          setSalesOrder={setSalesOrder}
-          setBom={setBom}
-          setSelectSOModal={setSelectSOModal}
-          setFormData={setFormData}
-          setAllSemiFinishedGoods={setAllSemiFinishedGoods}
-          setAllSavedSemiFinishedGoods={setAllSavedSemiFinishedGoods}
-          setsfglist={setsfglist}
-          fetchSFGStock={fetchSFGStock}
-          setSetOfNewlyAddedStockSfg={setSetOfNewlyAddedStockSfg}
-          setOfNewlyAddedStockSfg={setOfNewlyAddedStockSfg}
-          SalessorderQty={formData.qty}
-        />
-      )}
-
-      {soViewModal && (
-        <div className="my-8 overflow-x-auto">
-          <table className="min-w-full table-auto bg-white shadow-lg rounded-2xl overflow-hidden">
-            <thead className="bg-gradient-to-r from-blue-100 to-blue-200 text-blue-900">
-              <tr>
-                <th className="px-6 py-4 text-left font-semibold">#</th>
-                <th className="px-6 py-4 text-left font-semibold">
-                  Semi-Finished Goods
-                </th>
-                <th className="px-6 py-4 text-left font-semibold">Color</th>
-                <th className="px-6 py-4 text-left font-semibold">Quantity</th>
-                <th className="px-6 py-4 text-left font-semibold">
-                  Select Jobber
-                </th>
-                <th className="px-6 py-4 text-left font-semibold">
-                  Stock Reduced
-                </th>
-                <th className="px-6 py-4 text-left font-semibold">Status</th>
-                <th className="px-6 py-4 text-left font-semibold">Processes</th>
-                <th className="px-6 py-4 text-left font-semibold">Select</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {bom?.Extra_bom?.map((item, index) => {
-                // Disable checkbox based on stock_status and bom_status
-                const isButtonDisabled =
-                  item?.stock_status === false ||
-                  [
-                    "sendToJobber",
-                    "readyToStitch",
-                    "SendToStitcher",
-                    "completed",
-                  ].includes(item?.bom_status);
-
-                return (
-                  <tr key={item.id} className="hover:bg-blue-50 transition">
-                    <td className="px-6 py-4 text-gray-700">{index + 1}</td>
-                    <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                      {item?.semi_finished_goods?.semi_finished_goods_name}
-                    </td>
-                    <td className="px-6 py-4 text-gray-600 whitespace-nowrap">
-                      {item?.color?.color_name}
-                    </td>
-                    <td className="px-6 py-4 text-gray-600 whitespace-nowrap">
-                      {item?.qty}
-                    </td>
-
-                    <td className="px-6 py-4">
-                      <select
-                        className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-300 bg-white"
-                        value={
-                          jobberSelectionMap[item.id]?.jobber_master?.id || ""
-                        }
-                        onChange={(e) => {
-                          const selectedJobber = item?.jobber_master_sfg?.find(
-                            (jobber) =>
-                              jobber?.jobber_master?.id ===
-                              parseInt(e.target.value)
-                          );
-
-                          if (selectedJobber) {
-                            setJobberSelectionMap((prev) => ({
-                              ...prev,
-                              [item.id]: selectedJobber,
-                            }));
-                          }
-                        }}
-                        disabled={isButtonDisabled}
-                      >
-                        <option value="" disabled>
-                          -- Select Jobber --
-                        </option>
-                        {item?.jobber_master_sfg
-                          ?.filter(
-                            (jobber) =>
-                              jobber.completed === "Incomplete" ||
-                              jobber.completed === "Processing"
-                          )
-                          .map((jobber) => (
-                            <option
-                              key={jobber.id}
-                              value={jobber?.jobber_master?.id}
-                            >
-                              {jobber?.jobber_master?.id} -{" "}
-                              {jobber?.jobber_master?.jobber_name} -{" "}
-                              {jobber?.jobber_master?.work_type}
-                            </option>
-                          ))}
-                      </select>
-                    </td>
-
-                    <td className="px-6 py-4 text-gray-600 whitespace-nowrap">
-                      {item?.stock_status === true ? "Yes" : "No"}
-                    </td>
-                    <td className="px-6 py-4 text-gray-600 whitespace-nowrap">
-                      {item?.bom_status}
-                    </td>
-
-                    <tr key={`${item.id}-process`} className="bg-gray-50">
-                      <td
-                        colSpan={6}
-                        className="px-6 py-4 text-gray-600 whitespace-nowrap"
-                      >
-                        {item?.processes?.length > 0 ? (
-                          <div className="flex gap-4 items-center">
-                            <select
-                              className="w-full border border-gray-300 rounded-lg px-3 py-2 bg-gray-100 text-gray-700 cursor-not-allowed"
-                              defaultValue="placeholder"
-                            >
-                              <option value="placeholder" disabled>
-                                Process - Done by - Jobber
-                              </option>
-                              {item?.processes?.map((process, index) => (
-                                <option
-                                  key={index}
-                                  value={process?.process}
-                                  disabled
-                                >
-                                  {process?.process} - Done by -{" "}
-                                  {process?.jobber?.jobber_name}
-                                </option>
-                              ))}
-                            </select>
-                          </div>
-                        ) : (
-                          <span className="text-gray-500 italic">
-                            No Process Yet
-                          </span>
-                        )}
-                      </td>
-                    </tr>
-
-                    {/* Checkbox for row selection */}
-                    <td className="px-6 py-4">
-                      <input
-                        type="checkbox"
-                        checked={selectedRows.includes(item.id)}
-                        disabled={isButtonDisabled}
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            setSelectedRows((prev) => [...prev, item.id]);
-                          } else {
-                            setSelectedRows((prev) =>
-                              prev.filter((id) => id !== item.id)
-                            );
-                          }
-                        }}
-                      />
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      <form
-        className=""
-        onSubmit={handleSubmit}
-      >
-        <div className="grid grid-cols-2 gap-6 p-2 mb-5 ">
-          {/* SO ID */}
-          <FormInput
-            type={"text"}
-            placeholder={"SO ID"}
-            label={"SO ID"}
-            value={formData.so_id}
-            name={"so_id"}
-            onChange={handleChange}
-            editable={false}
-          />
-
-          {/* Quantity */}
-          <FormInput
-            type={"number"}
-            placeholder={"Quantity"}
-            label={"Quantity"}
-            onChange={handleChange}
-            value={formData.qty}
-            name={"qty"}
-            editable={false}
-          />
-
-          {/* Group */}
-          <div className="flex flex-col">
-            <FormLabel title={"Group"} />
-            <select
-              value={formData.group}
-              name="group"
-              disabled
-              className="border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="" disabled selected>
-                Select Design Group
-              </option>
-              {designGroups &&
-                Array.isArray(designGroups) &&
-                designGroups?.length > 0 &&
-                designGroups.map((item, index) => (
-                  <option key={item?.id} value={item?.id}>
-                    {item?.group_name}
-                  </option>
-                ))}
-            </select>
-          </div>
-
-          {/* Design Number */}
-          <div className="flex flex-col">
-            <FormLabel title={"Design Number"} />
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={data?.design_number?.design_number || ""}
-                placeholder="Design Number"
-                disabled
-                readOnly
-                className="w-full bg-gray-100 border broder-gray-300 broder-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+        {showConvertIdTable && (
+          <div className="fixed w-[80vw] z-10 bg-gray-200 rounded-xl px-2">
+            <div className="flex justify-between my-1 items-center">
+              <h3 className="text-xl">Select Convert ID</h3>
+              <p
+                className="text-xl px-2 border bg-red-600 rounded text-white hover:bg-red-500 cursor-pointer"
+                onClick={() => {
+                  setShowConvertIdTable(!showConvertIdTable);
+                }}
+              >
+                X
+              </p>
             </div>
+            <SingleAddTable
+              data={convertIdDatas}
+              setSelectedData={setSelectedConvertIdData}
+              setSelectedRow={setSelectedConvertIdRow}
+              NoOfColumns={headersforConvertId.length}
+              headers={headersforConvertId}
+            />
           </div>
-        </div>
+        )}
 
-        {/*  adding data table for Goods and SFG */}
-        {
-          <DesignDetails
-            exta_bom={extra_bom_so}
-            setShowEditTable={setShowEditSfgModal}
-            setEditSFGIndex={setSelectedSFGIndex}
-            designData={designData}
-            allSemiFinishedGoods={allSemiFinishedGoods}
-            setAllSemiFinishedGoods={setAllSemiFinishedGoods}
-            SavedSfgData={allSavedSemiFinishedGoods}
-            setSavedSfgData={setAllSavedSemiFinishedGoods}
-            addBomData={addBomData}
-            setAddBomData={setAddBomData}
+        {/* Add other BOM in current one  */}
+        {showAddBomModal && (
+          <BOMSection
+            showAddBomModal={showAddBomModal}
             setShowAddBomModal={setShowAddBomModal}
-            stockList={stockList}
-            setapprovedsfg={setApprovedSFG}
-            setSFGstatusStock={setSFGstatusStock}
-            setsfglist={setsfglist}
-            sfgStock={sfgStock}
-            sfgStockCategories={sfgStockCategories}
+            token={token}
+            allJobber={jobberList}
+            allRawMaterial={RawMaterialList}
+            sfgmGroup={availableSfgmGroups}
+            dataDesign={designData}
+            allSemiFinishedGoods={allSemiFinishedGoods}
+            allSavedSemiFinishedGoods={allSavedSemiFinishedGoods}
+            setAllSavedSemiFinishedGoods={setAllSavedSemiFinishedGoods}
+            setAllSemiFinishedGoods={setAllSemiFinishedGoods}
             sfglist={sfglist}
+            setsfglist={setsfglist}
+          />
+        )}
+
+        {addSfgModal && (
+          <ExtraBOMSfgCreate
+            onClose={() => setAddSfgModal(false)}
+            so_id={formData?.so_id}
+            setSOViewModal={setSOViewModal}
+            setSalesOrder={setSalesOrder}
+            setBom={setBom}
+            setSelectSOModal={setSelectSOModal}
+            setFormData={setFormData}
+            setAllSemiFinishedGoods={setAllSemiFinishedGoods}
+            setAllSavedSemiFinishedGoods={setAllSavedSemiFinishedGoods}
+            setsfglist={setsfglist}
             fetchSFGStock={fetchSFGStock}
-            setDeletedSfg={setDeletedSfg}
-            salesOrderQty={formData.qty}
+            setSetOfNewlyAddedStockSfg={setSetOfNewlyAddedStockSfg}
+            setOfNewlyAddedStockSfg={setOfNewlyAddedStockSfg}
+            SalessorderQty={formData.qty}
           />
-        }
-        <button
-          className="my-4 ml-4 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:scale-100 hover:shadow-2xl transition-all duration-300 ease-in-out flex items-center gap-2"
-          onClick={() => setAddSfgModal(true)}
-          type="button"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={2}
-            stroke="currentColor"
-            className="w-6 h-6"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M12 4.75v14.5M4.75 12h14.5"
-            />
-          </svg>
-          Add SFG from Stock
-        </button>
+        )}
 
-        <div className="grid grid-cols-2 gap-6 p-2 mb-16">
-          {/* Convert ID */}
-          <div className="flex flex-col">
-            <FormLabel title={"Convert ID"} />
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={selectedConvertIdData?.so_id || ""}
-                placeholder="Convert ID"
-                className="w-full bg-gray-100 border broder-gray-300 broder-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-          </div>
-
-          {/* Order Number */}
-          <FormInput
-            type={"text"}
-            placeholder={"Order Number"}
-            label={"Order Number"}
-            onChange={handleChange}
-            value={formData.order_no}
-            name={"order_no"}
-          />
-
-          {/* Order Date */}
-          <FormInput
-            type={"date"}
-            placeholder={"Order Date"}
-            label={"Order Date"}
-            value={formData.order_date}
-            onChange={handleChange}
-            name={"order_date"}
-          />
-
-          {/* Processor */}
-          <div className="flex flex-col">
-            <FormLabel title={"Processor"} />
-            <select
-              value={formData.processor}
-              name="processor"
-              onChange={handleChange}
-              className="border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="" disabled selected>
-                Select Processor
-              </option>
-              {processorOptions &&
-                Array.isArray(processorOptions) &&
-                processorOptions.map((item, index) => (
-                  <option key={item?.id} value={item?.id}>
-                    {item?.name + " - " + item?.designation}
-                  </option>
-                ))}
-            </select>
-          </div>
-
-          {/* Merchandiser */}
-          <div className="flex flex-col">
-            <FormLabel title={"Merchandiser"} />
-            <select
-              value={formData.merchandiser}
-              name="merchandiser"
-              onChange={handleChange}
-              className="border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="" disabled selected>
-                Select Merchandiser
-              </option>
-              {processorOptions &&
-                Array.isArray(processorOptions) &&
-                processorOptions.map((item, index) => (
-                  <option key={item?.id} value={item?.id}>
-                    {item?.name + " - " + item?.designation}
-                  </option>
-                ))}
-            </select>
-          </div>
-
-          {/* Delivery Date */}
-          <FormInput
-            type={"date"}
-            placeholder={"Delivery Date"}
-            label={"Delivery Date"}
-            value={formData.delivery_date}
-            onChange={handleChange}
-            name={"delivery_date"}
-          />
-
-          {/* Remarks */}
-          <div className="flex flex-col">
-            <FormLabel title={"SO Remarks"} />
-            <textarea
-              className="border border-gray-300 bg-gray-100 rounded-md p-2 h-40 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
-              placeholder="Remarks"
-              value={formData.remark}
-              onChange={handleChange}
-              name="remark"
-            ></textarea>
-          </div>
-
-          {/* Goods Received Remarks */}
-          <div className="flex flex-col">
-            <FormLabel title={"Goods receieved remarks"} />
-            <textarea
-              className="border border-gray-300 bg-gray-100 rounded-md p-2 h-40 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
-              placeholder="Goods Received Remarks"
-              value={formData.goods_received_remark}
-              onChange={handleChange}
-              name="goods_received_remark"
-            ></textarea>
-          </div>
-
-          {/* Table */}
-          <div className="col-span-2 border rounded border-gray-300">
-            <table className="w-full border-collapse border border-gray-300">
-              {/* Table Header */}
-              <thead>
-                <tr className="text-blue-500 bg-gray-200">
-                  <th className="border border-gray-300 px-4 py-2">Group</th>
-                  <th className="border border-gray-300 px-4 py-2">Colour</th>
-                  <th className="border border-gray-300 px-4 py-2">
-                    Design/Khaka
+        {soViewModal && (
+          <div className="my-8 overflow-x-auto">
+            <table className="min-w-full table-auto bg-white shadow-lg rounded-2xl overflow-hidden">
+              <thead className="bg-gradient-to-r from-blue-100 to-blue-200 text-blue-900">
+                <tr>
+                  <th className="px-6 py-4 text-left font-semibold">#</th>
+                  <th className="px-6 py-4 text-left font-semibold">
+                    Semi-Finished Goods
                   </th>
-                  <th className="border border-gray-300 px-4 py-2">
-                    Measurement
+                  <th className="px-6 py-4 text-left font-semibold">Color</th>
+                  <th className="px-6 py-4 text-left font-semibold">Quantity</th>
+                  <th className="px-6 py-4 text-left font-semibold">
+                    Select Jobber
                   </th>
-                  <th className="border border-gray-300 px-4 py-2">Work</th>
-                  <th className="border border-gray-300 px-4 py-2">Others</th>
+                  <th className="px-6 py-4 text-left font-semibold">
+                    Stock Reduced
+                  </th>
+                  <th className="px-6 py-4 text-left font-semibold">Status</th>
+                  <th className="px-6 py-4 text-left font-semibold">Processes</th>
+                  <th className="px-6 py-4 text-left font-semibold">Select</th>
                 </tr>
               </thead>
+              <tbody className="divide-y divide-gray-200">
+                {bom?.Extra_bom?.map((item, index) => {
+                  // Disable checkbox based on stock_status and bom_status
+                  const isButtonDisabled =
+                    item?.stock_status === false ||
+                    [
+                      "sendToJobber",
+                      "readyToStitch",
+                      "SendToStitcher",
+                      "completed",
+                    ].includes(item?.bom_status);
 
-              {/* Table Body */}
-              <tbody>
-                {/* LH */}
-                <tr className="hover:bg-gray-100">
-                  <td className="border border-gray-300 px-4 py-2">LH:</td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    <input
-                      type="text"
-                      value={order_items.LH.colour}
-                      onChange={(e) =>
-                        updateField("LH", "colour", e.target.value)
-                      }
-                      className="w-full bg-gray-100 border border-gray-300 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    <input
-                      type="text"
-                      value={order_items.LH.khaka}
-                      onChange={(e) =>
-                        updateField("LH", "khaka", e.target.value)
-                      }
-                      className="w-full bg-gray-100 border border-gray-300 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    <input
-                      type="text"
-                      value={order_items.LH.measurement}
-                      onChange={(e) =>
-                        updateField("LH", "measurement", e.target.value)
-                      }
-                      className="w-full bg-gray-100 border border-gray-300 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    {" "}
-                    <input
-                      type="text"
-                      value={order_items.LH.work}
-                      onChange={(e) =>
-                        updateField("LH", "work", e.target.value)
-                      }
-                      className="w-full bg-gray-100 border border-gray-300 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    {" "}
-                    <input
-                      type="text"
-                      value={order_items.LH.others}
-                      onChange={(e) =>
-                        updateField("LH", "others", e.target.value)
-                      }
-                      className="w-full bg-gray-100 border border-gray-300 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </td>
-                </tr>
+                  return (
+                    <tr key={item.id} className="hover:bg-blue-50 transition">
+                      <td className="px-6 py-4 text-gray-700">{index + 1}</td>
+                      <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                        {item?.semi_finished_goods?.semi_finished_goods_name}
+                      </td>
+                      <td className="px-6 py-4 text-gray-600 whitespace-nowrap">
+                        {item?.color?.color_name}
+                      </td>
+                      <td className="px-6 py-4 text-gray-600 whitespace-nowrap">
+                        {item?.qty}
+                      </td>
 
-                {/* BP */}
-                <tr className="hover:bg-gray-100">
-                  <td className="border border-gray-300 px-4 py-2">BP:</td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    <input
-                      type="text"
-                      value={order_items.BP.colour}
-                      onChange={(e) =>
-                        updateField("BP", "colour", e.target.value)
-                      }
-                      className="w-full bg-gray-100 border border-gray-300 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    <input
-                      type="text"
-                      value={order_items.BP.khaka}
-                      onChange={(e) =>
-                        updateField("BP", "khaka", e.target.value)
-                      }
-                      className="w-full bg-gray-100 border border-gray-300 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    <input
-                      type="text"
-                      value={order_items.BP.measurement}
-                      onChange={(e) =>
-                        updateField("BP", "measurement", e.target.value)
-                      }
-                      className="w-full bg-gray-100 border border-gray-300 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    {" "}
-                    <input
-                      type="text"
-                      value={order_items.BP.work}
-                      onChange={(e) =>
-                        updateField("BP", "work", e.target.value)
-                      }
-                      className="w-full bg-gray-100 border border-gray-300 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    {" "}
-                    <input
-                      type="text"
-                      value={order_items.BP.others}
-                      onChange={(e) =>
-                        updateField("BP", "others", e.target.value)
-                      }
-                      className="w-full bg-gray-100 border border-gray-300 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </td>
-                </tr>
+                      <td className="px-6 py-4">
+                        <select
+                          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-300 bg-white"
+                          value={
+                            jobberSelectionMap[item.id]?.jobber_master?.id || ""
+                          }
+                          onChange={(e) => {
+                            const selectedJobber = item?.jobber_master_sfg?.find(
+                              (jobber) =>
+                                jobber?.jobber_master?.id ===
+                                parseInt(e.target.value)
+                            );
 
-                {/* DUP1 */}
-                <tr className="hover:bg-gray-100">
-                  <td className="border border-gray-300 px-4 py-2">DUP1:</td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    <input
-                      type="text"
-                      value={order_items.DUP1.colour}
-                      onChange={(e) =>
-                        updateField("DUP1", "colour", e.target.value)
-                      }
-                      className="w-full bg-gray-100 border border-gray-300 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    <input
-                      type="text"
-                      value={order_items.DUP1.khaka}
-                      onChange={(e) =>
-                        updateField("DUP1", "khaka", e.target.value)
-                      }
-                      className="w-full bg-gray-100 border border-gray-300 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    <input
-                      type="text"
-                      value={order_items.DUP1.measurement}
-                      onChange={(e) =>
-                        updateField("DUP1", "measurement", e.target.value)
-                      }
-                      className="w-full bg-gray-100 border border-gray-300 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    {" "}
-                    <input
-                      type="text"
-                      value={order_items.DUP1.work}
-                      onChange={(e) =>
-                        updateField("DUP1", "work", e.target.value)
-                      }
-                      className="w-full bg-gray-100 border border-gray-300 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    {" "}
-                    <input
-                      type="text"
-                      value={order_items.DUP1.others}
-                      onChange={(e) =>
-                        updateField("DUP1", "others", e.target.value)
-                      }
-                      className="w-full bg-gray-100 border border-gray-300 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </td>
-                </tr>
+                            if (selectedJobber) {
+                              setJobberSelectionMap((prev) => ({
+                                ...prev,
+                                [item.id]: selectedJobber,
+                              }));
+                            }
+                          }}
+                          disabled={isButtonDisabled}
+                        >
+                          <option value="" disabled>
+                            -- Select Jobber --
+                          </option>
+                          {item?.jobber_master_sfg
+                            ?.filter(
+                              (jobber) =>
+                                jobber.completed === "Incomplete" ||
+                                jobber.completed === "Processing"
+                            )
+                            .map((jobber) => (
+                              <option
+                                key={jobber.id}
+                                value={jobber?.jobber_master?.id}
+                              >
+                                {jobber?.jobber_master?.id} -{" "}
+                                {jobber?.jobber_master?.jobber_name} -{" "}
+                                {jobber?.jobber_master?.work_type}
+                              </option>
+                            ))}
+                        </select>
+                      </td>
 
-                {/* DUP2 */}
-                <tr className="hover:bg-gray-100">
-                  <td className="border border-gray-300 px-4 py-2">DUP2:</td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    <input
-                      type="text"
-                      value={order_items.DUP2.colour}
-                      onChange={(e) =>
-                        updateField("DUP2", "colour", e.target.value)
-                      }
-                      className="w-full bg-gray-100 border border-gray-300 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    <input
-                      type="text"
-                      value={order_items.DUP2.khaka}
-                      onChange={(e) =>
-                        updateField("DUP2", "khaka", e.target.value)
-                      }
-                      className="w-full bg-gray-100 border border-gray-300 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    <input
-                      type="text"
-                      value={order_items.DUP2.measurement}
-                      onChange={(e) =>
-                        updateField("DUP2", "measurement", e.target.value)
-                      }
-                      className="w-full bg-gray-100 border border-gray-300 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    {" "}
-                    <input
-                      type="text"
-                      value={order_items.DUP2.work}
-                      onChange={(e) =>
-                        updateField("DUP2", "work", e.target.value)
-                      }
-                      className="w-full bg-gray-100 border border-gray-300 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    {" "}
-                    <input
-                      type="text"
-                      value={order_items.DUP2.others}
-                      onChange={(e) =>
-                        updateField("DUP2", "others", e.target.value)
-                      }
-                      className="w-full bg-gray-100 border border-gray-300 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </td>
-                </tr>
-                {/* Other */}
-                <tr className="hover:bg-gray-100">
-                  <td className="border border-gray-300 px-4 py-2">Others:</td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    <input
-                      type="text"
-                      value={order_items.Others.colour}
-                      onChange={(e) =>
-                        updateField("Others", "colour", e.target.value)
-                      }
-                      className="w-full bg-gray-100 border border-gray-300 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    <input
-                      type="text"
-                      value={order_items.Others.khaka}
-                      onChange={(e) =>
-                        updateField("Others", "khaka", e.target.value)
-                      }
-                      className="w-full bg-gray-100 border border-gray-300 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    <input
-                      type="text"
-                      value={order_items.Others.measurement}
-                      onChange={(e) =>
-                        updateField("Others", "measurement", e.target.value)
-                      }
-                      className="w-full bg-gray-100 border border-gray-300 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    {" "}
-                    <input
-                      type="text"
-                      value={order_items.Others.work}
-                      onChange={(e) =>
-                        updateField("Others", "work", e.target.value)
-                      }
-                      className="w-full bg-gray-100 border border-gray-300 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    {" "}
-                    <input
-                      type="text"
-                      value={order_items.Others.others}
-                      onChange={(e) =>
-                        updateField("Others", "others", e.target.value)
-                      }
-                      className="w-full bg-gray-100 border border-gray-300 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </td>
-                </tr>
+                      <td className="px-6 py-4 text-gray-600 whitespace-nowrap">
+                        {item?.stock_status === true ? "Yes" : "No"}
+                      </td>
+                      <td className="px-6 py-4 text-gray-600 whitespace-nowrap">
+                        {item?.bom_status}
+                      </td>
+
+                      <tr key={`${item.id}-process`} className="bg-gray-50">
+                        <td
+                          colSpan={6}
+                          className="px-6 py-4 text-gray-600 whitespace-nowrap"
+                        >
+                          {item?.processes?.length > 0 ? (
+                            <div className="flex gap-4 items-center">
+                              <select
+                                className="w-full border border-gray-300 rounded-lg px-3 py-2 bg-gray-100 text-gray-700 cursor-not-allowed"
+                                defaultValue="placeholder"
+                              >
+                                <option value="placeholder" disabled>
+                                  Process - Done by - Jobber
+                                </option>
+                                {item?.processes?.map((process, index) => (
+                                  <option
+                                    key={index}
+                                    value={process?.process}
+                                    disabled
+                                  >
+                                    {process?.process} - Done by -{" "}
+                                    {process?.jobber?.jobber_name}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+                          ) : (
+                            <span className="text-gray-500 italic">
+                              No Process Yet
+                            </span>
+                          )}
+                        </td>
+                      </tr>
+
+                      {/* Checkbox for row selection */}
+                      <td className="px-6 py-4">
+                        <input
+                          type="checkbox"
+                          checked={selectedRows.includes(item.id)}
+                          disabled={isButtonDisabled}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setSelectedRows((prev) => [...prev, item.id]);
+                            } else {
+                              setSelectedRows((prev) =>
+                                prev.filter((id) => id !== item.id)
+                              );
+                            }
+                          }}
+                        />
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
+        )}
 
-          {/* button */}
-          <div className="col-span-2 flex justify-end mt-4 gap-4">
-            <button
-              onClick={clearHandler}
-              type="button"
-              className="bg-gray-200 px-4 py-1 rounded hover:bg-gray-600 hover:text-white transition"
-            >
-              Clear
-            </button>
-            <button
-              type="submit"
-              className={`bg-blue-900 text-white px-4 py-1 rounded hover:bg-blue-800 hover:text-white transition duration-200 ease-in-out
-              `}
-              disabled={submitting}
-            >
-              {submitting ? (
-                <div className="flex justify-center items-center space-x-2">
-                  <PuffLoader size={20} color="#fff" />
-                  <span>Saving...</span>
-                </div>
-              ) : (
-                "Save"
-              )}
-            </button>
+        <form
+          className=""
+          onSubmit={handleSubmit}
+        >
+          <div className="grid grid-cols-2 gap-6 p-2 mb-5 ">
+            {/* SO ID */}
+            <FormInput
+              type={"text"}
+              placeholder={"SO ID"}
+              label={"SO ID"}
+              value={formData.so_id}
+              name={"so_id"}
+              onChange={handleChange}
+              editable={false}
+            />
+
+            {/* Quantity */}
+            <FormInput
+              type={"number"}
+              placeholder={"Quantity"}
+              label={"Quantity"}
+              onChange={handleChange}
+              value={formData.qty}
+              name={"qty"}
+              editable={false}
+            />
+
+            {/* Group */}
+            <div className="flex flex-col">
+              <FormLabel title={"Group"} />
+              <select
+                value={formData.group}
+                name="group"
+                disabled
+                className="border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="" disabled selected>
+                  Select Design Group
+                </option>
+                {designGroups &&
+                  Array.isArray(designGroups) &&
+                  designGroups?.length > 0 &&
+                  designGroups.map((item, index) => (
+                    <option key={item?.id} value={item?.id}>
+                      {item?.group_name}
+                    </option>
+                  ))}
+              </select>
+            </div>
+
+            {/* Design Number */}
+            <div className="flex flex-col">
+              <FormLabel title={"Design Number"} />
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={data?.design_number?.design_number || ""}
+                  placeholder="Design Number"
+                  disabled
+                  readOnly
+                  className="w-full bg-gray-100 border broder-gray-300 broder-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            </div>
           </div>
-        </div>
-      </form>
-    </div>
+
+          {/*  adding data table for Goods and SFG */}
+          {
+            <DesignDetails
+              exta_bom={extra_bom_so}
+              setShowEditTable={setShowEditSfgModal}
+              setEditSFGIndex={setSelectedSFGIndex}
+              designData={designData}
+              allSemiFinishedGoods={allSemiFinishedGoods}
+              setAllSemiFinishedGoods={setAllSemiFinishedGoods}
+              SavedSfgData={allSavedSemiFinishedGoods}
+              setSavedSfgData={setAllSavedSemiFinishedGoods}
+              addBomData={addBomData}
+              setAddBomData={setAddBomData}
+              setShowAddBomModal={setShowAddBomModal}
+              stockList={stockList}
+              setapprovedsfg={setApprovedSFG}
+              setSFGstatusStock={setSFGstatusStock}
+              setsfglist={setsfglist}
+              sfgStock={sfgStock}
+              sfgStockCategories={sfgStockCategories}
+              sfglist={sfglist}
+              fetchSFGStock={fetchSFGStock}
+              setDeletedSfg={setDeletedSfg}
+              salesOrderQty={formData.qty}
+            />
+          }
+          <button
+            className="my-4 ml-4 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:scale-100 hover:shadow-2xl transition-all duration-300 ease-in-out flex items-center gap-2"
+            onClick={() => setAddSfgModal(true)}
+            type="button"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={2}
+              stroke="currentColor"
+              className="w-6 h-6"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 4.75v14.5M4.75 12h14.5"
+              />
+            </svg>
+            Add SFG from Stock
+          </button>
+
+          <div className="grid grid-cols-2 gap-6 p-2 mb-16">
+            {/* Convert ID */}
+            <div className="flex flex-col">
+              <FormLabel title={"Convert ID"} />
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={selectedConvertIdData?.so_id || ""}
+                  placeholder="Convert ID"
+                  className="w-full bg-gray-100 border broder-gray-300 broder-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            </div>
+
+            {/* Order Number */}
+            <FormInput
+              type={"text"}
+              placeholder={"Order Number"}
+              label={"Order Number"}
+              onChange={handleChange}
+              value={formData.order_no}
+              name={"order_no"}
+            />
+
+            {/* Order Date */}
+            <FormInput
+              type={"date"}
+              placeholder={"Order Date"}
+              label={"Order Date"}
+              value={formData.order_date}
+              onChange={handleChange}
+              name={"order_date"}
+            />
+
+            {/* Processor */}
+            <div className="flex flex-col">
+              <FormLabel title={"Processor"} />
+              <select
+                value={formData.processor}
+                name="processor"
+                onChange={handleChange}
+                className="border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="" disabled selected>
+                  Select Processor
+                </option>
+                {processorOptions &&
+                  Array.isArray(processorOptions) &&
+                  processorOptions.map((item, index) => (
+                    <option key={item?.id} value={item?.id}>
+                      {item?.name + " - " + item?.designation}
+                    </option>
+                  ))}
+              </select>
+            </div>
+
+            {/* Merchandiser */}
+            <div className="flex flex-col">
+              <FormLabel title={"Merchandiser"} />
+              <select
+                value={formData.merchandiser}
+                name="merchandiser"
+                onChange={handleChange}
+                className="border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="" disabled selected>
+                  Select Merchandiser
+                </option>
+                {processorOptions &&
+                  Array.isArray(processorOptions) &&
+                  processorOptions.map((item, index) => (
+                    <option key={item?.id} value={item?.id}>
+                      {item?.name + " - " + item?.designation}
+                    </option>
+                  ))}
+              </select>
+            </div>
+
+            {/* Delivery Date */}
+            <FormInput
+              type={"date"}
+              placeholder={"Delivery Date"}
+              label={"Delivery Date"}
+              value={formData.delivery_date}
+              onChange={handleChange}
+              name={"delivery_date"}
+            />
+
+            {/* Remarks */}
+            <div className="flex flex-col">
+              <FormLabel title={"SO Remarks"} />
+              <textarea
+                className="border border-gray-300 bg-gray-100 rounded-md p-2 h-40 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
+                placeholder="Remarks"
+                value={formData.remark}
+                onChange={handleChange}
+                name="remark"
+              ></textarea>
+            </div>
+
+            {/* Goods Received Remarks */}
+            <div className="flex flex-col">
+              <FormLabel title={"Goods receieved remarks"} />
+              <textarea
+                className="border border-gray-300 bg-gray-100 rounded-md p-2 h-40 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
+                placeholder="Goods Received Remarks"
+                value={formData.goods_received_remark}
+                onChange={handleChange}
+                name="goods_received_remark"
+              ></textarea>
+            </div>
+
+            {/* Table */}
+            <div className="col-span-2 border rounded border-gray-300">
+              <table className="w-full border-collapse border border-gray-300">
+                {/* Table Header */}
+                <thead>
+                  <tr className="text-blue-500 bg-gray-200">
+                    <th className="border border-gray-300 px-4 py-2">Group</th>
+                    <th className="border border-gray-300 px-4 py-2">Colour</th>
+                    <th className="border border-gray-300 px-4 py-2">
+                      Design/Khaka
+                    </th>
+                    <th className="border border-gray-300 px-4 py-2">
+                      Measurement
+                    </th>
+                    <th className="border border-gray-300 px-4 py-2">Work</th>
+                    <th className="border border-gray-300 px-4 py-2">Others</th>
+                  </tr>
+                </thead>
+
+                {/* Table Body */}
+                <tbody>
+                  {/* LH */}
+                  <tr className="hover:bg-gray-100">
+                    <td className="border border-gray-300 px-4 py-2">LH:</td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      <input
+                        type="text"
+                        value={order_items.LH.colour}
+                        onChange={(e) =>
+                          updateField("LH", "colour", e.target.value)
+                        }
+                        className="w-full bg-gray-100 border border-gray-300 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      <input
+                        type="text"
+                        value={order_items.LH.khaka}
+                        onChange={(e) =>
+                          updateField("LH", "khaka", e.target.value)
+                        }
+                        className="w-full bg-gray-100 border border-gray-300 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      <input
+                        type="text"
+                        value={order_items.LH.measurement}
+                        onChange={(e) =>
+                          updateField("LH", "measurement", e.target.value)
+                        }
+                        className="w-full bg-gray-100 border border-gray-300 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      {" "}
+                      <input
+                        type="text"
+                        value={order_items.LH.work}
+                        onChange={(e) =>
+                          updateField("LH", "work", e.target.value)
+                        }
+                        className="w-full bg-gray-100 border border-gray-300 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      {" "}
+                      <input
+                        type="text"
+                        value={order_items.LH.others}
+                        onChange={(e) =>
+                          updateField("LH", "others", e.target.value)
+                        }
+                        className="w-full bg-gray-100 border border-gray-300 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </td>
+                  </tr>
+
+                  {/* BP */}
+                  <tr className="hover:bg-gray-100">
+                    <td className="border border-gray-300 px-4 py-2">BP:</td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      <input
+                        type="text"
+                        value={order_items.BP.colour}
+                        onChange={(e) =>
+                          updateField("BP", "colour", e.target.value)
+                        }
+                        className="w-full bg-gray-100 border border-gray-300 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      <input
+                        type="text"
+                        value={order_items.BP.khaka}
+                        onChange={(e) =>
+                          updateField("BP", "khaka", e.target.value)
+                        }
+                        className="w-full bg-gray-100 border border-gray-300 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      <input
+                        type="text"
+                        value={order_items.BP.measurement}
+                        onChange={(e) =>
+                          updateField("BP", "measurement", e.target.value)
+                        }
+                        className="w-full bg-gray-100 border border-gray-300 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      {" "}
+                      <input
+                        type="text"
+                        value={order_items.BP.work}
+                        onChange={(e) =>
+                          updateField("BP", "work", e.target.value)
+                        }
+                        className="w-full bg-gray-100 border border-gray-300 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      {" "}
+                      <input
+                        type="text"
+                        value={order_items.BP.others}
+                        onChange={(e) =>
+                          updateField("BP", "others", e.target.value)
+                        }
+                        className="w-full bg-gray-100 border border-gray-300 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </td>
+                  </tr>
+
+                  {/* DUP1 */}
+                  <tr className="hover:bg-gray-100">
+                    <td className="border border-gray-300 px-4 py-2">DUP1:</td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      <input
+                        type="text"
+                        value={order_items.DUP1.colour}
+                        onChange={(e) =>
+                          updateField("DUP1", "colour", e.target.value)
+                        }
+                        className="w-full bg-gray-100 border border-gray-300 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      <input
+                        type="text"
+                        value={order_items.DUP1.khaka}
+                        onChange={(e) =>
+                          updateField("DUP1", "khaka", e.target.value)
+                        }
+                        className="w-full bg-gray-100 border border-gray-300 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      <input
+                        type="text"
+                        value={order_items.DUP1.measurement}
+                        onChange={(e) =>
+                          updateField("DUP1", "measurement", e.target.value)
+                        }
+                        className="w-full bg-gray-100 border border-gray-300 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      {" "}
+                      <input
+                        type="text"
+                        value={order_items.DUP1.work}
+                        onChange={(e) =>
+                          updateField("DUP1", "work", e.target.value)
+                        }
+                        className="w-full bg-gray-100 border border-gray-300 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      {" "}
+                      <input
+                        type="text"
+                        value={order_items.DUP1.others}
+                        onChange={(e) =>
+                          updateField("DUP1", "others", e.target.value)
+                        }
+                        className="w-full bg-gray-100 border border-gray-300 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </td>
+                  </tr>
+
+                  {/* DUP2 */}
+                  <tr className="hover:bg-gray-100">
+                    <td className="border border-gray-300 px-4 py-2">DUP2:</td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      <input
+                        type="text"
+                        value={order_items.DUP2.colour}
+                        onChange={(e) =>
+                          updateField("DUP2", "colour", e.target.value)
+                        }
+                        className="w-full bg-gray-100 border border-gray-300 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      <input
+                        type="text"
+                        value={order_items.DUP2.khaka}
+                        onChange={(e) =>
+                          updateField("DUP2", "khaka", e.target.value)
+                        }
+                        className="w-full bg-gray-100 border border-gray-300 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      <input
+                        type="text"
+                        value={order_items.DUP2.measurement}
+                        onChange={(e) =>
+                          updateField("DUP2", "measurement", e.target.value)
+                        }
+                        className="w-full bg-gray-100 border border-gray-300 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      {" "}
+                      <input
+                        type="text"
+                        value={order_items.DUP2.work}
+                        onChange={(e) =>
+                          updateField("DUP2", "work", e.target.value)
+                        }
+                        className="w-full bg-gray-100 border border-gray-300 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      {" "}
+                      <input
+                        type="text"
+                        value={order_items.DUP2.others}
+                        onChange={(e) =>
+                          updateField("DUP2", "others", e.target.value)
+                        }
+                        className="w-full bg-gray-100 border border-gray-300 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </td>
+                  </tr>
+                  {/* Other */}
+                  <tr className="hover:bg-gray-100">
+                    <td className="border border-gray-300 px-4 py-2">Others:</td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      <input
+                        type="text"
+                        value={order_items.Others.colour}
+                        onChange={(e) =>
+                          updateField("Others", "colour", e.target.value)
+                        }
+                        className="w-full bg-gray-100 border border-gray-300 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      <input
+                        type="text"
+                        value={order_items.Others.khaka}
+                        onChange={(e) =>
+                          updateField("Others", "khaka", e.target.value)
+                        }
+                        className="w-full bg-gray-100 border border-gray-300 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      <input
+                        type="text"
+                        value={order_items.Others.measurement}
+                        onChange={(e) =>
+                          updateField("Others", "measurement", e.target.value)
+                        }
+                        className="w-full bg-gray-100 border border-gray-300 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      {" "}
+                      <input
+                        type="text"
+                        value={order_items.Others.work}
+                        onChange={(e) =>
+                          updateField("Others", "work", e.target.value)
+                        }
+                        className="w-full bg-gray-100 border border-gray-300 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      {" "}
+                      <input
+                        type="text"
+                        value={order_items.Others.others}
+                        onChange={(e) =>
+                          updateField("Others", "others", e.target.value)
+                        }
+                        className="w-full bg-gray-100 border border-gray-300 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            {/* button */}
+            <div className="col-span-2 flex justify-end mt-4 gap-4">
+              <button
+                onClick={clearHandler}
+                type="button"
+                className="bg-gray-200 px-4 py-1 rounded hover:bg-gray-600 hover:text-white transition"
+              >
+                Clear
+              </button>
+              <button
+                type="submit"
+                className={`bg-blue-900 text-white px-4 py-1 rounded hover:bg-blue-800 hover:text-white transition duration-200 ease-in-out
+              `}
+                disabled={submitting}
+              >
+                {submitting ? (
+                  <div className="flex justify-center items-center space-x-2">
+                    <PuffLoader size={20} color="#fff" />
+                    <span>Saving...</span>
+                  </div>
+                ) : (
+                  "Save"
+                )}
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </>
   );
 };
 

@@ -11,6 +11,7 @@ import ViewIcon from "../../assets/Others/ViewIcon.png";
 import Pagination from '../utility/Pagination';
 import SmartTable from '../../smartTable/SmartTable';
 import Pagination10 from '../utility/Pagination10';
+import MasterTable from '../../smartTable/MasterTable';
 
 
 const headersForTable = ["Sale Bill Id", "Design Name", "SO ID", "Date", "Bill To", "Bill To Details", "Other Charges", "Total Bill Amount", "Processor", "Status", "Details", "Print"];
@@ -652,7 +653,7 @@ const BillOfSalesReport = () => {
         <h1 className="text-2xl pb-2 border-b font-bold text-blue-900 mb-4">{title}</h1>
         <div className="" ref={printableTableRef}>
 
-          <SmartTable
+          <MasterTable
             headers={headersForTable}
             data={enhancedData}
             searchTerm={searchTerm}

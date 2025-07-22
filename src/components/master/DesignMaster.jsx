@@ -20,6 +20,7 @@ import SFGBomComponent from "./SFGBomComponent";
 import SFGBomSection from "./SFGBomSection";
 import SFGDataTable from "./component/SFGDataTable";
 import { useLocation, useNavigate } from "react-router-dom";
+import MasterTable from "../../smartTable/MasterTable";
 
 const headers = [
   "document_id",
@@ -891,7 +892,7 @@ const DesignMaster = () => {
             <h3 className="text-2xl font-bold text-blue-900 pb-2 border-b">List Of Designs</h3>
           </div>
 
-          <SmartTable
+          <MasterTable
             headers={headers}
             data={enhancedData}
             searchTerm={searchTerm}

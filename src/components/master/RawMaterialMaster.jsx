@@ -17,6 +17,7 @@ import EditRawMaterialMaster from "./EditModals/EditRawMaterialMaster";
 import Pagination from "../utility/Pagination";
 import AddKarigar from "./AddKarigar";
 import { Plus } from "lucide-react";
+import MasterTable from "../../smartTable/MasterTable";
 
 const headers = ["document_id", "Item Id", "Group", "Item Name", "Unit", "HSN/SAC Code", "Description", "Color", "Price/unit", "Edit"];
 
@@ -153,6 +154,7 @@ const RawMaterialMaster = () => {
                         "filters[$or][4][description][$containsi]": searchTerm,
                         "filters[$or][5][color][color_name][$containsi]": searchTerm,
                         "filters[$or][6][price_per_unit][$containsi]": searchTerm,
+                        "filters[$or][7][id][$containsi]": searchTerm,
                     }),
                 },
                 headers: {
@@ -526,7 +528,7 @@ const RawMaterialMaster = () => {
                     <div className="">
                         <h3 className="text-2xl font-bold text-blue-900 pb-2 border-b">List Of Raw Materials</h3>
                     </div>
-                    <SmartTable
+                    <MasterTable
                         headers={headers}
                         data={enhancedData}
                         searchTerm={searchTerm}

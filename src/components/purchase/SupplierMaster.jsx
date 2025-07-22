@@ -12,6 +12,7 @@ import EditIcon from "../../assets/Others/EditIcon.png";
 import EditSupplierMaster from "./EditModel/EditSupplierMaster";
 import Pagination from "../utility/Pagination";
 import { Plus } from "lucide-react";
+import MasterTable from "../../smartTable/MasterTable";
 
 const statesOfIndia = [
   "Andhra Pradesh",
@@ -790,7 +791,7 @@ const SupplierMaster = () => {
             <div className="">
               <h3 className="text-2xl font-bold text-blue-900 pb-2 border-b">List Of Suppliers</h3>
             </div>
-            <SmartTable
+            <MasterTable
               headers={headers}
               data={enhancedData}
               searchTerm={searchTerm}

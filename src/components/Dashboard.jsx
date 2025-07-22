@@ -14,7 +14,7 @@ import ExportToExcel from "./utility/ExportToExcel";
 const Dashboard = ({ company, setSelectedSOId, setSalesOrder, setBom, setFormData, setFromDashboard, setSelectedItem }) => {
   const [salesDatas, setSalesData] = useState([]);
   const [headers] = useState([
-    " ",
+    "Id ",
     "SO Id",
     "Converted To",
     "Order No",
@@ -226,7 +226,7 @@ const Dashboard = ({ company, setSelectedSOId, setSalesOrder, setBom, setFormDat
         return {
           id: item.id,
           so_id: item.so_id,
-          convert_id: item?.orders?.[0]?.external_orders || "",
+          convert_id: item?.orders?.[0]?.external_orders || "-",
           order_no: item.order_no,
           customer_name: customer || "Vasttram Admin",
           group_name: group || "",

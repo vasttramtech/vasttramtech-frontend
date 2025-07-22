@@ -9,6 +9,7 @@ import { BounceLoader, PuffLoader } from "react-spinners";
 import SmartTable2 from "../../smartTable/SmartTable2";
 import { toast } from "react-toastify";
 import MeasurementModal from "./MeasurementModal";
+import { MdCancel } from "react-icons/md";
 
 const SelectSOTable = ({
     NoOfColumns,
@@ -218,7 +219,7 @@ const StitchingEntry = () => {
     const { load, error, availableProcessor } = useSelector((state) => state.fetchData);
     const navigate = useNavigate();
 
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
 
 
@@ -325,6 +326,9 @@ const StitchingEntry = () => {
         catch (error) {
             console.error("Error fetching jobber data:", error);
         }
+        finally {
+            setLoading(false);
+        }
 
     }
 
@@ -391,7 +395,7 @@ const StitchingEntry = () => {
         e.preventDefault();
         setSubmitting(true);
 
-        if (showMeasurement === false){
+        if (showMeasurement === false) {
             toast.error("Please add measurements!!");
             setSubmitting(false);
             return;
@@ -750,282 +754,283 @@ const StitchingEntry = () => {
     console.log("bpGrownKurti: ", bpGrownKurti);
 
 
+    if (loading || load) {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <BounceLoader color="#1e3a8a" />
+            </div>
+        )
+    }
+
     return (
-        <div className="py-2 bg-white rounded-lg relative">
-            {loading || load ? (
-                <div className="absolute inset-0 flex justify-center items-center mt-64 bg-opacity-50 bg-gray-200 z-10">
-                    <BounceLoader size={100} color={"#1e3a8a"} loading={loading} />
-                </div>
-            ) : (
-                <div className="">
-                    <h1 className="text-3xl font-bold text-blue-900 mb-4">
-                        Stitching Entry
-                    </h1>
+        <div className="p-6 bg-white rounded-lg relative">
+
+            <div className="">
+                <h1 className="text-2xl font-bold pb-2 border-b text-blue-900 mb-4">
+                    Stitching Entry
+                </h1>
 
 
-                    {/* Form */}
-                    <form className=" p-5 mb-16 border border-gray-200 rounded-lg shadow-md" onSubmit={handleSubmit}>
-                        <div className="col-span-2 my-5 flex border border-blue-500 justify-center mt-4 rounded p-2">
-                            <div className="relative inline-flex flex-col gap-2">
-                                <div className="flex items-center gap-3">
-                                    <p className="text-gray-700 font-medium">Choose Sales Order:</p>
+                {/* Form */}
+                <form className="" onSubmit={handleSubmit}>
+                    <div className="col-span-2 my-5 flex border border-blue-500 justify-center mt-4 rounded-lg p-2">
+                        <div className="relative inline-flex flex-col gap-2">
+                            <div className="flex items-center gap-3">
+                                <p className="text-gray-700 font-medium">Choose Sales Order:</p>
+                                <button
+                                    type="button"
+                                    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+                                    onClick={() => setDisplayModal(true)}
+                                >
+                                    Choose Sales Order
+                                </button>
+                            </div>
+
+                            {displayModal && (
+                                <div className="absolute top-full mt-2 left-0 bg-white border border-gray-200 shadow-lg rounded-md p-3 z-20 w-72">
+
+                                    <div className="flex justify-end">
+                                        <button
+                                            className=" text-gray-700 hover:text-red-500 text-sm font-bold"
+                                            onClick={() => setDisplayModal(false)}
+                                        >
+                                            ✖
+                                        </button>
+                                    </div>
+
                                     <button
                                         type="button"
-                                        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
-                                        onClick={() => setDisplayModal(true)}
+                                        className="w-full px-4 py-2 text-left rounded hover:bg-blue-100 transition"
+                                        onClick={() => {
+                                            handleSalesOrderType('vasttram');
+                                            setDisplayModal(false);
+                                        }
+                                        }
                                     >
-                                        Choose Sales Order
+                                        Vasttram Sales Order
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="w-full px-4 py-2 text-left rounded hover:bg-blue-100 transition"
+                                        onClick={() => {
+                                            handleSalesOrderType('customer');
+                                            setDisplayModal(false);
+                                        }}
+                                    >
+                                        Customer Sales Order
                                     </button>
                                 </div>
-
-                                {displayModal && (
-                                    <div className="absolute top-full mt-2 left-0 bg-white border border-gray-200 shadow-lg rounded-md p-3 z-20 w-72">
-
-                                        <div className="flex justify-end">
-                                            <button
-                                                className=" text-gray-700 hover:text-red-500 text-sm font-bold"
-                                                onClick={() => setDisplayModal(false)}
-                                            >
-                                                ✖
-                                            </button>
-                                        </div>
-
-                                        <button
-                                            type="button"
-                                            className="w-full px-4 py-2 text-left rounded hover:bg-blue-100 transition"
-                                            onClick={() => {
-                                                handleSalesOrderType('vasttram');
-                                                setDisplayModal(false);
-                                            }
-                                            }
-                                        >
-                                            Vasttram Sales Order
-                                        </button>
-                                        <button
-                                            type="button"
-                                            className="w-full px-4 py-2 text-left rounded hover:bg-blue-100 transition"
-                                            onClick={() => {
-                                                handleSalesOrderType('customer');
-                                                setDisplayModal(false);
-                                            }}
-                                        >
-                                            Customer Sales Order
-                                        </button>
-                                    </div>
-                                )}
-                            </div>
-
+                            )}
                         </div>
 
+                    </div>
 
 
-                        {/* Modal */}
-                        {selectedSOModal && (
-                            <div className="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50">
-                                <div className="relative w-[90vw] bg-gray-200 border shadow-2xl p-4 rounded-lg">
 
-                                    <div className="flex justify-between items-center">
-                                        <h3 className="text-2xl font-semibold">Choose Sales Order</h3>
+                    {/* Modal */}
+                    {selectedSOModal && (
+                        <div className="fixed inset-0 bg-gray-900 bg-opacity-50 backdrop-blur-md flex justify-center items-center z-50">
+                            <div className="relative w-[90vw] bg-gray-200 border shadow-2xl p-4 rounded-lg">
 
-                                        <p
-                                            className="text-xl px-2 border bg-red-600 rounded-full text-white hover:bg-red-500 cursor-pointer"
-                                            onClick={() => {
-                                                setSelectedSOModal(false);
-                                            }}
-                                        >
-                                            X
-                                        </p>
-                                    </div>
+                                <div className="flex justify-between items-center mb-2 pb-2 border-b border-b-gray-300">
+                                    <h3 className="text-xl font-bold text-blue-900 ">Choose Sales Order</h3>
 
-                                    <div className="mt-1">
-                                        <SelectSOTable
-                                            NoOfColumns={headersForTable.length}
-                                            data={salesOrderList}
-                                            headers={headersForTable}
-                                            setSelectedRow={setSelectedRows}
-                                            selectedRow={selectedRow}
-                                            setSelectedSO={setSelectedSO}
-                                            setSelectedSOId={setSelectedSOId}
-                                            setFormData={setFormData}
-                                            setOrderItem={setOrderItem}
-                                            setLoading={setLoading}
-                                            setBom={setBom}
-                                            type={type}
-                                            setSalesOrder={setSalesOrder}
-                                            setSOViewModal={setSOViewModal}
-                                            setSelectedSOModal={setSelectedSOModal}
-                                            setAllBomIds={setAllBomIds}
-                                            allBomIds={allBomIds}
-                                            allreadyProcessedQtyOfBOM={allreadyProcessedQtyOfBOM}
-                                            setAllreadyProcessedQtyOfBOM={setAllreadyProcessedQtyOfBOM}
-                                            allreadyProcessedOrderItems={allreadyProcessedOrderItems}
-                                            setAllreadyProcessedOrderItems={setAllreadyProcessedOrderItems}
-                                        />
-                                    </div>
+                                    <p
+                                        className=" text-red-700 rounded-full pr-5 hover:text-red-500 cursor-pointer duration-200 ease-in-out transition-all"
+                                        onClick={() => {
+                                            setSelectedSOModal(false);
+                                        }}
+                                    >
+                                        <MdCancel className="w-8 h-8" />
+                                    </p>
+                                </div>
+
+                                <div className="mt-1">
+                                    <SelectSOTable
+                                        NoOfColumns={headersForTable.length}
+                                        data={salesOrderList}
+                                        headers={headersForTable}
+                                        setSelectedRow={setSelectedRows}
+                                        selectedRow={selectedRow}
+                                        setSelectedSO={setSelectedSO}
+                                        setSelectedSOId={setSelectedSOId}
+                                        setFormData={setFormData}
+                                        setOrderItem={setOrderItem}
+                                        setLoading={setLoading}
+                                        setBom={setBom}
+                                        type={type}
+                                        setSalesOrder={setSalesOrder}
+                                        setSOViewModal={setSOViewModal}
+                                        setSelectedSOModal={setSelectedSOModal}
+                                        setAllBomIds={setAllBomIds}
+                                        allBomIds={allBomIds}
+                                        allreadyProcessedQtyOfBOM={allreadyProcessedQtyOfBOM}
+                                        setAllreadyProcessedQtyOfBOM={setAllreadyProcessedQtyOfBOM}
+                                        allreadyProcessedOrderItems={allreadyProcessedOrderItems}
+                                        setAllreadyProcessedOrderItems={setAllreadyProcessedOrderItems}
+                                    />
                                 </div>
                             </div>
-                        )}
+                        </div>
+                    )}
 
 
-                        {selectedSO !== null && (
-                            <div className="my-8 col-span-2">
-                                <h2 className="text-lg font-semibold text-gray-800 mb-3">Stitching Details</h2>
-                                <div className="overflow-x-auto bg-white shadow-lg rounded-lg">
-                                    <table className="w-full border-collapse border border-gray-300 rounded-lg">
-                                        <thead className="bg-gray-200 text-gray-700 text-sm uppercase">
-                                            <tr>
-                                                {["Group", "Colour", "Design/Khaka", "Measurement", "Work", "Others", "Qty Required", "Already Processed", "Process Qty", "Select"].map((header) => (
-                                                    <th key={header} className="border border-gray-300 p-3 text-center">{header}</th>
-                                                ))}
-                                            </tr>
-                                        </thead>
-
-
-
-                                        <tbody>
-                                            {Object.entries(orderItem).map(([key, value], index) => {
-                                                {/* console.log(selectedSO); */ }
-                                                const requiredQty = Number(selectedSO.qty || 0);
-                                                const alreadyProcessed = allreadyProcessedOrderItems[key] || 0;
-                                                const selected = selectedStitchRows.find(row => row.key === key);
-                                                const processQty = selected?.processQty || 0;
-
-                                                const maxQty = requiredQty - alreadyProcessed;
-                                                const isDisabled = requiredQty <= alreadyProcessed;
-
-                                                return (
-                                                    <tr key={index} className="even:bg-gray-100 hover:bg-gray-50 transition">
-                                                        <td className="border border-gray-300 p-3 text-center">{key}</td>
-                                                        <td className="border border-gray-300 p-3 text-center">{value.colour}</td>
-                                                        <td className="border border-gray-300 p-3 text-center">{value.khaka}</td>
-                                                        <td className="border border-gray-300 p-3 text-center">{value.measurement}</td>
-                                                        <td className="border border-gray-300 p-3 text-center">{value.work}</td>
-                                                        <td className="border border-gray-300 p-3 text-center">{value.others}</td>
-                                                        <td className="border border-gray-300 p-3 text-center">{requiredQty}</td>
-                                                        <td className="border border-gray-300 p-3 text-center">{alreadyProcessed}</td>
-
-                                                        <td className="border border-gray-300 p-3 text-center">
-                                                            <input
-                                                                type="number"
-                                                                className="w-20 border rounded px-2 py-1"
-                                                                min={0}
-                                                                max={maxQty}
-                                                                value={processQty}
-                                                                disabled={!selected || isDisabled}
-                                                                onInput={(e) => {
-                                                                    let value = Number(e.target.value);
-                                                                    if (value > maxQty) value = maxQty;
-                                                                    handleProcessQtyChange(key, value);
-                                                                }}
-                                                            />
-                                                        </td>
-
-                                                        <td className="border border-gray-300 p-3 text-center">
-                                                            <input
-                                                                type="checkbox"
-                                                                checked={!!selected}
-                                                                onChange={() => handleCheckboxChange(key, value)}
-                                                                disabled={isDisabled}
-                                                            />
-                                                        </td>
-                                                    </tr>
-                                                );
-                                            })}
-                                        </tbody>
-
-
-
-
-                                    </table>
-                                </div>
-                            </div>
-                        )}
-                        {
-                            soViewModal && bom?.Extra_bom.length > 0 &&
-
-
-                            <div className="my-8 overflow-x-auto rounded-lg shadow-lg">
-                                <h2 className="text-lg font-semibold text-gray-800 mb-3">Semi Finished Goods Details</h2>
-
-                                <table className="min-w-full table-auto overflow-hidden">
-                                    <thead className="bg-gradient-to-r from-blue-100 to-blue-200 text-blue-900">
+                    {selectedSO !== null && (
+                        <div className="my-8 col-span-2">
+                            <h2 className="text-lg font-semibold text-gray-800 mb-3">Stitching Details</h2>
+                            <div className="overflow-x-auto bg-white shadow-lg rounded-lg">
+                                <table className="w-full border-collapse border border-gray-300 rounded-lg">
+                                    <thead className="bg-gray-200 text-gray-700 text-sm uppercase">
                                         <tr>
-                                            <th className="px-6 py-4 text-left font-semibold">#</th>
-                                            <th className="px-6 py-4 text-left font-semibold">Semi-Finished Goods</th>
-                                            <th className="px-6 py-4 text-left font-semibold">Color</th>
-                                            <th className="px-6 py-4 text-left font-semibold">Stock Reduced</th>
-                                            <th className="px-6 py-4 text-left font-semibold">Status</th>
-                                            <th className="px-6 py-4 text-left font-semibold">Processes</th>
-                                            <th className="px-6 py-4 text-left font-semibold">Quantity</th>
-                                            <th className="px-6 py-4 text-left font-semibold">Already Processed Qty</th>
-                                            <th className="px-6 py-4 text-left font-semibold">Process Qty</th>
-                                            <th className="px-6 py-4 text-left font-semibold">Select</th>
+                                            {["Group", "Colour", "Design/Khaka", "Measurement", "Work", "Others", "Qty Required", "Already Processed", "Process Qty", "Select"].map((header) => (
+                                                <th key={header} className="border border-gray-300 p-3 text-center">{header}</th>
+                                            ))}
                                         </tr>
                                     </thead>
-                                    <tbody className="divide-y divide-gray-200">
-                                        {bom?.Extra_bom?.map((item, index) => {
-                                            // Disable checkbox based on stock_status and bom_status
-                                            const isButtonDisabled = (item?.bom_status === "completed")
 
-                                            const maxQty = item?.qty - (allreadyProcessedQtyOfBOM[item?.id] || 0);
 
+
+                                    <tbody>
+                                        {Object.entries(orderItem).map(([key, value], index) => {
+                                            {/* console.log(selectedSO); */ }
+                                            const requiredQty = Number(selectedSO.qty || 0);
+                                            const alreadyProcessed = allreadyProcessedOrderItems[key] || 0;
+                                            const selected = selectedStitchRows.find(row => row.key === key);
+                                            const processQty = selected?.processQty || 0;
+
+                                            const maxQty = requiredQty - alreadyProcessed;
+                                            const isDisabled = requiredQty <= alreadyProcessed;
 
                                             return (
-                                                <tr key={item.id} className="hover:bg-blue-50 transition">
-                                                    <td className="px-6 py-4 text-gray-700">{index + 1}</td>
-                                                    <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                                                        {item?.semi_finished_goods?.semi_finished_goods_name}
-                                                    </td>
-                                                    <td className="px-6 py-4 text-gray-600 whitespace-nowrap">
-                                                        {item?.color?.color_name}
-                                                    </td>
+                                                <tr key={index} className="even:bg-gray-100 hover:bg-gray-50 transition">
+                                                    <td className="border border-gray-300 p-3 text-center">{key}</td>
+                                                    <td className="border border-gray-300 p-3 text-center">{value.colour}</td>
+                                                    <td className="border border-gray-300 p-3 text-center">{value.khaka}</td>
+                                                    <td className="border border-gray-300 p-3 text-center">{value.measurement}</td>
+                                                    <td className="border border-gray-300 p-3 text-center">{value.work}</td>
+                                                    <td className="border border-gray-300 p-3 text-center">{value.others}</td>
+                                                    <td className="border border-gray-300 p-3 text-center">{requiredQty}</td>
+                                                    <td className="border border-gray-300 p-3 text-center">{alreadyProcessed}</td>
 
-
-
-                                                    <td className="px-6 py-4 text-gray-600 whitespace-nowrap">
-                                                        {item?.stock_status === true ? "Yes" : "No"}
-                                                    </td>
-                                                    <td className="px-6 py-4 text-gray-600 whitespace-nowrap">
-                                                        {item?.bom_status}
-                                                    </td>
-
-                                                    <tr key={`${item.id}-process`} className="bg-gray-50">
-                                                        <td colSpan={6} className="px-6 py-4 text-gray-600 whitespace-nowrap">
-                                                            {item?.processes?.length > 0 ? (
-                                                                <div className="flex flex-col gap-1 items-center">
-
-                                                                    {item?.processes?.map((process, index) => (
-                                                                        <div>
-                                                                            {process?.process} - Done by - <span className="font-semibold text-green-700">{process?.jobber?.jobber_name}</span>
-                                                                        </div>
-                                                                    ))}
-
-                                                                </div>
-                                                            ) : (
-                                                                <span className="text-gray-500 italic">No Process Yet</span>
-                                                            )}
-                                                        </td>
-                                                    </tr>
-                                                    <td className="px-6 py-4 text-gray-600 whitespace-nowrap">
-                                                        {item?.qty}
-                                                    </td>
-                                                    <td className="px-6 py-4 text-gray-600 whitespace-nowrap">
+                                                    <td className="border border-gray-300 p-3 text-center">
                                                         <input
                                                             type="number"
                                                             className="w-20 border rounded px-2 py-1"
                                                             min={0}
                                                             max={maxQty}
-                                                            value={allreadyProcessedQtyOfBOM[item.id] || 0}
-                                                            disabled
-                                                            onChange={(e) => {
+                                                            value={processQty}
+                                                            disabled={!selected || isDisabled}
+                                                            onInput={(e) => {
                                                                 let value = Number(e.target.value);
                                                                 if (value > maxQty) value = maxQty;
-
-
+                                                                handleProcessQtyChange(key, value);
                                                             }}
                                                         />
                                                     </td>
-                                                    {/* <td className="px-6 py-4 text-gray-600 whitespace-nowrap">
+
+                                                    <td className="border border-gray-300 p-3 text-center">
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={!!selected}
+                                                            onChange={() => handleCheckboxChange(key, value)}
+                                                            disabled={isDisabled}
+                                                        />
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })}
+                                    </tbody>
+
+
+
+
+                                </table>
+                            </div>
+                        </div>
+                    )}
+                    {soViewModal && bom?.Extra_bom.length > 0 &&
+                        <div className="my-8 overflow-x-auto rounded-lg shadow-lg">
+                            <h2 className="text-lg font-semibold text-gray-800 mb-3">Semi Finished Goods Details</h2>
+
+                            <table className="min-w-full table-auto overflow-hidden">
+                                <thead className="bg-gradient-to-r from-blue-100 to-blue-200 text-blue-900">
+                                    <tr>
+                                        <th className="px-6 py-4 text-left font-semibold">#</th>
+                                        <th className="px-6 py-4 text-left font-semibold">Semi-Finished Goods</th>
+                                        <th className="px-6 py-4 text-left font-semibold">Color</th>
+                                        <th className="px-6 py-4 text-left font-semibold">Stock Reduced</th>
+                                        <th className="px-6 py-4 text-left font-semibold">Status</th>
+                                        <th className="px-6 py-4 text-left font-semibold">Processes</th>
+                                        <th className="px-6 py-4 text-left font-semibold">Quantity</th>
+                                        <th className="px-6 py-4 text-left font-semibold">Already Processed Qty</th>
+                                        <th className="px-6 py-4 text-left font-semibold">Process Qty</th>
+                                        <th className="px-6 py-4 text-left font-semibold">Select</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-gray-200">
+                                    {bom?.Extra_bom?.map((item, index) => {
+                                        // Disable checkbox based on stock_status and bom_status
+                                        const isButtonDisabled = (item?.bom_status === "completed")
+
+                                        const maxQty = item?.qty - (allreadyProcessedQtyOfBOM[item?.id] || 0);
+
+
+                                        return (
+                                            <tr key={item.id} className="hover:bg-blue-50 transition">
+                                                <td className="px-6 py-4 text-gray-700">{index + 1}</td>
+                                                <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                                                    {item?.semi_finished_goods?.semi_finished_goods_name}
+                                                </td>
+                                                <td className="px-6 py-4 text-gray-600 whitespace-nowrap">
+                                                    {item?.color?.color_name}
+                                                </td>
+
+
+
+                                                <td className="px-6 py-4 text-gray-600 whitespace-nowrap">
+                                                    {item?.stock_status === true ? "Yes" : "No"}
+                                                </td>
+                                                <td className="px-6 py-4 text-gray-600 whitespace-nowrap">
+                                                    {item?.bom_status}
+                                                </td>
+
+                                                <tr key={`${item.id}-process`} className="bg-gray-50">
+                                                    <td colSpan={6} className="px-6 py-4 text-gray-600 whitespace-nowrap">
+                                                        {item?.processes?.length > 0 ? (
+                                                            <div className="flex flex-col gap-1 items-center">
+
+                                                                {item?.processes?.map((process, index) => (
+                                                                    <div>
+                                                                        {process?.process} - Done by - <span className="font-semibold text-green-700">{process?.jobber?.jobber_name}</span>
+                                                                    </div>
+                                                                ))}
+
+                                                            </div>
+                                                        ) : (
+                                                            <span className="text-gray-500 italic">No Process Yet</span>
+                                                        )}
+                                                    </td>
+                                                </tr>
+                                                <td className="px-6 py-4 text-gray-600 whitespace-nowrap">
+                                                    {item?.qty}
+                                                </td>
+                                                <td className="px-6 py-4 text-gray-600 whitespace-nowrap">
+                                                    <input
+                                                        type="number"
+                                                        className="w-20 border rounded px-2 py-1"
+                                                        min={0}
+                                                        max={maxQty}
+                                                        value={allreadyProcessedQtyOfBOM[item.id] || 0}
+                                                        disabled
+                                                        onChange={(e) => {
+                                                            let value = Number(e.target.value);
+                                                            if (value > maxQty) value = maxQty;
+
+
+                                                        }}
+                                                    />
+                                                </td>
+                                                {/* <td className="px-6 py-4 text-gray-600 whitespace-nowrap">
                                                         <input
                                                             type="number"
                                                             className="w-20 border rounded px-2 py-1"
@@ -1051,214 +1056,215 @@ const StitchingEntry = () => {
                                                         />
                                                     </td> */}
 
-                                                    <td className="px-6 py-4 text-gray-600 whitespace-nowrap">
-                                                        <input
-                                                            type="number"
-                                                            className="w-20 border rounded px-2 py-1"
-                                                            min={0}
-                                                            max={maxQty}
-                                                            value={processQuantities[item.id] || 0}
-                                                            onChange={(e) => {
-                                                                const value = Math.max(0, Math.min(Number(e.target.value), maxQty));
-                                                                if (!isNaN(value)) {
-                                                                    setProcessQuantities(prev => ({
-                                                                        ...prev,
-                                                                        [item.id]: value
-                                                                    }));
-                                                                    // Update selected row's quantity
-                                                                    setSelectedSalesOrderRows(prev =>
-                                                                        prev.map(row =>
-                                                                            row.id === item.id ? { ...row, processQty: value } : row
-                                                                        )
-                                                                    );
-                                                                }
-                                                            }}
-                                                            disabled={!selectedSalesOrderRows.some(row => row.id === item.id) || isButtonDisabled}
-                                                        />
-                                                    </td>
+                                                <td className="px-6 py-4 text-gray-600 whitespace-nowrap">
+                                                    <input
+                                                        type="number"
+                                                        className="w-20 border rounded px-2 py-1"
+                                                        min={0}
+                                                        max={maxQty}
+                                                        value={processQuantities[item.id] || 0}
+                                                        onChange={(e) => {
+                                                            const value = Math.max(0, Math.min(Number(e.target.value), maxQty));
+                                                            if (!isNaN(value)) {
+                                                                setProcessQuantities(prev => ({
+                                                                    ...prev,
+                                                                    [item.id]: value
+                                                                }));
+                                                                // Update selected row's quantity
+                                                                setSelectedSalesOrderRows(prev =>
+                                                                    prev.map(row =>
+                                                                        row.id === item.id ? { ...row, processQty: value } : row
+                                                                    )
+                                                                );
+                                                            }
+                                                        }}
+                                                        disabled={!selectedSalesOrderRows.some(row => row.id === item.id) || isButtonDisabled}
+                                                    />
+                                                </td>
 
 
-                                                    <td className="px-6 py-4">
-                                                        {/* Checkbox for row selection */}
-                                                        <input
-                                                            type="checkbox"
-                                                            checked={selectedSalesOrderRows.some((row) => row.id === item.id)}
-                                                            disabled={isButtonDisabled}
-                                                            onChange={(e) => {
-                                                                if (e.target.checked) {
-                                                                    setSelectedSalesOrderRows((prev) => [
-                                                                        ...prev,
-                                                                        { ...item, processQty: processQuantities[item.id] || 0 }
-                                                                    ]);
-                                                                } else {
-                                                                    setSelectedSalesOrderRows((prev) =>
-                                                                        prev.filter((row) => row.id !== item.id)
-                                                                    );
-                                                                }
-                                                            }}
-                                                        />
-                                                    </td>
+                                                <td className="px-6 py-4">
+                                                    {/* Checkbox for row selection */}
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={selectedSalesOrderRows.some((row) => row.id === item.id)}
+                                                        disabled={isButtonDisabled}
+                                                        onChange={(e) => {
+                                                            if (e.target.checked) {
+                                                                setSelectedSalesOrderRows((prev) => [
+                                                                    ...prev,
+                                                                    { ...item, processQty: processQuantities[item.id] || 0 }
+                                                                ]);
+                                                            } else {
+                                                                setSelectedSalesOrderRows((prev) =>
+                                                                    prev.filter((row) => row.id !== item.id)
+                                                                );
+                                                            }
+                                                        }}
+                                                    />
+                                                </td>
 
-                                                </tr>
-                                            );
-                                        })}
-                                    </tbody>
-                                </table>
-                            </div>
-                        }
-
-                        <div className="border flex justify-center border-gray-200 rounded-xl p-4">
-                            <button type="button"
-                                onClick={() => setMeasurementModal(true)}
-                                className="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-700 transition"
-                            >Add Measurements</button>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
                         </div>
+                    }
 
-                        {
-                            measurementModal && (
-                                <MeasurementModal
-                                    setMeasurementModal={setMeasurementModal}
-                                    lhSh={lhSh}
-                                    setLhSh={setLhSh}
-                                    bpGrownKurti={bpGrownKurti}
-                                    setBpGrownKurti={setBpGrownKurti}
-                                    setShowMeasurement={setShowMeasurement}
-                                />
-                            )
-                        }
+                    <div className="border flex justify-center border-blue-500 rounded-lg py-2  gap-2">
+                        <p className="text-gray-700 font-medium">Add Measurements:</p>
+                        <button type="button"
+                            onClick={() => setMeasurementModal(true)}
+                            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+                        >Add Measurements</button>
+                    </div>
 
-                        {showMeasurement && (
-                            <div className="mt-6 border border-gray-300 rounded-lg p-5 shadow-sm bg-gray-50">
-                                <h2 className="text-xl font-semibold mb-4 text-gray-700 border-b pb-2">📏 Measurement Details</h2>
-
-                                {/* Lehenga / Sharara Measurements */}
-                                <div className="mb-6">
-                                    <h3 className="text-lg font-medium text-blue-600 mb-2">Lehenga / Sharara</h3>
-                                    <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-                                        {Object.entries(lhSh).map(([key, val]) => (
-                                            <div key={key} className="text-sm text-gray-800">
-                                                <span className="font-medium capitalize">{key.replace(/([A-Z])/g, ' $1')}:</span> {val}
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                {/* BP / Grown / Kurti Measurements */}
-                                <div>
-                                    <h3 className="text-lg font-medium text-green-600 mb-2">BP / Grown / Kurti</h3>
-                                    <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-                                        {Object.entries(bpGrownKurti).map(([key, val]) => (
-                                            <div key={key} className="text-sm text-gray-800">
-                                                <span className="font-medium capitalize">{key.replace(/([A-Z])/g, ' $1')}:</span> {val}
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-
-
-
-                        <div className="grid grid-cols-2 gap-4">
-
-                            <FormInput type={"input"} placeholder={"Sales Order Id"} label={"Sales Order Id"} name="so_id" value={formData.so_id} />
-                            <FormInput type={"input"} placeholder={"Design Group"} label={"Design Group"} name="design_group" value={formData.design_group} />
-                            <FormInput type={"input"} placeholder={"Design Name"} label={"Design Name"} name="design_number" value={formData.design_number} />
-                            {/* Date */}
-                            <FormInput type={"date"} placeholder={"Date"} label={"Date"} name="date" value={formData.date} onChange={formDataChangeHandler} />
-                            <FormInput
-                                type={"date"}
-                                placeholder={"Due Date"}
-                                label={"Due Date"}
-                                name="due_date"
-                                value={formData.due_date}
-                                onChange={formDataChangeHandler}
+                    {
+                        measurementModal && (
+                            <MeasurementModal
+                                setMeasurementModal={setMeasurementModal}
+                                lhSh={lhSh}
+                                setLhSh={setLhSh}
+                                bpGrownKurti={bpGrownKurti}
+                                setBpGrownKurti={setBpGrownKurti}
+                                setShowMeasurement={setShowMeasurement}
                             />
-                            {/* Choose Stittcher */}
-                            <div className="flex flex-col">
-                                <FormLabel title={"Select Stitcher"} />
-                                <select className="border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500" name="selected_stiitcher" value={formData.selected_stiitcher} onChange={formDataChangeHandler}>
-                                    <option value="" disabled selected>
-                                        Choose Stitcher
-                                    </option>
-                                    {stitcherDetail.map((stitcher) => (
-                                        <option key={stitcher.id} value={stitcher.id}>
-                                            {`${stitcher.id} - ${stitcher.stitcher_name}`}
-                                        </option>
+                        )
+                    }
+
+                    {showMeasurement && (
+                        <div className="mt-6 border border-gray-300 rounded-lg p-5 shadow-sm bg-blue-50">
+                            <h2 className="text-xl font-semibold mb-4 text-blue-900 border-b pb-2">📏 Measurement Details</h2>
+
+                            {/* Lehenga / Sharara Measurements */}
+                            <div className="mb-6">
+                                <h3 className="text-lg font-medium text-blue-600 mb-2">Lehenga / Sharara</h3>
+                                <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                                    {Object.entries(lhSh).map(([key, val]) => (
+                                        <div key={key} className="text-sm text-gray-800">
+                                            <span className="font-medium capitalize">{key.replace(/([A-Z])/g, ' $1')}:</span> {val}
+                                        </div>
                                     ))}
-                                </select>
+                                </div>
                             </div>
 
-                            {/* Processor */}
-                            <div className="flex flex-col">
-                                <label className="text-gray-700 font-semibold">Processor  <span className=' text-red-600 '>*</span></label>
-                                <select className="border border-gray-300 bg-gray-100 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    name="processor"
-                                    value={formData.processor}
-                                    onChange={formDataChangeHandler}
-                                >
-                                    <option value="" className="text-gray-400">Select Processor</option>
-                                    {
-                                        availableProcessor
-                                            .filter(processor => processor.designation !== "Merchandiser")
-                                            .map(processor => (
-                                                <option key={processor.id} value={processor.id}>
-                                                    {processor.name + " - " + processor.designation}
-                                                </option>
-                                            ))
-
-                                    }
-                                </select>
-                            </div>
-                            <div className="flex flex-col">
-                                <FormLabel title={"Stitch Order Remarks"} />
-                                <textarea
-                                    className="border border-gray-300 bg-gray-100 rounded-md p-2 h-40 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
-                                    placeholder="Stitch Order Remarks..."
-                                    name="remarks"
-                                    value={formData.remarks}
-                                    onChange={formDataChangeHandler}
-                                ></textarea>
+                            {/* BP / Grown / Kurti Measurements */}
+                            <div>
+                                <h3 className="text-lg font-medium text-green-600 mb-2">BP / Grown / Kurti</h3>
+                                <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                                    {Object.entries(bpGrownKurti).map(([key, val]) => (
+                                        <div key={key} className="text-sm text-gray-800">
+                                            <span className="font-medium capitalize">{key.replace(/([A-Z])/g, ' $1')}:</span> {val}
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
                         </div>
+                    )}
 
-                        <div className="my-2">
-                            {/* <div className="border flex justify-center border-gray-200 rounded-xl p-4">
+
+
+                    <div className="grid grid-cols-2 gap-4 mt-4">
+
+                        <FormInput type={"input"} placeholder={"Sales Order Id"} label={"Sales Order Id"} name="so_id" value={formData.so_id} />
+                        <FormInput type={"input"} placeholder={"Design Group"} label={"Design Group"} name="design_group" value={formData.design_group} />
+                        <FormInput type={"input"} placeholder={"Design Name"} label={"Design Name"} name="design_number" value={formData.design_number} />
+                        {/* Date */}
+                        <FormInput type={"date"} placeholder={"Date"} label={"Date"} name="date" value={formData.date} onChange={formDataChangeHandler} />
+                        <FormInput
+                            type={"date"}
+                            placeholder={"Due Date"}
+                            label={"Due Date"}
+                            name="due_date"
+                            value={formData.due_date}
+                            onChange={formDataChangeHandler}
+                        />
+                        {/* Choose Stittcher */}
+                        <div className="flex flex-col">
+                            <FormLabel title={"Select Stitcher"} />
+                            <select className="border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500" name="selected_stiitcher" value={formData.selected_stiitcher} onChange={formDataChangeHandler}>
+                                <option value="" disabled selected>
+                                    Choose Stitcher
+                                </option>
+                                {stitcherDetail.map((stitcher) => (
+                                    <option key={stitcher.id} value={stitcher.id}>
+                                        {`${stitcher.id} - ${stitcher.stitcher_name}`}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
+                        {/* Processor */}
+                        <div className="flex flex-col">
+                            <label className="text-gray-700 font-semibold">Processor  <span className=' text-red-600 '>*</span></label>
+                            <select className="border border-gray-300 bg-gray-100 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                name="processor"
+                                value={formData.processor}
+                                onChange={formDataChangeHandler}
+                            >
+                                <option value="" className="text-gray-400">Select Processor</option>
+                                {
+                                    availableProcessor
+                                        .filter(processor => processor.designation !== "Merchandiser")
+                                        .map(processor => (
+                                            <option key={processor.id} value={processor.id}>
+                                                {processor.name + " - " + processor.designation}
+                                            </option>
+                                        ))
+
+                                }
+                            </select>
+                        </div>
+                        <div className="flex flex-col">
+                            <FormLabel title={"Stitch Order Remarks"} />
+                            <textarea
+                                className="border border-gray-300 bg-gray-100 rounded-md p-2 h-40 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
+                                placeholder="Stitch Order Remarks..."
+                                name="remarks"
+                                value={formData.remarks}
+                                onChange={formDataChangeHandler}
+                            ></textarea>
+                        </div>
+                    </div>
+
+                    <div className="my-2">
+                        {/* <div className="border flex justify-center border-gray-200 rounded-xl p-4">
                                 <button type="button"
                                     onClick={() => setMeasurementModal(true)}
                                     className="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-700 transition"
                                 >Add Measurements</button>
                             </div> */}
-                            {/* button */}
-                            <div className="col-span-2 flex justify-end mt-4">
-                                <button
-                                    type="button"
-                                    onClick={cancelHandler}
-                                    className="bg-gray-200 px-4 py-1 rounded hover:bg-gray-600 hover:text-white transition"
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    type="submit"
-                                    className={`p-3 ml-4 bg-blue-900 rounded-md text-white transition-all duration-100 ease-in-out ${submitting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700 hover:scale-105'
-                                        }`}
-                                    disabled={submitting}
-                                >
-                                    {submitting ? (
-                                        <div className="flex justify-center items-center gap-2">
-                                            <PuffLoader size={20} color="#fff" />
-                                            <span>Saving...</span>
-                                        </div>
-                                    ) : (
-                                        'Save'
-                                    )}
-                                </button>
-                            </div>
-
+                        {/* button */}
+                        <div className="col-span-2 flex justify-end mt-4">
+                            <button
+                                type="button"
+                                onClick={cancelHandler}
+                                className="bg-gray-200 px-4 py-1 rounded hover:bg-gray-600 hover:text-white transition"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                type="submit"
+                                className={`p-3 ml-4 bg-blue-900 rounded-md text-white transition-all duration-100 ease-in-out ${submitting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700 hover:scale-105'
+                                    }`}
+                                disabled={submitting}
+                            >
+                                {submitting ? (
+                                    <div className="flex justify-center items-center gap-2">
+                                        <PuffLoader size={20} color="#fff" />
+                                        <span>Saving...</span>
+                                    </div>
+                                ) : (
+                                    'Save'
+                                )}
+                            </button>
                         </div>
 
-                    </form>
-                </div>)}
+                    </div>
+
+                </form>
+            </div>
         </div>
     )
 };

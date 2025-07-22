@@ -472,7 +472,7 @@ const SFGBomSection = ({
       <div className="border border-gray-300  shadow-xl rounded-xl p-5">
         {/* Raw Material Selection Modal */}
         {displayRawMaterialModal && (
-          <div className="fixed inset-0 bg-gray-900 backdrop-blur-md bg-opacity-50 flex justify-center items-center z-50">
+          <div className="fixed animate-fade-in inset-0 bg-gray-900 backdrop-blur-md bg-opacity-50 flex justify-center items-center z-50">
             <div className="relative w-[90vw] bg-gray-200 border shadow-2xl p-4 rounded-lg">
               <button
                 className="absolute top-2 right-2  text-red-500 hover:text-red-700 hover:scale-105 transition-all duration-200 ease-in-out rounded-full text-2xl p-1 font-bold"
@@ -510,7 +510,7 @@ const SFGBomSection = ({
 
         {/* Jobber Selection Modal */}
         {displayJobberModal && (
-          <div className="fixed inset-0 bg-gray-900 backdrop-blur-md bg-opacity-50 flex justify-center items-center z-50">
+          <div className="fixed animate-fade-in inset-0 bg-gray-900 backdrop-blur-md bg-opacity-50 flex justify-center items-center z-50">
             <div className="relative w-[90vw] bg-gray-200 border shadow-2xl p-4 rounded-lg">
               <button
                 className="absolute top-2 right-2 text-red-500 hover:text-red-700 hover:scale-105 transition-all duration-200 ease-in-out rounded-full text-2xl font-bold"
