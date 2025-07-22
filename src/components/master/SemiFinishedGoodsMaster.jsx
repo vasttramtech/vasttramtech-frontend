@@ -178,6 +178,10 @@ const SemiFinishedGoodsMaster = () => {
         try {
 
             setLoading(true);
+            const params = {
+                "pagination[page]": 1,
+                "pagination[pageSize]": 10000,
+            }
             const headers = {
                 Authorization: `Bearer ${token}`,
             };
@@ -188,7 +192,7 @@ const SemiFinishedGoodsMaster = () => {
             ];
 
             const [sfgmRes, unitRes] = await Promise.all(
-                endpoints.map((url) => axios.get(url, { headers }))
+                endpoints.map((url) => axios.get(url, {params, headers }))
             );
 
             setSemiFinishedGoods(Array.isArray(sfgmRes.data.data) ? sfgmRes.data.data : []);

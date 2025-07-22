@@ -69,7 +69,12 @@ const SFGBomSection = ({
     try {
       const response = await axios.get(
         `${process.env.REACT_APP_BACKEND_URL}/api/colors?populate=*`,
-        { headers: { Authorization: `Bearer ${token}` } }
+        {
+          params: {
+            "pagination[page]": 1,
+            "pagination[pageSize]": 10000,
+          }, headers: { Authorization: `Bearer ${token}` }
+        }
       );
 
 

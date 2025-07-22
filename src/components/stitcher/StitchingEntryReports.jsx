@@ -33,6 +33,7 @@ const StitchingEntryReports = () => {
     "Date",
     "Due Date",
     "Remarks",
+    "Status",
     "View"
   ]);
   const title = 'Bill of Purchase Report';
@@ -214,6 +215,7 @@ const StitchingEntryReports = () => {
           "filters[$or][6][date][$containsi]": searchTerm,
           "filters[$or][7][due_date][$containsi]": searchTerm,
           "filters[$or][8][remarks][$containsi]": searchTerm,
+          "filters[$or][9][stitch_status][$containsi]": searchTerm,
         };
       }
 
@@ -243,6 +245,7 @@ const StitchingEntryReports = () => {
           date: entry?.date,
           dueDate: entry?.due_date,
           remarks: entry?.remarks,
+          stitch_status : entry?.stitch_status
         };
       });
 

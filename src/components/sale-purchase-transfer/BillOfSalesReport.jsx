@@ -274,6 +274,7 @@ const BillOfSalesReport = () => {
         params["filters[$or][7][processor][name][$containsi]"] = searchTerm;
         params["filters[$or][8][processor][designation][$containsi]"] = searchTerm;
         params["filters[$or][9][billOfSales_status][$containsi]"] = searchTerm;
+        params["filters[$or][10][id][$containsi]"] = searchTerm;
       }
 
       const response = await axios.get(
@@ -653,7 +654,7 @@ const BillOfSalesReport = () => {
         <h1 className="text-2xl pb-2 border-b font-bold text-blue-900 mb-4">{title}</h1>
         <div className="" ref={printableTableRef}>
 
-          <MasterTable
+          <SmartTable
             headers={headersForTable}
             data={enhancedData}
             searchTerm={searchTerm}

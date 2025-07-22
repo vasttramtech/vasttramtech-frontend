@@ -315,6 +315,9 @@ const BillOfSales = () => {
                     urgent: (order?.urgent === true) ? "Yes" : "No"
                 }
             ))
+            if (data.length < 1) {
+                toast.warn("There is not data");
+            }
             setSelectedSO(data);
             if (OrderData.length > 0) setSelectSOModal(true);
 

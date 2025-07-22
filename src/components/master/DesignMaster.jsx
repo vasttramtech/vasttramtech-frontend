@@ -426,7 +426,7 @@ const DesignMaster = () => {
       formData.design_number == "" ||
       formData.unit == ""
     ) {
-      alert("Design Group, Color, Design Number and Total Design Cost is required");
+      toast.error("Design Group, Color, Design Number and Unit is required");
       return;
     }
 
