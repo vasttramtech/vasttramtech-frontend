@@ -9,6 +9,7 @@ import EditPurchaseOrder from "./EditModel/EditPurchaseOrder";
 import Pagination from "../utility/Pagination";
 import Swal from "sweetalert2";
 import Pagination10 from "../utility/Pagination10";
+import MasterTable from "../../smartTable/MasterTable";
 
 const headers = [
   "document_id",
@@ -311,7 +312,7 @@ const PurchaseOrderList = () => {
 
         <div className="">
 
-          <SmartTable
+          <MasterTable
             headers={headers}
             data={updatedRawData}
             searchTerm={searchTerm}
