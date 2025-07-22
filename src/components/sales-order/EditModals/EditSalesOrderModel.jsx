@@ -25,6 +25,7 @@ const EditSalesOrderModel = () => {
   const { designGroups, load, error, userList, availableSfgmGroups } =
     useSelector((state) => state.fetchData);
   const [extra_bom_so, setExtra_bom_so] = useState([]);
+  const [extra_bom_so_initial, setExtra_bom_so_initial] = useState([]);
 
   const [formData, setFormData] = useState({
     so_id: "",
@@ -203,6 +204,9 @@ const EditSalesOrderModel = () => {
     setStockList((prev) => [...stockList, ...arr]);
   }, [extra_bom_so, formData.qty]);
 
+  console.log("extra_bom_so: ", extra_bom_so)
+  console.log("extra_bom_so_initial: ", extra_bom_so_initial)
+
   function updateOrderItemStatus(orderItems) {
     const updatedItems = {};
 
@@ -351,6 +355,7 @@ const EditSalesOrderModel = () => {
         });
         setOrder_items(response?.data?.order_items);
         setExtra_bom_so(response?.data?.extra_bom_so[0]?.Extra_bom);
+        setExtra_bom_so_initial(response?.data?.extra_bom_so[0]?.Extra_bom);
         setDesignData(response?.data?.design_number);
         setSelectedConvertIdData({
           so_id: response.data?.orders?.[0]?.external_orders || "N/A",
@@ -473,16 +478,128 @@ const EditSalesOrderModel = () => {
     }
   };
 
+  console.log("allSemiFinishedGoods456: ", allSemiFinishedGoods);
   const handleSubmitInternalSalesOrder = async () => {
     if (!token) {
       navigate("/login");
     }
+    console.log("allSemiFinishedGoods123: ", allSemiFinishedGoods)
+    const updatedAllSFG = allSemiFinishedGoods.map(allSFG => {
+      const matchedInitial = extra_bom_so_initial.find(initial =>
+        initial.semi_finished_goods?.id === allSFG.semi_finished_goods
+      );
+
+      const updatedRawMaterialBom = allSFG.raw_material_bom.map(rawItem => {
+        if (matchedInitial) {
+          const matchedRM = matchedInitial.raw_material_bom.find(initialRM =>
+            initialRM.raw_material_master?.id === rawItem.raw_material_master
+          );
+
+          if (matchedRM) {
+            return {
+              ...rawItem,
+              rm_qty: (rawItem.rm_qty - matchedRM.rm_qty) * formData.qty,
+            };
+          } else {
+            return {
+              ...rawItem,
+              rm_qty: rawItem.rm_qty * formData.qty,
+            };
+          }
+        } else {
+          // If no matchedInitial, just multiply normally
+          return {
+            ...rawItem,
+            rm_qty: rawItem.rm_qty * formData.qty,
+          };
+        }
+      });
+
+      return {
+        ...allSFG,
+        raw_material_bom: updatedRawMaterialBom,
+      };
+    });
+
+    console.log("")
+
+    // const updatedAllSFG = allSemiFinishedGoods.map(allSFG => {
+    //   // ✅ Match based on bom_id instead of semi_finished_goods.id
+    //   const matchedInitial = extra_bom_so_initial.find(initial =>
+    //     initial.id === allSFG.bom_id
+    //   );
+
+    //   const updatedRawMaterialBom = allSFG.raw_material_bom.map(rawItem => {
+    //     if (matchedInitial) {
+    //       const matchedRM = matchedInitial.raw_material_bom.find(initialRM =>
+    //         initialRM.raw_material_master?.id === rawItem.raw_material_master
+    //       );
+
+    //       if (matchedRM) {
+    //         return {
+    //           ...rawItem,
+    //           rm_qty: (rawItem.rm_qty - matchedRM.rm_qty) * formData.qty,
+    //         };
+    //       } else {
+    //         return {
+    //           ...rawItem,
+    //           rm_qty: rawItem.rm_qty * formData.qty,
+    //         };
+    //       }
+    //     } else {
+    //       // If no matchedInitial, just multiply normally
+    //       return {
+    //         ...rawItem,
+    //         rm_qty: rawItem.rm_qty * formData.qty,
+    //       };
+    //     }
+    //   });
+
+    //   return {
+    //     ...allSFG,
+    //     raw_material_bom: updatedRawMaterialBom,
+    //   };
+    // });
+
+    console.log("updatedAllSFG: ", updatedAllSFG)
+    // alert("Hellow");
+    // return;
     setsubmitting(true);
     try {
-      const extrabomso = allSemiFinishedGoods.map((item, ind) => ({
-        ...item,
-        stock_status: SFGStatusStock[ind],
-      }));
+
+      // const extrabomso = allSemiFinishedGoods.map((item, ind) => ({
+      //   ...item,
+      //   stock_status: SFGStatusStock[ind],
+      // }));
+
+      const extrabomso = allSemiFinishedGoods.map((item, ind) => {
+        // Check if the current item's semi_finished_goods matches any in extra_bom_so_initial
+        const isMatched = extra_bom_so_initial.some(initial =>
+          initial.semi_finished_goods?.id === item.semi_finished_goods
+        );
+
+        // If NOT matched, multiply qty and raw_material_bom rm_qty
+        let updatedQty = item.qty;
+        // let updatedRawMaterialBom = item.raw_material_bom;
+
+        if (!isMatched) {
+          updatedQty = item.qty * formData.qty;
+          // updatedRawMaterialBom = item.raw_material_bom.map(rm => ({
+          //   ...rm,
+          //   rm_qty: rm.rm_qty * formData.qty,
+          // }));
+        }
+
+        return {
+          ...item,
+          qty: updatedQty,
+          // raw_material_bom: updatedRawMaterialBom,
+          stock_status: selectedConvertIdData?.so_id ? true : SFGStatusStock[ind],
+        };
+      });
+
+      // console.log("extrabomso-end", extrabomso)
+
       const postData = {
         data: {
           order_date: formData.order_date,
@@ -505,6 +622,12 @@ const EditSalesOrderModel = () => {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
+
+      // const response = {
+      //   data: {
+      //     message: "Simulated success",
+      //   },
+      // };
       if (!response || !response.data) {
         toast.error("Error at creating Sales Order");
       } else {
@@ -572,11 +695,34 @@ const EditSalesOrderModel = () => {
         // );
 
         const reduce = reduceStock.flat();
+        const updatedReduce = reduce.map(reduceItem => {
+          // Search across all updatedAllSFG items and their raw_material_bom arrays
+          for (const sfg of updatedAllSFG) {
+            for (const bom of sfg.raw_material_bom) {
+              if (bom.raw_material_master === reduceItem.raw_material_master) {
+                return {
+                  ...reduceItem,
+                  qty: bom.rm_qty
+                };
+              }
+            }
+          }
+
+          // If not matched, return original item
+          return reduceItem;
+        });
+
+        console.log("updatedReduce: ", updatedReduce);
+
+        console.log("reduce: ", reduce)
+
+        // alert("Hellow")
+        // return;
 
         if (reduce.length > 0) {
           await axios.post(
             `${process.env.REACT_APP_BACKEND_URL}/api/custom/redact-stock-inBulk`,
-            reduce,
+            updatedReduce,
             {
               headers: { Authorization: `Bearer ${token}` },
             }
@@ -642,6 +788,7 @@ const EditSalesOrderModel = () => {
             others: "",
           },
         });
+        navigate(`/sales-order-report/report/internal/${id}`);
       }
     } catch (error) {
       console.log("Error at creating Sales Order", error);
@@ -660,12 +807,82 @@ const EditSalesOrderModel = () => {
     if (!token) {
       navigate("/login");
     }
+    console.log("allSemiFinishedGoods: ", allSemiFinishedGoods)
+
+    const updatedAllSFG = allSemiFinishedGoods.map(allSFG => {
+      const matchedInitial = extra_bom_so_initial.find(initial =>
+        initial.semi_finished_goods?.id === allSFG.semi_finished_goods
+      );
+
+      const updatedRawMaterialBom = allSFG.raw_material_bom.map(rawItem => {
+        if (matchedInitial) {
+          const matchedRM = matchedInitial.raw_material_bom.find(initialRM =>
+            initialRM.raw_material_master?.id === rawItem.raw_material_master
+          );
+
+          if (matchedRM) {
+            return {
+              ...rawItem,
+              rm_qty: (rawItem.rm_qty - matchedRM.rm_qty) * formData.qty,
+            };
+          } else {
+            return {
+              ...rawItem,
+              rm_qty: rawItem.rm_qty * formData.qty,
+            };
+          }
+        } else {
+          // If no matchedInitial, just multiply normally
+          return {
+            ...rawItem,
+            rm_qty: rawItem.rm_qty * formData.qty,
+          };
+        }
+      });
+
+      return {
+        ...allSFG,
+        raw_material_bom: updatedRawMaterialBom,
+      };
+    });
+
+    console.log("updatedAllSFG: ", updatedAllSFG)
+    // alert("Hellw");
+    // return;
     setsubmitting(true);
     try {
-      const extrabomso = allSemiFinishedGoods.map((item, ind) => ({
-        ...item,
-        stock_status: selectedConvertIdData?.so_id ? true : SFGStatusStock[ind],
-      }));
+      // const extrabomso = allSemiFinishedGoods.map((item, ind) => ({
+      //   ...item,
+      //   stock_status: selectedConvertIdData?.so_id ? true : SFGStatusStock[ind],
+      // }));
+
+      const extrabomso = allSemiFinishedGoods.map((item, ind) => {
+        // Check if the current item's semi_finished_goods matches any in extra_bom_so_initial
+        const isMatched = extra_bom_so_initial.some(initial =>
+          initial.semi_finished_goods?.id === item.semi_finished_goods
+        );
+
+        // If NOT matched, multiply qty and raw_material_bom rm_qty
+        let updatedQty = item.qty;
+        // let updatedRawMaterialBom = item.raw_material_bom;
+
+        if (!isMatched) {
+          updatedQty = item.qty * formData.qty;
+          // updatedRawMaterialBom = item.raw_material_bom.map(rm => ({
+          //   ...rm,
+          //   rm_qty: rm.rm_qty * formData.qty,
+          // }));
+        }
+
+        return {
+          ...item,
+          qty: updatedQty,
+          // raw_material_bom: updatedRawMaterialBom,
+          stock_status: selectedConvertIdData?.so_id ? true : SFGStatusStock[ind],
+        };
+      });
+
+      console.log("extrabomso-end", extrabomso)
       const postData = {
         data: {
           order_no: formData.order_no,
@@ -680,6 +897,7 @@ const EditSalesOrderModel = () => {
           // extra_bom_so:extrabomso
         },
       };
+      console.log("PostData: ", postData)
       const response = await axios.put(
         `${process.env.REACT_APP_BACKEND_URL}/api/sales-order-entry/update/${id}`,
         postData,
@@ -687,6 +905,12 @@ const EditSalesOrderModel = () => {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
+
+      // const response = {
+      //   data: {
+      //     message: "Simulated success",
+      //   },
+      // };
       if (!response || !response.data) {
         toast.error("Error at creating Sales Order");
       } else {
@@ -747,6 +971,7 @@ const EditSalesOrderModel = () => {
         if (someCompleted.length > 0) {
           await handleBulkAddStock(someCompleted);
         }
+        // console.log("extra_bom_so: ", extra_bom_so)
         const to_increase_stock = extra_bom_so.filter(
           (item) => item.fromStock === true
         );
@@ -756,6 +981,8 @@ const EditSalesOrderModel = () => {
             qty: rm.rm_qty * formData.qty,
           }))
         );
+        // console.log("increaseStock: ",increaseStock);
+
         if (increaseStock.length > 0) {
           await axios.post(
             `${process.env.REACT_APP_BACKEND_URL}/api/custom/increase-stock`,
@@ -772,6 +999,7 @@ const EditSalesOrderModel = () => {
             qty: rm.total_rm_qty,
           }))
         );
+        console.log("reduceFromApproved: ", reduceFromApproved)
 
         // ✅ From someCompleted — uses: raw_material_master.id & rm_qty
         const reduceFromSomeCompleted = someCompleted.flatMap((item) =>
@@ -780,6 +1008,7 @@ const EditSalesOrderModel = () => {
             qty: rm.rm_qty * formData.qty,
           }))
         );
+        console.log("reduceFromSomeCompleted: ", reduceFromSomeCompleted)
 
         // Combine all reductions
         const reduceStock = [...reduceFromSomeCompleted, ...reduceFromApproved];
@@ -791,11 +1020,33 @@ const EditSalesOrderModel = () => {
         // );
 
         const reduce = reduceStock.flat();
+        const updatedReduce = reduce.map(reduceItem => {
+          // Search across all updatedAllSFG items and their raw_material_bom arrays
+          for (const sfg of updatedAllSFG) {
+            for (const bom of sfg.raw_material_bom) {
+              if (bom.raw_material_master === reduceItem.raw_material_master) {
+                return {
+                  ...reduceItem,
+                  qty: bom.rm_qty
+                };
+              }
+            }
+          }
+
+          // If not matched, return original item
+          return reduceItem;
+        });
+
+        console.log("updatedReduce: ", updatedReduce);
+
+        console.log("reduce: ", reduce)
+        // alert("Hellow");
+        // return;
 
         if (reduce.length > 0) {
           await axios.post(
             `${process.env.REACT_APP_BACKEND_URL}/api/custom/redact-stock-inBulk`,
-            reduce,
+            updatedReduce,
             {
               headers: { Authorization: `Bearer ${token}` },
             }
@@ -859,6 +1110,8 @@ const EditSalesOrderModel = () => {
             others: "",
           },
         });
+
+        navigate(`/sales-order-report/report/external/${id}`);
       }
     } catch (error) {
       console.log("Error at creating Sales Order", error);

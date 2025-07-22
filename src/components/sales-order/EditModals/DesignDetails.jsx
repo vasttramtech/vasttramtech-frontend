@@ -33,6 +33,7 @@ const DesignDetails = ({
     async function fetchDetails() {
       try {
         const transformedData = exta_bom?.map((entry) => ({
+          bom_id : entry?.id,
           semi_finished_goods:
             entry.semi_finished_goods?.semi_finished_goods_name || "",
           qty: Number(entry.qty),
@@ -66,6 +67,7 @@ const DesignDetails = ({
         }));
         setSavedSfgData(transformedData);
         const savedData = exta_bom?.map((entry) => ({
+          bom_id : entry?.id,
           semi_finished_goods: entry?.semi_finished_goods?.id,
           qty: Number(entry?.qty),
           color: entry?.color?.id,
