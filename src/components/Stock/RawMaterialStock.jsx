@@ -82,9 +82,24 @@ const RawMaterialStock = () => {
         const fetchData = async () => {
             try {
                 setLoading(true);
+                // const response = await axios.get(
+                //     `${process.env.REACT_APP_BACKEND_URL}/api/raw-material-stocks?populate[raw_material_master][populate][hsn_sac_code]=*&populate[raw_material_master][populate][unit]=*&populate[raw_material_master][populate][color]=*&populate[raw_material_master][populate][group]=*&"sort[0]": "id:asc"`,
+                //     { headers: { Authorization: `Bearer ${token}` } }
+                // );
                 const response = await axios.get(
-                    `${process.env.REACT_APP_BACKEND_URL}/api/raw-material-stocks?populate[raw_material_master][populate][hsn_sac_code]=*&populate[raw_material_master][populate][unit]=*&populate[raw_material_master][populate][color]=*&populate[raw_material_master][populate][group]=*`,
-                    { headers: { Authorization: `Bearer ${token}` } }
+                    `${process.env.REACT_APP_BACKEND_URL}/api/raw-material-stocks`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                        params: {
+                            "populate[raw_material_master][populate][hsn_sac_code]": "*",
+                            "populate[raw_material_master][populate][unit]": "*",
+                            "populate[raw_material_master][populate][color]": "*",
+                            "populate[raw_material_master][populate][group]": "*",
+                            "sort[0]": "id:asc",
+                        },
+                    }
                 );
                 console.log(response)
                 if (response.data?.data) {

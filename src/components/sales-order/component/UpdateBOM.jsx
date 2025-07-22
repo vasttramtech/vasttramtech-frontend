@@ -73,6 +73,7 @@ const UpdateBOM = ({
   // state for BOM's Semi finished goods master
   const [SfgData, setSfgData] = useState({
     sfg_group: "",
+    sfg_material_name: "",
     sfg_material: "",
     sfg_color: "",
     sfg_color1: "",
@@ -85,7 +86,8 @@ const UpdateBOM = ({
     if (!IndividualSfg) return;
     setSfgData({
       sfg_group: IndividualSfg?.group?.id,
-      sfg_material: IndividualSfg?.semi_finished_goods_name,
+      sfg_material_name: IndividualSfg?.semi_finished_goods_name,
+      sfg_material: IndividualSfg?.id,
       sfg_color1: FinalSFGData?.color,
       sfg_qty: Number(FinalSFGData.qty),
       sfg_description: FinalSFGData?.sfg_description,
@@ -192,6 +194,7 @@ const UpdateBOM = ({
       setSfgData({
         ...SfgData,
         [name]: value,
+        sfg_material_name: "",
         sfg_material: "",
         sfg_color1: "",
         sfg_qty: 0,
@@ -510,6 +513,7 @@ const UpdateBOM = ({
 
     setSfgData({
       sfg_group: "",
+      sfg_material_name : "",
       sfg_material: "",
       sfg_color1: "",
       sfg_qty: 0,
@@ -688,12 +692,12 @@ const UpdateBOM = ({
               <label className="text-gray-700 font-semibold">
                 SFG Material
               </label>
-              <input type="text" className="border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500" name="sfg_material" value={SfgData.sfg_material} disabled></input>
-              {/* <select
+              {/* <input type="text" className="border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500" name="sfg_material" value={SfgData.sfg_material} disabled></input> */}
+              <select
                 type=""
                 name="sfg_material"
                 // onChange={sfgDataHandler}
-                value={SfgData.sfg_material}
+                value={SfgData.sfg_material_name}
                 className="border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500"
                 disabled
               >
@@ -707,7 +711,7 @@ const UpdateBOM = ({
                       {item}
                     </option>
                   ))}
-              </select> */}
+              </select>
               {/* <select
                 name="sfg_material"
                 // onChange={sfgDataHandler}
