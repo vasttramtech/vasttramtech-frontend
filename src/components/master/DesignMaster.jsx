@@ -423,7 +423,8 @@ const DesignMaster = () => {
     if (
       formData.design_group == "" ||
       formData.color == "" ||
-      formData.design_number == ""
+      formData.design_number == "" ||
+      formData.unit == ""
     ) {
       alert("Design Group, Color, Design Number and Total Design Cost is required");
       return;

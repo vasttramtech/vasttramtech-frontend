@@ -380,6 +380,7 @@ const EditDesignMaster = ({
               onChange={handleInputChange}
               defaultValue=""
               value={formData.design_group}
+              disabled
             >
               <option value="" disabled>
                 Select Design Group
@@ -400,6 +401,7 @@ const EditDesignMaster = ({
             name="design_number"
             className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="Design Number"
+            disabled
             value={formData.design_number}
             onChange={handleInputChange}
           />
@@ -412,6 +414,7 @@ const EditDesignMaster = ({
             onChange={handleInputChange}
             defaultValue=""
             value={formData.color}
+            disabled
           >
             <option value="" disabled>
               Select Color
@@ -434,6 +437,7 @@ const EditDesignMaster = ({
               className="flex-grow border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={formData.unit}
               onChange={handleInputChange}
+              disabled
             >
               <option value="" disabled>
                 Select Jobber Code
