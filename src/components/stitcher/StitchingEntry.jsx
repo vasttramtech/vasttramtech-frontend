@@ -73,7 +73,7 @@ const SelectSOTable = ({
                     processor: data?.processor?.id
                 }));
                 setSalesOrder(data);
-                console.log("Data", data);
+                // console.log("Data", data);
                 const extraBom = data.extra_bom_so[0]?.Extra_bom || [];
 
                 const extraBomFromStock = data?.extra_bomSfg_fromStock || [];
@@ -88,7 +88,7 @@ const SelectSOTable = ({
                 console.log(filteredExtraBom);
                 const allId = filteredExtraBom.map((item) => item?.id);
                 setAllBomIds(allId);
-                console.log("All boms ids", allId);
+                // console.log("All boms ids", allId);
 
                 // fetching already processed data from here
                 let idsString
@@ -98,7 +98,7 @@ const SelectSOTable = ({
                 else {
                     idsString = " "
                 }
-                console.log("idsString", idsString);
+                // console.log("idsString", idsString);
 
                 try {
                     let response;
@@ -199,7 +199,7 @@ const SelectSOTable = ({
 
 
 const StitchingEntry = () => {
-    const headersForTable = ["Stitching Id", "SO Type", "SO ID", "Design Group", "Design Name", "Qty", "Remarks"];
+    const headersForTable = ["Id", "SO ID", "Design Group", "Design Name", "Qty", "Remarks"];
 
     const [displayModal, setDisplayModal] = useState(false);
     const [selectedRow, setSelectedRow] = useState([]);
@@ -391,6 +391,31 @@ const StitchingEntry = () => {
         console.log(formData.date)
     }
 
+    const checkValidations = () => {
+        const hasInvalidStitchRow = selectedStitchRows?.some(item => {
+            if (item.processQty <= 0) {
+                toast.warning("Please enter process quantity for order items");
+                return true;
+            }
+            return false;
+        });
+
+        if (hasInvalidStitchRow) return false;
+
+        const hasInvalidSalesOrderRow = selectedSalesOrderRows?.some(item => {
+            if (item.processQty <= 0) {
+                toast.warning("Please enter process quantity for BOM items");
+                return true;
+            }
+            return false;
+        });
+
+        if (hasInvalidSalesOrderRow) return false;
+
+        return true;
+    };
+
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSubmitting(true);
@@ -402,12 +427,12 @@ const StitchingEntry = () => {
         }
 
         if (salesOrder.length === 0) {
-            alert("Please select a sales order");
+            toast.warning("Please select a sales order");
             setSubmitting(false);
             return
         }
-        if (selectedSalesOrderRows.length === 0 && selectedStitchRows.length === 0) {
-            alert("Please select at least one stitch row or sales order row");
+        if (selectedSalesOrderRows.length <= 0) {
+            toast.warning("Please select a BOM");
             setSubmitting(false);
             return
         }
@@ -422,6 +447,13 @@ const StitchingEntry = () => {
             setSubmitting(false);
             return;
         }
+
+        if (checkValidations() === false) {
+            setSubmitting(false);
+            return
+        }
+
+
 
 
         console.log("Selected Stitch Rows: ", selectedStitchRows);
@@ -480,7 +512,7 @@ const StitchingEntry = () => {
                 measurement: row.measurement,
                 work: row.work,
                 others: row.others,
-                qty_required: row.requiredQty,
+                qty_required: Number(selectedSO.qty || 0),
                 already_processed: row.already_processed,
                 process_qty: row.processQty
             })),
@@ -542,7 +574,6 @@ const StitchingEntry = () => {
             });
 
             console.log("bomStatusUpdates: ", bomStatusUpdates);
-
             const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/stitching-entries`, postData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -752,8 +783,6 @@ const StitchingEntry = () => {
 
     }
 
-    console.log("lhSh: ", lhSh);
-    console.log("bpGrownKurti: ", bpGrownKurti);
 
 
     if (loading || load) {

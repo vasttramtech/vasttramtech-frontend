@@ -320,6 +320,18 @@ const StitchingReceive = () => {
         console.log(formData.date)
     }
 
+    const checkValidation = () => {
+        const hasInvalidStitchRow = receivedItems?.some(item => {
+            if (item.receive_qty <= 0) {
+                toast.warning("Please enter process quantity for order items");
+                return true;
+            }
+            return false;
+        });
+        if (hasInvalidStitchRow) return false;
+        return true
+    }
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSubmitting(true);
@@ -336,6 +348,12 @@ const StitchingReceive = () => {
             setSubmitting(false)
             return;
         }
+
+        if (checkValidation() === false) {
+            setSubmitting(false)
+            return;
+        }
+
 
         const getStitchingStatus = () => {
             if (!selectedEntry || !selectedEntry.order_Items) return "partially_completed";

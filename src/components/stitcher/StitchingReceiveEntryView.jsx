@@ -161,23 +161,23 @@ const StitchingReceiveEntryView = () => {
             <tbody className="divide-y divide-gray-200">
               <tr>
                 <td className="py-2 px-4 text-sm">
-                  {stitchingData?.stitcher?.id || "N/A"}
+                  {stitchingData?.stitcher?.id || "-"}
                 </td>
                 <td className="py-2 px-4 text-sm">
-                  {stitchingData?.stitcher?.stitcher_name || "N/A"}
+                  {stitchingData?.stitcher?.stitcher_name || "-"}
 
                 </td>
                 <td className="py-2 px-4 text-sm">
-                  {stitchingData?.stitcher?.stitcher_type || "N/A"}
+                  {stitchingData?.stitcher?.stitcher_type || "-"}
                 </td>
                 <td className="py-2 px-4 text-sm">
-                  {stitchingData?.stitcher?.stitcher_code || "N/A"}
+                  {stitchingData?.stitcher?.stitcher_code || "-"}
                 </td>
                 <td className="py-2 px-4 text-sm">
-                  {stitchingData?.stitcher?.address || "N/A"}
+                  {stitchingData?.stitcher?.address || "-"}
                 </td>
                 <td className="py-2 px-4 text-sm">
-                  {stitchingData?.stitcher?.remarks || "N/A"}
+                  {stitchingData?.stitcher?.remarks || "-"}
                 </td>
               </tr>
             </tbody>
