@@ -536,7 +536,7 @@ const EditSupplierMaster = ({ setOpenEditModal, selectedRow, fetchSupplierMaster
                         <input
                             type="text"
                             className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            placeholder="Address Id"
+                            placeholder="Alternate email Id"
                             value={concernedPersonDetails.alternate_email_id}
                             name="alternate_email_id"
                             onChange={handleInputchangeConcernedPerson}
