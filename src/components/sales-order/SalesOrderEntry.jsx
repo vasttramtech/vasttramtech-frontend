@@ -669,6 +669,8 @@ const SalesOrderEntry = () => {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
+      // console.log(response);
+
       if (!response || !response.data) {
         toast.error("Error at creating Sales Order");
       } else {
@@ -699,10 +701,7 @@ const SalesOrderEntry = () => {
       }
     } catch (error) {
       console.log("Error at creating Sales Order", error);
-      toast.error(
-        error?.response?.data?.error?.message ||
-        "Error at creating Sales Order Entry"
-      );
+      toast.warn("Order id already taken by order. Please re-select the customer to generate new SO ID")
     } finally {
       // setLoading(false);
       setsubmitting(false);
@@ -731,8 +730,12 @@ const SalesOrderEntry = () => {
     }
     try {
       if (isAdmin) {
-        await handleSubmitInternalSalesOrder();
-      } else await handleSubmitSalesOrder();
+        const res = await handleSubmitInternalSalesOrder();
+        // console.log("Res from internal", res);
+      } else {
+        const res2 = await handleSubmitSalesOrder();
+        // console.log("Res from external", res2);
+      }
       setChangeSoid(!changeSoid);
     } catch (error) {
       console.log("Error at creating Sales Order Entry", error);
