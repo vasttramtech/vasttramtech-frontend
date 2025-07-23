@@ -419,7 +419,7 @@ const StitchingEntryView = () => {
               <tbody>
                 {stitchingData?.order_Items?.map((item, index) => {
 
-                  console.log("Item: ", item);
+                  {/* console.log("Item: ", item); */ }
                   return (
                     <tr key={index} className="even:bg-gray-100 hover:bg-gray-50 transition">
                       <td className="border border-gray-300 p-3 text-center">{item?.group}</td>
@@ -499,7 +499,7 @@ const StitchingEntryView = () => {
               <tbody>
                 {stitchingData?.bom.map((item, index) => {
 
-                  console.log("Item: ", item);
+                  {/* console.log("Item: ", item); */ }
                   return (
                     <tr key={index} className="even:bg-gray-100 hover:bg-gray-50 transition">
                       <td className="border border-gray-300 p-3 text-center">{item?.bom_id}</td>
