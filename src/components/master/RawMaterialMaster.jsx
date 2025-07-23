@@ -421,7 +421,7 @@ const RawMaterialMaster = () => {
                     {/* Item Name */}
                     <div className="flex flex-col">
                         <label className="text-gray-700 font-semibold">Item Name</label>
-                        <input type="text" className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="semi-Finished Goods Name"
+                        <input type="text" className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Item Name"
                             name="item_name"
                             value={formData.item_name}
                             onChange={handleInputChange}
@@ -462,7 +462,7 @@ const RawMaterialMaster = () => {
                     {/* Price per unit */}
                     <div className="flex flex-col">
                         <label className="text-gray-700 font-semibold">Price per unit</label>
-                        <input type="number" className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="semi-Finished Goods Name"
+                        <input type="number" className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Price per unit"
                             name="pricePerUnit"
                             value={formData.pricePerUnit}
                             onChange={handleInputChange}

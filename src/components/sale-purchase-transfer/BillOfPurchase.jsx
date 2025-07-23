@@ -1146,7 +1146,7 @@ const BillOfPurchase = () => {
           {/* Reference bill */}
           <FormInput
             type={"text"}
-            placeholder={"Reference Bill"}
+            placeholder={"Enter Reference Bill No"}
             label={"Reference Bil"}
             name="referenceBill"
             value={formData.referenceBill}
@@ -1158,10 +1158,11 @@ const BillOfPurchase = () => {
               Design: <span className=' text-red-600 '>*</span>
             </label>
             <input
-              className="border border-gray-300 rounded-md w-full p-2"
+              className="border border-gray-300 bg-gray-100 rounded-md w-full p-2"
               type="text"
               id="design"
               name="design"
+              placeholder="Selected Design"
               value={formData.design}
               onChange={formDataChangeHandler}
               required

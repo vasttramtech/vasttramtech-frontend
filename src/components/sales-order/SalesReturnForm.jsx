@@ -527,7 +527,7 @@ const SalesReturnForm = () => {
                             name="soId"
                             value={formData.soId}
                             onChange={handleChange}
-                            placeholder="SO-00####"
+                            placeholder="Select SO ID"
                             className="border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                     </div>
@@ -582,7 +582,7 @@ const SalesReturnForm = () => {
                             name="transporter"
                             value={formData.transporter}
                             onChange={handleChange}
-                            placeholder="Transporter"
+                            placeholder="Enter Transporter"
                             className="border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                     </div>
@@ -593,7 +593,7 @@ const SalesReturnForm = () => {
                             type="text"
                             name="goods"
                             value={formData.goods}
-                            placeholder="Goods"
+                            placeholder="Enter Goods"
                             onChange={handleChange}
                             className="border border-gray-300 bg-gray-100 rounded-md p-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
