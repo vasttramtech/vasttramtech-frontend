@@ -562,6 +562,12 @@ const SalesOrderEntry = () => {
       navigate("/login");
     }
     setsubmitting(true);
+
+    //     if (allSemiFinishedGoods.length <= 0) {
+    //   toast.warn("Please select the design first");
+    //   setsubmitting(false);
+    //   return;
+    // }
     try {
       const extrabomso = allSemiFinishedGoods.map((item, ind) => ({
         ...item,
@@ -622,10 +628,15 @@ const SalesOrderEntry = () => {
       }
     } catch (error) {
       console.log("Error at creating Sales Order", error);
-      toast.error(
-        error?.response?.data?.error?.message ||
-        "Error at creating Sales Order Entry"
-      );
+      if (error?.response?.data?.error?.message == `so_id must be unique`) {
+        toast.warn("Order ID is already taken, Please re-select the customer")
+      }
+      else {
+        toast.error(
+          error?.response?.data?.error?.message ||
+          "Error at creating Sales Order Entry"
+        );
+      }
     } finally {
       setsubmitting(false);
     }
@@ -636,6 +647,11 @@ const SalesOrderEntry = () => {
       navigate("/login");
     }
     setsubmitting(true);
+    // if (allSemiFinishedGoods.length <= 0) {
+    //   toast.warn("Please select the design first");
+    //   setsubmitting(false);
+    //   return;
+    // }
     try {
       const extrabomso = allSemiFinishedGoods.map((item, ind) => ({
         ...item,
@@ -701,7 +717,16 @@ const SalesOrderEntry = () => {
       }
     } catch (error) {
       console.log("Error at creating Sales Order", error);
-      toast.warn("Order id already taken by order. Please re-select the customer to generate new SO ID")
+
+      if (error?.response?.data?.error?.message == `so_id must be unique`) {
+        toast.warn("Order ID is already taken, Please re-select the customer")
+      }
+      else {
+        toast.error(
+          error?.response?.data?.error?.message ||
+          "Error at creating Sales Order Entry"
+        );
+      }
     } finally {
       // setLoading(false);
       setsubmitting(false);
@@ -728,17 +753,18 @@ const SalesOrderEntry = () => {
       toast.error("Enter required Fields");
       return;
     }
+
+
     try {
       if (isAdmin) {
-        const res = await handleSubmitInternalSalesOrder();
-        // console.log("Res from internal", res);
+        await handleSubmitInternalSalesOrder();
       } else {
-        const res2 = await handleSubmitSalesOrder();
-        // console.log("Res from external", res2);
+        await handleSubmitSalesOrder();
       }
       setChangeSoid(!changeSoid);
     } catch (error) {
       console.log("Error at creating Sales Order Entry", error);
+
     }
   };
   async function GenerateSoid() {
