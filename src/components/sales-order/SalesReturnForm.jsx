@@ -12,6 +12,7 @@ import { MdCancel } from "react-icons/md";
 const salesOrderHeaders = [
     "Select",
     "SO ID",
+    "Customer",
     "Order No",
     "Order Date",
     "Converted Date",
@@ -39,9 +40,10 @@ const SalesOrderTable = ({ salesOrders, selectedSOId, setSelectedSOId }) => {
             so?.sourceType === "internal"
                 ? so?.orders[0]?.external_orders
                 : so?.so_id,
-        order_no: so.order_no,
+        customer: so?.customer?.company_name,
+        order_no: so?.order_no,
         order_date: so.order_date,
-        converted_date: so?.sourceType === "internal" ? so?.converted_date : "",
+        converted_date: so?.sourceType === "internal" ? so?.converted_date : "-",
         delivery_date: so.delivery_date,
         processor: so.processor?.name,
         qty: so.qty,
@@ -258,9 +260,7 @@ const SalesReturnForm = () => {
                 <h1 className=" text-2xl font-bold text-blue-900 mb-4 border-b pb-2">
                     Sales Return
                 </h1>
-                <h1 className="text-center text-2xl font-bold text-red-700 mb-6 border-b pb-2">
-                    Please don't use it. We are working on it.
-                </h1>
+
 
                 <div className="text-center border border-gray-200 shadow-sm py-2">
                     <button
