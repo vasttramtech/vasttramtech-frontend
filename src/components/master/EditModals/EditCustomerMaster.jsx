@@ -306,7 +306,7 @@ const EditCustomerMaster = ({ setOpenEditModal, selectedRow, fetchCustomerMaster
                         <input
                             type="text"
                             className="border border-gray-300 bg-gray-100 rounded-md p-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            placeholder="Credit Limit (Days)"
+                            placeholder="Credit Limit (Amount)"
                             value={formData.credit_limit_amount}
                             name="credit_limit_amount"
                             onChange={handleInputChangeCompay}
@@ -374,7 +374,7 @@ const EditCustomerMaster = ({ setOpenEditModal, selectedRow, fetchCustomerMaster
                             value={formData.address_category}
                         >
                             <option value="" disabled selected>
-                                Address CatAddress
+                                Address Category
                             </option>
                             {addressCategory.map((item, index) => (
                                 <option value={item} key={item}>
