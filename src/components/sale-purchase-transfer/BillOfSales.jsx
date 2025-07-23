@@ -1218,6 +1218,7 @@ const BillOfSales = () => {
                                     type="text"
                                     id="so_id"
                                     name="so_id"
+                                    placeholder='SO ID'
                                     value={salesOrder?.so_id || ""}
                                     onChange={formDataChangeHandler}
                                     required
@@ -1235,6 +1236,7 @@ const BillOfSales = () => {
                                     type="text"
                                     id="design"
                                     name="design"
+                                    placeholder='Design'
                                     value={salesOrder?.design_number?.design_number || ""}
                                     onChange={formDataChangeHandler}
                                     required
@@ -1252,7 +1254,6 @@ const BillOfSales = () => {
                                     type="date"
                                     id="exDate"
                                     name="ex_date"
-                                    placeholder='SO-24105'
                                     value={formData.ex_date}
                                     onChange={formDataChangeHandler}
                                     required
@@ -1270,7 +1271,7 @@ const BillOfSales = () => {
                                     type="text"
                                     id="remarks"
                                     name="remarks"
-
+                                    placeholder='Enter SO Remarks '
                                     value={formData.remarks}
                                     onChange={formDataChangeHandler}
 
@@ -1287,6 +1288,7 @@ const BillOfSales = () => {
                                     type="text"
                                     id="job_note"
                                     name="job_note"
+                                    placeholder='Enter Job Note'
                                     value={formData.job_note}
                                     onChange={formDataChangeHandler}
 

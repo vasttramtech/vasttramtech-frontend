@@ -783,6 +783,7 @@ const DispatchEntry = () => {
                                     name="remarks"
                                     value={formData.remarks}
                                     onChange={formDataHandler}
+                                    placeholder='Enter Remarks'
                                     className='p-4 border border-gray-400 rounded-md w-full'
                                     id="" />
                             </div>
@@ -794,6 +795,7 @@ const DispatchEntry = () => {
                                     type="text"
                                     id="invoice_no"
                                     name="invoice_no"
+                                    placeholder='Enter Invoice No'
                                     value={formData.invoice_no}
                                     onChange={formDataHandler}
                                     required

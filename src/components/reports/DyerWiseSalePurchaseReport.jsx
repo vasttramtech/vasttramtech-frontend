@@ -240,6 +240,7 @@ const DyerWiseSalePurchaseReport = () => {
                                     <Select
                                         placeholder={fetchJobberLoader ? "Loading..." : "Select Jobber"}
                                         options={jobber}
+
                                         onChange={(selectedOption) => {
                                             setSelectedJobber(selectedOption);
                                         }}
