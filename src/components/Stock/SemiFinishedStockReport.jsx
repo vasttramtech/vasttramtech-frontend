@@ -19,7 +19,13 @@ const SemiFinishedStockReport = () => {
                 setLoading(true);
                 const response = await axios.get(
                     `${process.env.REACT_APP_BACKEND_URL}/api/semi-finished-goods-stocks?populate[semi_finished_goods_master][populate][group]=*&populate[color]=*&populate[processes]=*`,
-                    { headers: { Authorization: `Bearer ${token}` } }
+                    {
+                        params: {
+                            "pagination[page]": 1,
+                            "pagination[pageSize]": 100000,
+                        },
+                        headers: { Authorization: `Bearer ${token}` }
+                    }
                 );
                 // console.log(response)
                 if (response.data?.data) {

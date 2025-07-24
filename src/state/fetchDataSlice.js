@@ -11,7 +11,7 @@ export const fetchDataFromAPI = async (url, token) => {
       {
         params: {
           "pagination[page]": 1,
-          "pagination[pageSize]": 10000,
+          "pagination[pageSize]": 100000,
         },
         headers: { Authorization: `Bearer ${token}` },
       }

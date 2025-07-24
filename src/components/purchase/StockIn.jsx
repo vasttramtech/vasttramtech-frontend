@@ -653,7 +653,7 @@ const StockIn = () => {
                   Choose File
                 </label>
                 <span className="text-gray-500 ml-2">
-                  {selectedImages.final_img_upload ? selectedImages.final_img_upload.name : "No file chosen"}
+                  {selectedImages.final_img_upload ? selectedImages.final_img_upload.name.slice(0, 15) : "No file chosen"}
                 </span>
               </div>
               {previewImages.final_img_upload && (
@@ -676,7 +676,7 @@ const StockIn = () => {
                   Choose File
                 </label>
                 <span className="text-gray-500 ml-2">
-                  {selectedImages.img_upload ? selectedImages.img_upload.name : "No file chosen"}
+                  {selectedImages.img_upload ? selectedImages.img_upload.name.slice(0, 15) : "No file chosen"}
                 </span>
               </div>
               {previewImages.img_upload && (

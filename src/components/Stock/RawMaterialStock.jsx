@@ -93,6 +93,8 @@ const RawMaterialStock = () => {
                             Authorization: `Bearer ${token}`,
                         },
                         params: {
+                            "pagination[page]": 1,
+                            "pagination[pageSize]": 100000,
                             "populate[raw_material_master][populate][hsn_sac_code]": "*",
                             "populate[raw_material_master][populate][unit]": "*",
                             "populate[raw_material_master][populate][color]": "*",
