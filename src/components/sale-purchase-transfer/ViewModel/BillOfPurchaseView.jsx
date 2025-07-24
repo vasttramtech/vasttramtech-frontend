@@ -33,7 +33,7 @@ const BillOfPurchaseView = () => {
           `${process.env.REACT_APP_BACKEND_URL}/api/bill-of-purchase/get-by-id/${id}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        // console.log("Bill of Pruchase Data: ", response.data);
+        console.log("Bill of Pruchase Data: ", response.data);
         if (response.data) {
 
           setBillOfPurchaseData(response.data);
@@ -334,8 +334,9 @@ const BillOfPurchaseView = () => {
       {/* Bill Info */}
       <div className="flex justify-between mb-6 text-sm">
         <div>
-        <p className="font-bold text-start text-blue-800 text-lg"><strong>Bill Of Purchase ID:</strong> {billOfPurchaseData?.id}</p>
+          <p className="font-bold text-start text-blue-800 text-lg"><strong>Bill Of Purchase ID:</strong> {billOfPurchaseData?.id}</p>
           <p><strong>Date:</strong> {billOfPurchaseData?.date}</p>
+          <p><strong>SO ID:</strong> {billOfPurchaseData?.so_id}</p>
           <p><strong>Reference Bill:</strong> {billOfPurchaseData?.reference_bill}</p>
         </div>
         <div>

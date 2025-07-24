@@ -7,6 +7,10 @@ export const fetchJobberMasters = createAsyncThunk(
   async (token, thunkAPI) => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/jobber-masters`, {
+        params: {
+          "pagination[page]": 1,
+          "pagination[pageSize]": 100000,
+        },
         headers: { Authorization: `Bearer ${token}` },
       });
       return response.data.data;
