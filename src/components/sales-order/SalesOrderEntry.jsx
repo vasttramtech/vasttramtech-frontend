@@ -563,11 +563,24 @@ const SalesOrderEntry = () => {
     }
     setsubmitting(true);
 
-    //     if (allSemiFinishedGoods.length <= 0) {
-    //   toast.warn("Please select the design first");
-    //   setsubmitting(false);
-    //   return;
-    // }
+    if (allSemiFinishedGoods.length <= 0) {
+      toast.warn("Please select the design first");
+      setsubmitting(false);
+      return;
+    }
+
+    const checkBOMJobbers = (allBOM) => {
+      return allBOM.every(
+        (bom) => bom.jobber_master_sfg && bom.jobber_master_sfg.length > 0
+      );
+    };
+
+    if (!checkBOMJobbers(allSemiFinishedGoods)) {
+      toast.warn("Please add jobber in every Design BOM.");
+      setsubmitting(false);
+      return;
+    };
+
     try {
       const extrabomso = allSemiFinishedGoods.map((item, ind) => ({
         ...item,
@@ -647,17 +660,33 @@ const SalesOrderEntry = () => {
       navigate("/login");
     }
     setsubmitting(true);
-    // if (allSemiFinishedGoods.length <= 0) {
-    //   toast.warn("Please select the design first");
-    //   setsubmitting(false);
-    //   return;
-    // }
+    if (allSemiFinishedGoods.length <= 0) {
+      toast.warn("Please select the design first");
+      setsubmitting(false);
+      return;
+    }
+
+    console.log("extrabomso123456: ", allSemiFinishedGoods);
+
+    const checkBOMJobbers = (allBOM) => {
+      return allBOM.every(
+        (bom) => bom.jobber_master_sfg && bom.jobber_master_sfg.length > 0
+      );
+    };
+
+    if (!checkBOMJobbers(allSemiFinishedGoods)) {
+      toast.warn("Please add jobber in every Design BOM.");
+      setsubmitting(false);
+      return;
+    };
+
     try {
       const extrabomso = allSemiFinishedGoods.map((item, ind) => ({
         ...item,
         stock_status: selectedConvertIdData?.so_id ? true : SFGStatusStock[ind],
         qty: item.qty * formData.qty,
       }));
+      
       const postData = {
         data: {
           so_id: formData.so_id,
