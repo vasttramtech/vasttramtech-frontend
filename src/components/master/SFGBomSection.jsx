@@ -675,6 +675,7 @@ const SFGBomSection = ({
                 className="p-2 border bg-gray-100 border-gray-300 rounded-md"
                 type="number"
                 placeholder="0.0"
+                min={0}
                 name="sfg_qty"
                 onChange={sfgDataHandler}
                 value={SfgData.sfg_qty}
