@@ -64,7 +64,8 @@ const SelectSOTable = ({
             // let data;
 
             if (status === "Alter") {
-                const returnId = convertId !== "" ? convertId : so_id;
+                // const returnId = convertId !== "" ? convertId : so_id;
+                const returnId =  so_id;
                 const response = await axios.get(
                     `${process.env.REACT_APP_BACKEND_URL}/api/custom-sales-order-returns/${returnId}/details`,
                     {
@@ -82,7 +83,7 @@ const SelectSOTable = ({
 
                     let so_id = data?.so_id;
                     if (so_type === "internal-sales-order-entry") {
-                        so_id = data?.orders[0]?.external_orders;
+                        so_id = data?.internal_sales_order_entry?.orders[0]?.external_orders;
                     }
 
                     let sales_order = data?.internal_sales_order_entry || data?.sales_oder_entry;
