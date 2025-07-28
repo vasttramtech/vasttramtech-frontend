@@ -1293,6 +1293,7 @@ const SalesOrderEntry = () => {
             onChange={handleChange}
             value={formData.qty}
             name={"qty"}
+            min={0}
             editable={isAdmin || (!isAdmin && selectedConvertIdData?.so_id)}
           />
 

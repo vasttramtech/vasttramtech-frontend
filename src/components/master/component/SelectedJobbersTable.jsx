@@ -62,6 +62,7 @@ const SelectedJobbersTable = ({
                 <input
                   type="number"
                   className="w-20 p-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  min={0}
                   value={jobber.Rate || 0}
                   onChange={(e) =>
                     handleRateChange(jobber.id, parseFloat(e.target.value) || 0)

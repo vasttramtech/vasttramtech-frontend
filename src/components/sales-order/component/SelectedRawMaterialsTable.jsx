@@ -65,6 +65,7 @@ const SelectedRawMaterialsTable = ({
                   defaultValue={material?.Qty || 0}
                   className="w-20 p-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                   value={material.Qty || 0}
+                  min={0}
                   onChange={(e) =>
                     handleQuantityChange(
                       material.id,

@@ -764,6 +764,7 @@ const UpdateBOM = ({
                 placeholder="0.0"
                 name="sfg_qty"
                 onChange={sfgDataHandler}
+                min={0}
                 value={SfgData.sfg_qty}
                 readOnly={SavedSfgData.fromStock === true}
               />
