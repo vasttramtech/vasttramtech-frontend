@@ -160,7 +160,7 @@ const EditSupplierMaster = ({ setOpenEditModal, selectedRow, fetchSupplierMaster
                 company_type: formData.company_type,
                 company_name: formData.company_name,
                 state: formData.state,
-                credit_limit: formData.credit_limit_amount,
+                credit_limit: formData.credit_limit,
                 credit_limit_days: formData.credit_limit_days,
                 contact_number: formData.contact_number,
                 website: formData.website,
